@@ -104,9 +104,6 @@
             this.m_tbMin = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.Cumulative = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Count = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.GreyLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.m_dgvHisData = new System.Windows.Forms.DataGridView();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.m_HistogramInput = new System.Windows.Forms.TabPage();
@@ -141,7 +138,7 @@
             this.m_cbImages = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.m_picBox = new System.Windows.Forms.PictureBox();
+            this.m_display = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.m_BlobMeasurementTable)).BeginInit();
             this.flowLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
@@ -194,7 +191,7 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.m_picBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.m_display)).BeginInit();
             this.SuspendLayout();
             // 
             // label13
@@ -267,6 +264,9 @@
             this.m_BlobMeasurementTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.m_BlobMeasurementTable.Size = new System.Drawing.Size(374, 319);
             this.m_BlobMeasurementTable.TabIndex = 2;
+            this.m_BlobMeasurementTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_BlobMeasurementTable_CellEndEdit);
+            this.m_BlobMeasurementTable.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_BlobMeasurementTable_CellValueChanged);
+            this.m_BlobMeasurementTable.CurrentCellDirtyStateChanged += new System.EventHandler(this.m_BlobMeasurementTable_CurrentCellDirtyStateChanged);
             // 
             // m_cbBlobProperties
             // 
@@ -325,6 +325,7 @@
             this.m_cbBlobProperties.Name = "m_cbBlobProperties";
             this.m_cbBlobProperties.Size = new System.Drawing.Size(21, 21);
             this.m_cbBlobProperties.TabIndex = 0;
+            this.m_cbBlobProperties.SelectedIndexChanged += new System.EventHandler(this.m_cbBlobProperties_SelectedIndexChanged);
             // 
             // m_btnDeleteProperties
             // 
@@ -384,6 +385,7 @@
             this.m_dgvBlobResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.m_dgvBlobResults.Size = new System.Drawing.Size(380, 355);
             this.m_dgvBlobResults.TabIndex = 0;
+            this.m_dgvBlobResults.SelectionChanged += new System.EventHandler(this.m_dgvBlobResults_SelectionChanged);
             // 
             // m_BlobMeasurement
             // 
@@ -629,6 +631,7 @@
             this.m_cbSegPolarity.Name = "m_cbSegPolarity";
             this.m_cbSegPolarity.Size = new System.Drawing.Size(172, 21);
             this.m_cbSegPolarity.TabIndex = 3;
+            this.m_cbSegPolarity.SelectedIndexChanged += new System.EventHandler(this.m_cbSegPolarity_SelectedIndexChanged);
             // 
             // tableLayoutPanel7
             // 
@@ -1208,25 +1211,6 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Statictics";
             // 
-            // Cumulative
-            // 
-            this.Cumulative.HeaderText = "Cumulative %";
-            this.Cumulative.Name = "Cumulative";
-            this.Cumulative.ReadOnly = true;
-            // 
-            // Count
-            // 
-            this.Count.HeaderText = "Count";
-            this.Count.Name = "Count";
-            this.Count.ReadOnly = true;
-            // 
-            // GreyLevel
-            // 
-            this.GreyLevel.Frozen = true;
-            this.GreyLevel.HeaderText = "Grey Level";
-            this.GreyLevel.Name = "GreyLevel";
-            this.GreyLevel.ReadOnly = true;
-            // 
             // m_dgvHisData
             // 
             this.m_dgvHisData.AllowUserToAddRows = false;
@@ -1234,10 +1218,6 @@
             this.m_dgvHisData.AllowUserToResizeColumns = false;
             this.m_dgvHisData.BackgroundColor = System.Drawing.SystemColors.Control;
             this.m_dgvHisData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.m_dgvHisData.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.GreyLevel,
-            this.Count,
-            this.Cumulative});
             this.m_dgvHisData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_dgvHisData.Location = new System.Drawing.Point(3, 16);
             this.m_dgvHisData.MinimumSize = new System.Drawing.Size(0, 500);
@@ -1319,6 +1299,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(408, 419);
             this.tabControl1.TabIndex = 2;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // m_BlobTab
             // 
@@ -1584,6 +1565,7 @@
             this.m_RunBtn.TabIndex = 0;
             this.m_RunBtn.Text = "Run";
             this.m_RunBtn.UseVisualStyleBackColor = true;
+            this.m_RunBtn.Click += new System.EventHandler(this.m_RunBtn_Click);
             // 
             // m_OpenBtn
             // 
@@ -1603,6 +1585,7 @@
             this.m_RunToolBtn.TabIndex = 2;
             this.m_RunToolBtn.Text = "Run Tool";
             this.m_RunToolBtn.UseVisualStyleBackColor = true;
+            this.m_RunToolBtn.Click += new System.EventHandler(this.m_RunToolBtn_Click);
             // 
             // flowLayoutPanel1
             // 
@@ -1641,6 +1624,7 @@
             this.m_cbImages.Name = "m_cbImages";
             this.m_cbImages.Size = new System.Drawing.Size(380, 21);
             this.m_cbImages.TabIndex = 5;
+            this.m_cbImages.SelectedIndexChanged += new System.EventHandler(this.m_cbImages_SelectedIndexChanged);
             // 
             // tableLayoutPanel8
             // 
@@ -1659,23 +1643,31 @@
             // 
             // panel2
             // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.AutoScroll = true;
-            this.panel2.Controls.Add(this.m_picBox);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.AutoSize = true;
+            this.panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel2.BackColor = System.Drawing.Color.Navy;
+            this.panel2.Controls.Add(this.m_display);
             this.panel2.Location = new System.Drawing.Point(3, 28);
             this.panel2.Name = "panel2";
+            this.panel2.Padding = new System.Windows.Forms.Padding(50);
             this.panel2.Size = new System.Drawing.Size(380, 419);
             this.panel2.TabIndex = 6;
+            this.panel2.Resize += new System.EventHandler(this.panel2_Resize);
             // 
-            // m_picBox
+            // m_display
             // 
-            this.m_picBox.Location = new System.Drawing.Point(3, 2);
-            this.m_picBox.Name = "m_picBox";
-            this.m_picBox.Size = new System.Drawing.Size(208, 218);
-            this.m_picBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.m_picBox.TabIndex = 6;
-            this.m_picBox.TabStop = false;
-            this.m_picBox.Paint += new System.Windows.Forms.PaintEventHandler(this.m_picBox_Paint);
+            this.m_display.BackColor = System.Drawing.Color.Transparent;
+            this.m_display.Location = new System.Drawing.Point(21, 94);
+            this.m_display.Margin = new System.Windows.Forms.Padding(50);
+            this.m_display.Name = "m_display";
+            this.m_display.Size = new System.Drawing.Size(341, 270);
+            this.m_display.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.m_display.TabIndex = 0;
+            this.m_display.TabStop = false;
             // 
             // Form1
             // 
@@ -1748,9 +1740,9 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
+            this.tableLayoutPanel8.PerformLayout();
             this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.m_picBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.m_display)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1834,9 +1826,6 @@
         private System.Windows.Forms.TextBox m_tbMin;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Cumulative;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Count;
-        private System.Windows.Forms.DataGridViewTextBoxColumn GreyLevel;
         private System.Windows.Forms.DataGridView m_dgvHisData;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TabPage m_HistogramInput;
@@ -1871,7 +1860,7 @@
         private System.Windows.Forms.ComboBox m_cbImages;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.PictureBox m_picBox;
+        public System.Windows.Forms.PictureBox m_display;
     }
 }
 

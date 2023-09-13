@@ -12,57 +12,48 @@ namespace OpenCV_Vision_Pro
 {
     public partial class ROI : UserControl
     {
-        private double m_Xcoord = 0;
-        private double m_Ycoord = 0;
-        private double m_width = 50;
-        private double m_height = 50;
         private double m_rotation = 0;
         private double m_skew = 0;
-
+        private FrameControl frameControl = new FrameControl();
         public ROI()
         {
             InitializeComponent();
             m_comboBoxROI.SelectedIndex = 0;
+            frameControl.Size = new Size(100, 100);
+            frameControl.Location = new Point(0, 0);
         }
 
-        public double X
+        public Rectangle ROI_Region
         {
-            get { return m_Xcoord; }
-            set
+            get
             {
-                m_Xcoord = value;
-                Invalidate();
+               return new Rectangle(X, Y, ROI_Width, ROI_Height);
             }
         }
 
-        public double Y
+        public FrameControl FrameControl
         {
-            get { return m_Ycoord; }
-            set
-            {
-                m_Ycoord = value;
-                Invalidate();
-            }
+            get { return frameControl; }
         }
 
-        public double ROI_Width
+        public int X
         {
-            get { return m_width; }
-            set
-            {
-                m_width = value;
-                Invalidate();
-            }
+            get { return FrameControl.X; }
         }
 
-        public double ROI_Height
+        public int Y
         {
-            get { return m_height; }
-            set
-            {
-                m_height = value;
-                Invalidate();
-            }
+            get { return FrameControl.Y; }
+        }
+
+        public int ROI_Width
+        {
+            get { return FrameControl.Width; }
+        }
+
+        public int ROI_Height
+        {
+            get { return FrameControl.Height; }
         }
 
         public double ROI_rotation
