@@ -21,6 +21,8 @@ namespace OpenCV_Vision_Pro
         public Bitmap BlobImage { get; set; }
         public Dictionary<String,ArrayList> MeasurementProperties { get; set; }
 
+        public double threshold { get; set; }
+
         public async void Run(Mat image)
         {
             CvInvoke.CvtColor(image, image, ColorConversion.Bgr2Gray);
@@ -28,9 +30,9 @@ namespace OpenCV_Vision_Pro
             Mat filter_image = new Mat();
             CvInvoke.BilateralFilter(image, filter_image, 9, 20, 20);
             if (polarity == "Light blobs, Dark background")
-                CvInvoke.Threshold(filter_image, image, 128, 255, ThresholdType.Binary);
+                CvInvoke.Threshold(filter_image, image, threshold, 255, ThresholdType.Binary);
             else
-                CvInvoke.Threshold(filter_image, image, 128, 255, ThresholdType.BinaryInv);
+                CvInvoke.Threshold(filter_image, image, threshold, 255, ThresholdType.BinaryInv);
             
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             Mat hierarchy = new Mat();

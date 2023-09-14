@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Collections;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Windows.Forms.VisualStyles;
 
 namespace OpenCV_Vision_Pro
 {
@@ -57,13 +58,16 @@ namespace OpenCV_Vision_Pro
             m_cbSegPolarity.SelectedIndex = 0;
             m_cbConnectMode.SelectedIndex = 0;
             m_cbConnectClean.SelectedIndex = 2;
+
+            m_NumSegmentation1.Value = 128;
         }
 
         private void m_OpenBtn_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "All File (*.*) | *.*";
-            if(openFileDialog.ShowDialog() == DialogResult.OK) { 
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
 
                 m_strFileName = openFileDialog.FileName;
 
@@ -71,13 +75,11 @@ namespace OpenCV_Vision_Pro
                 m_display.Width = m_image.Width;
                 m_display.Height = m_image.Height;
 
-                if (bitmapList.ContainsKey("LastRun.OutputImage"))
-                    bitmapList["LastRun.OutputImage"] = m_image;
-                else
-                    bitmapList.Add("LastRun.OutputImage", m_image);
+                m_cbImages.Items.Clear();
+                bitmapList.Clear();
+                bitmapList.Add("LastRun.OutputImage", m_image);
 
                 m_display.Image = bitmapList["LastRun.OutputImage"];
-                m_cbImages.Items.Clear();
                 m_cbImages.Items.Add("LastRun.OutputImage");
                 m_cbImages.SelectedIndex = 0;
             }
@@ -90,7 +92,10 @@ namespace OpenCV_Vision_Pro
                 if (e.Delta <= 0)
                 {
                     if (m_roi.FrameControl.Width < 10 || m_roi.FrameControl.Height < 10)
-                        return;
+                    {
+                        m_roi.FrameControl.Width = 10;
+                        m_roi.FrameControl.Height = 10;
+                    }
                     //set minimum size to zoom
                     if (m_display.Width < 0)
                         return;
@@ -101,7 +106,7 @@ namespace OpenCV_Vision_Pro
                     if (m_display.Width > 8000)
                         return;
                 }
-                
+
                 m_display.Width += Convert.ToInt32(m_display.Width * e.Delta / 1000);
                 m_display.Height += Convert.ToInt32(m_display.Height * e.Delta / 1000);
                 m_roi.FrameControl.Width += Convert.ToInt32(m_roi.FrameControl.Width * e.Delta / 1000);
@@ -163,7 +168,9 @@ namespace OpenCV_Vision_Pro
                 runBlob();
             else if (tabControl1.SelectedTab.Name == "m_CaliperTab")
                 runCaliper();
+            int index = m_cbImages.SelectedIndex;
             m_cbImages.SelectedIndex = 0;
+            m_cbImages.SelectedIndex = index;
         }
 
         private void runHistogram()
@@ -173,7 +180,8 @@ namespace OpenCV_Vision_Pro
             {
                 Bitmap bitmap = new Bitmap(m_display.Image);
                 histogramTool = new HistogramTool(getRegion());
-            }else
+            }
+            else
                 histogramTool = new HistogramTool(bitmapList["LastRun.OutputImage"]);
             //bitmapList.Add("LastRun.Histogram.InputImage", new Bitmap(m_display.Image));
             //m_cbImages.Items.Add("LastRun.Histogram.InputImage");
@@ -182,9 +190,9 @@ namespace OpenCV_Vision_Pro
             m_tbMax.Text = histogramTool.Maximum.ToString();
             m_tbMedian.Text = histogramTool.Median.ToString();
             m_tbMode.Text = histogramTool.Mode.ToString();
-            m_tbMean.Text = Math.Round(histogramTool.Mean,4).ToString();
-            m_tbSD.Text = Math.Round(histogramTool.StandardDeviation,4).ToString();
-            m_tbVariance.Text = Math.Round(histogramTool.Variance,4).ToString();
+            m_tbMean.Text = Math.Round(histogramTool.Mean, 4).ToString();
+            m_tbSD.Text = Math.Round(histogramTool.StandardDeviation, 4).ToString();
+            m_tbVariance.Text = Math.Round(histogramTool.Variance, 4).ToString();
 
             m_tbSample.Text = histogramTool.NumberOfSample.ToString();
             m_dgvHisData.DataSource = histogramTool.histData;
@@ -197,7 +205,8 @@ namespace OpenCV_Vision_Pro
             }
         }
 
-        private void runBlob() {
+        private void runBlob()
+        {
             m_dgvBlobResults.Columns.Clear();
             m_dgvBlobResults.Rows.Clear();
             m_dgvBlobResults.Refresh();
@@ -245,7 +254,7 @@ namespace OpenCV_Vision_Pro
                 }
                 m_dgvBlobResults.Rows.Add(m_listTemp);
             }
-            
+
 
         }
 
@@ -256,29 +265,34 @@ namespace OpenCV_Vision_Pro
             m_CaliperRes.Refresh();
 
             if (m_roi.m_comboBoxROI.SelectedIndex != 0)
-                caliperTool.Run(getRegion());
+                caliperTool.Run(bitmapList["LastRun.OutputImage"].ToMat(), getRegionRect());
             else
-                caliperTool.Run(bitmapList["LastRun.OutputImage"].ToMat());
-            /*
-            m_CaliperRes.DataSource = caliperTool.caliperResult;
+                caliperTool.Run(bitmapList["LastRun.OutputImage"].ToMat(), new Rectangle());
 
+            m_CaliperRes.DataSource = caliperTool.caliperResult;
+            m_CaliperRes.Columns[0].Frozen = true;
             if (bitmapList.ContainsKey("LastRun.Caliper"))
                 bitmapList["LastRun.Caliper"] = caliperTool.caliperImage;
             else
             {
                 bitmapList.Add("LastRun.Caliper", caliperTool.caliperImage);
                 m_cbImages.Items.Add("LastRun.Caliper");
-            }*/
+            }
         }
 
         private void m_cbImages_SelectedIndexChanged(object sender, EventArgs e)
         {
+
             String m_strSelectedItem = m_cbImages.SelectedItem.ToString();
             Bitmap selectedBitmap = bitmapList[m_strSelectedItem];
             m_display.Width = selectedBitmap.Width;
             m_display.Height = selectedBitmap.Height;
             m_display.Image = selectedBitmap;
             CenterPictureBox(m_display);
+            if (m_cbImages.SelectedIndex == 0 && m_display.Controls.Count > 0)
+                m_roi.FrameControl.Visible = true;
+            else if (m_display.Controls.Count > 0)
+                m_roi.FrameControl.Visible = false;
         }
 
         /*
@@ -309,8 +323,12 @@ namespace OpenCV_Vision_Pro
                 m_display.Controls.Clear();
                 return;
             }
-            
+
             m_display.Controls.Add(m_roi.FrameControl);
+            if (m_cbImages.SelectedItem.ToString() == "LastRun.OutputImage")
+                m_roi.FrameControl.Visible = true;
+            else
+                m_roi.FrameControl.Visible = false;
         }
 
         private void m_cbBlobProperties_SelectedIndexChanged(object sender, EventArgs e)
@@ -337,21 +355,21 @@ namespace OpenCV_Vision_Pro
 
         private void m_cbSegPolarity_SelectedIndexChanged(object sender, EventArgs e)
         {
-            blobTool.polarity = m_cbSegPolarity.SelectedItem.ToString() ;
+            blobTool.polarity = m_cbSegPolarity.SelectedItem.ToString();
         }
 
         private void m_dgvBlobResults_SelectionChanged(object sender, EventArgs e)
         {
             if (m_dgvBlobResults.Rows.Count == 0) { return; }
             if (m_dgvBlobResults.SelectedRows.Count == 0) { return; }
-            if(m_cbImages.SelectedItem.ToString() != "LastRun.BlobImage") { return; }
+            if (m_cbImages.SelectedItem.ToString() != "LastRun.BlobImage") { return; }
             try
             {
                 int m_intNum = m_dgvBlobResults.SelectedRows[0].Index;
                 int ID = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
                 Mat tempMat = bitmapList["LastRun.BlobImage"].ToMat();
-                CvInvoke.Polylines(tempMat, blobTool.contourByID[ID], true, new MCvScalar(100,150), 2);
-                m_display.Image = tempMat.ToBitmap();    
+                CvInvoke.Polylines(tempMat, blobTool.contourByID[ID], true, new MCvScalar(100, 150), 2);
+                m_display.Image = tempMat.ToBitmap();
             }
             catch (Exception ex)
             {
@@ -440,7 +458,7 @@ namespace OpenCV_Vision_Pro
                     m_dgvRow.Cells[4].ReadOnly = false;
                     blobTool.MeasurementProperties.Add(m_strName, new ArrayList()
                     {
-                        "Exclude",0,0 
+                        "Exclude",0,0
                     });
                 }
                 return;
@@ -476,8 +494,12 @@ namespace OpenCV_Vision_Pro
         private Mat getRegion()
         {
             Mat m = ResizeImage(m_display.Image, m_display.Width, m_display.Height).ToMat();
+            return new Mat(m, getRegionRect());
+        }
 
-            int width,height;
+        private Rectangle getRegionRect()
+        {
+            int width, height;
             int X = 0;
             int Y = 0;
 
@@ -507,11 +529,25 @@ namespace OpenCV_Vision_Pro
                 height = m_roi.ROI_Height;
             }
 
-            return new Mat(m, new Rectangle(X, Y, width, height));
+            return new Rectangle(X, Y, width, height);
         }
+
         private void m_RunBtn_Click(object sender, EventArgs e)
         {
-            
+            if (m_display.Image == null)
+            {
+                MessageBox.Show("No Image Selected");
+                return;
+            }
+            if (tabControl1.SelectedTab.Name == "m_HistogramTab")
+                runHistogram();
+            else if (tabControl1.SelectedTab.Name == "m_BlobTab")
+                runBlob();
+            else if (tabControl1.SelectedTab.Name == "m_CaliperTab")
+                runCaliper();
+            int index = m_cbImages.SelectedIndex;
+            m_cbImages.SelectedIndex = 0;
+            m_cbImages.SelectedIndex = index;
         }
 
         /// <summary>https://stackoverflow.com/a/24199315/1115360
@@ -544,6 +580,50 @@ namespace OpenCV_Vision_Pro
             }
 
             return destImage;
+        }
+
+        private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
+        {
+            if (m_CaliperRes.Rows.Count == 0) { return; }
+            if (m_CaliperRes.SelectedRows.Count == 0) { return; }
+            if (m_cbImages.SelectedItem.ToString() != "LastRun.Caliper") { return; }
+            try
+            {
+                int m_intNum = m_CaliperRes.SelectedRows[0].Index;
+                int edge = int.Parse(m_CaliperRes.SelectedRows[0].Cells[2].Value.ToString());
+                Mat tempMat = bitmapList["LastRun.Caliper"].ToMat();
+                int[] points = caliperTool.caliperPoints[edge];
+                if (!caliperTool.ROIBool)
+                    CvInvoke.Line(tempMat, new Point(points[0], points[1]), new Point(points[2], points[3]), new MCvScalar(100, 150), 1);
+                else
+                {
+                    Point p1 = new Point(points[0] + m_roi.X, m_roi.Y);
+                    Point p2 = new Point(points[2] + m_roi.X, m_roi.Y + m_roi.ROI_Height);
+                    CvInvoke.Line(tempMat, p1, p2, new MCvScalar(100, 150), 1);
+                }
+                m_display.Image = tempMat.ToBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void m_NumSegmentation1_ValueChanged(object sender, EventArgs e)
+        {
+            blobTool.threshold = (double)m_NumSegmentation1.Value;
+        }
+
+        private void edge0_CheckedChanged(object sender, EventArgs e)
+        {
+            if (((RadioButton)sender).Checked)
+                caliperTool.polarity0 = ((RadioButton)sender).Text;
+        }
+
+        private void edge1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (((RadioButton)sender).Checked)
+                caliperTool.polarity1 = ((RadioButton)sender).Text;
         }
     }
 }

@@ -419,11 +419,7 @@
             this.m_NumSegmentation1.Name = "m_NumSegmentation1";
             this.m_NumSegmentation1.Size = new System.Drawing.Size(70, 20);
             this.m_NumSegmentation1.TabIndex = 6;
-            this.m_NumSegmentation1.Value = new decimal(new int[] {
-            128,
-            0,
-            0,
-            0});
+            this.m_NumSegmentation1.ValueChanged += new System.EventHandler(this.m_NumSegmentation1_ValueChanged);
             // 
             // m_labelSeg2
             // 
@@ -536,6 +532,7 @@
             this.m_CaliperRes.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.m_CaliperRes.Size = new System.Drawing.Size(380, 355);
             this.m_CaliperRes.TabIndex = 0;
+            this.m_CaliperRes.SelectionChanged += new System.EventHandler(this.m_CaliperRes_SelectionChanged);
             // 
             // m_BlobOutput
             // 
@@ -899,6 +896,7 @@
             this.m_Any0.TabStop = true;
             this.m_Any0.Text = "Any Polarity";
             this.m_Any0.UseVisualStyleBackColor = true;
+            this.m_Any0.CheckedChanged += new System.EventHandler(this.edge0_CheckedChanged);
             // 
             // m_LD0
             // 
@@ -909,6 +907,7 @@
             this.m_LD0.TabIndex = 1;
             this.m_LD0.Text = "Light to Dark";
             this.m_LD0.UseVisualStyleBackColor = true;
+            this.m_LD0.CheckedChanged += new System.EventHandler(this.edge0_CheckedChanged);
             // 
             // m_DL0
             // 
@@ -919,6 +918,7 @@
             this.m_DL0.TabIndex = 0;
             this.m_DL0.Text = "Dark to Light";
             this.m_DL0.UseVisualStyleBackColor = true;
+            this.m_DL0.CheckedChanged += new System.EventHandler(this.edge0_CheckedChanged);
             // 
             // m_gbEdge1Polarity
             // 

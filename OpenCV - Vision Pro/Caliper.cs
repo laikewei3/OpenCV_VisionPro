@@ -8,7 +8,6 @@ namespace OpenCV_Vision_Pro
 {
     public class Caliper
     {
-        public int ID {  get; set; }
         public double Score {  get; set; }
         public int Edge0 { get; set; }
         public int Edge1 { get; set; }
@@ -26,5 +25,16 @@ namespace OpenCV_Vision_Pro
         public double PositionXEdge1 { get; set; }
         public double PositionYEdge1 { get; set; }
 
+    }
+
+    public class Edges
+    {
+        public int EdgeID { get; set; }
+        public double Score { get; set; }
+        public double Position { get; set; }
+        public double PositionX { get; set; }
+        public double PositionY { get; set; }
+        public double ContrastEdge0 { get; set; }
+        public double ScoringFunction0 { get; set; }
     }
 }
