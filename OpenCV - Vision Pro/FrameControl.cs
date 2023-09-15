@@ -11,12 +11,16 @@ namespace OpenCV_Vision_Pro
         public int X { get; set; }
         public int Y { get; set; }
 
+        private Point previousMouseLocation;
+        private double rotationAngle = 0.0;
+
         public FrameControl()
         {
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             DoubleBuffered = true;
             ResizeRedraw = true;
             BackColor = Color.Transparent;
+            previousMouseLocation = new Point(X, Y);
             this.SizeChanged += sizeChanged;
             this.Move += moved;
         }
@@ -36,10 +40,15 @@ namespace OpenCV_Vision_Pro
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            using (var p = new Pen(Color.DeepSkyBlue, 4))
+            using (Pen cornerP = new Pen(Color.DarkRed, 4))
+            using (var p = new Pen(Color.DeepSkyBlue, 2))
             {
                 p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
                 e.Graphics.DrawRectangle(p, 0, 0, Width - 1, Height - 1);
+                e.Graphics.DrawRectangle(cornerP, 0, 0, 3, 3);
+                e.Graphics.DrawRectangle(cornerP, 0, Height-3, 3, 3);
+                e.Graphics.DrawRectangle(cornerP, Width-3, 0, 3, 3);
+                e.Graphics.DrawRectangle(cornerP, Width-3, Height-3, 3, 3);
             }
         }
         const int WM_NCHITTEST = 0x84;

@@ -335,6 +335,7 @@
             this.m_btnDeleteProperties.TabIndex = 1;
             this.m_btnDeleteProperties.Text = "X";
             this.m_btnDeleteProperties.UseVisualStyleBackColor = true;
+            this.m_btnDeleteProperties.Click += new System.EventHandler(this.m_btnDeleteProperties_Click);
             // 
             // flowLayoutPanel3
             // 
@@ -740,6 +741,7 @@
             0,
             0,
             0});
+            this.m_NumResult.ValueChanged += new System.EventHandler(this.m_NumResult_ValueChanged);
             // 
             // m_NumFilter
             // 
@@ -813,6 +815,7 @@
             0,
             0,
             0});
+            this.m_NumContrastThreshold.ValueChanged += new System.EventHandler(this.m_NumContrastThreshold_ValueChanged);
             // 
             // m_gbEdgeMode
             // 
@@ -871,6 +874,7 @@
             this.m_radioPair.TabIndex = 1;
             this.m_radioPair.Text = "Edge Pair";
             this.m_radioPair.UseVisualStyleBackColor = true;
+            this.m_radioPair.CheckedChanged += new System.EventHandler(this.m_radioPair_CheckedChanged);
             // 
             // groupBox3
             // 
@@ -945,6 +949,7 @@
             this.m_Any1.TabStop = true;
             this.m_Any1.Text = "Any Polarity";
             this.m_Any1.UseVisualStyleBackColor = true;
+            this.m_Any1.CheckedChanged += new System.EventHandler(this.edge1_CheckedChanged);
             // 
             // m_LD1
             // 
@@ -955,6 +960,7 @@
             this.m_LD1.TabIndex = 1;
             this.m_LD1.Text = "Light to Dark";
             this.m_LD1.UseVisualStyleBackColor = true;
+            this.m_LD1.CheckedChanged += new System.EventHandler(this.edge1_CheckedChanged);
             // 
             // m_DL1
             // 
@@ -965,6 +971,7 @@
             this.m_DL1.TabIndex = 0;
             this.m_DL1.Text = "Dark to Light";
             this.m_DL1.UseVisualStyleBackColor = true;
+            this.m_DL1.CheckedChanged += new System.EventHandler(this.edge1_CheckedChanged);
             // 
             // label12
             // 
@@ -994,6 +1001,7 @@
             0,
             0,
             0});
+            this.m_NumEdgePairWidth.ValueChanged += new System.EventHandler(this.m_NumEdgePairWidth_ValueChanged);
             // 
             // m_CaliperOutput
             // 
@@ -1473,6 +1481,7 @@
             0,
             0,
             0});
+            this.m_NumConnectionMin.ValueChanged += new System.EventHandler(this.m_NumConnectionMin_ValueChanged);
             // 
             // groupBox5
             // 
@@ -1547,6 +1556,7 @@
             this.m_cbBlobOperation.Name = "m_cbBlobOperation";
             this.m_cbBlobOperation.Size = new System.Drawing.Size(21, 21);
             this.m_cbBlobOperation.TabIndex = 0;
+            this.m_cbBlobOperation.SelectedIndexChanged += new System.EventHandler(this.m_cbBlobOperation_SelectedIndexChanged);
             // 
             // m_BtnDeleteOperation
             // 
@@ -1556,6 +1566,7 @@
             this.m_BtnDeleteOperation.TabIndex = 1;
             this.m_BtnDeleteOperation.Text = "X";
             this.m_BtnDeleteOperation.UseVisualStyleBackColor = true;
+            this.m_BtnDeleteOperation.Click += new System.EventHandler(this.m_BtnDeleteOperation_Click);
             // 
             // m_RunBtn
             // 
@@ -1677,7 +1688,7 @@
             this.Controls.Add(this.tableLayoutPanel8);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "OpenCV - Vision Pro";
             ((System.ComponentModel.ISupportInitialize)(this.m_BlobMeasurementTable)).EndInit();
             this.flowLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);

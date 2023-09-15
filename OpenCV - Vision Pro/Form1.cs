@@ -12,10 +12,10 @@ using System.Collections;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms.VisualStyles;
+using System.Reflection.Metadata;
 
 namespace OpenCV_Vision_Pro
 {
-
     public partial class Form1 : Form
     {
         Dictionary<String, Bitmap> bitmapList = new Dictionary<String, Bitmap>();
@@ -228,21 +228,30 @@ namespace OpenCV_Vision_Pro
 
         private void showBlobResult(DataGridViewRowCollection rows, List<Blob> m_listResults)
         {
-            int i = 1;
+            int i = 2;
             List<string> m_listData = new List<string>();
+            m_dgvBlobResults.Columns.Add("m_measure0", "N");
             m_dgvBlobResults.Columns.Add("m_measure1", "ID");
-            //m_listData.Add("N");
+            m_dgvBlobResults.Columns[0].Frozen = true;
+            m_dgvBlobResults.Columns[0].ReadOnly = true;
+            m_dgvBlobResults.Columns[1].Frozen = true;
+            m_dgvBlobResults.Columns[1].ReadOnly = true;
+            m_dgvBlobResults.Columns[0].Width = 50;
+            m_dgvBlobResults.Columns[1].Width = 50;
             m_listData.Add("ID");
 
             foreach (DataGridViewRow r in rows)
             {
-                m_dgvBlobResults.Columns.Add("m_measure" + i++, r.Cells[0].Value.ToString());
+                int index = m_dgvBlobResults.Columns.Add("m_measure" + i++, r.Cells[0].Value.ToString());
+                m_dgvBlobResults.Columns[index].ReadOnly = true;
                 m_listData.Add(r.Cells[0].Value.ToString());
             }
+            int j = 0;
             foreach (Blob r in m_listResults)
             {
-                i = 0;
-                string[] m_listTemp = new string[m_listData.Count];
+                i = 1;
+                string[] m_listTemp = new string[m_listData.Count+1];
+                m_listTemp[0] = (j++).ToString();
                 foreach (string name in m_listData)
                 {
                     PropertyInfo propInfo = typeof(Blob).GetProperty(name);
@@ -366,9 +375,10 @@ namespace OpenCV_Vision_Pro
             try
             {
                 int m_intNum = m_dgvBlobResults.SelectedRows[0].Index;
-                int ID = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
+                int N = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
                 Mat tempMat = bitmapList["LastRun.BlobImage"].ToMat();
-                CvInvoke.Polylines(tempMat, blobTool.contourByID[ID], true, new MCvScalar(100, 150), 2);
+                CvInvoke.Polylines(tempMat, blobTool.contourByRow[N], true, new MCvScalar(100, 150), 2);
+                Console.Write(N + ":"+ "DRAW" + "\n");
                 m_display.Image = tempMat.ToBitmap();
             }
             catch (Exception ex)
@@ -590,16 +600,35 @@ namespace OpenCV_Vision_Pro
             try
             {
                 int m_intNum = m_CaliperRes.SelectedRows[0].Index;
-                int edge = int.Parse(m_CaliperRes.SelectedRows[0].Cells[2].Value.ToString());
+                int edge0 = int.Parse(m_CaliperRes.SelectedRows[0].Cells[2].Value.ToString());
                 Mat tempMat = bitmapList["LastRun.Caliper"].ToMat();
-                int[] points = caliperTool.caliperPoints[edge];
-                if (!caliperTool.ROIBool)
-                    CvInvoke.Line(tempMat, new Point(points[0], points[1]), new Point(points[2], points[3]), new MCvScalar(100, 150), 1);
+                List<int> points = caliperTool.caliperPoints[edge0];
+
+                int edge1 = 0;
+                List<int> points1 = new List<int>();
+                if (caliperTool.caliperParams.EdgeMode == "Edge Pair")
+                {
+                    edge1 = int.Parse(m_CaliperRes.SelectedRows[0].Cells[3].Value.ToString());
+                    points1 = caliperTool.caliperPoints[edge1];
+                }
+
+                if (!caliperTool.caliperParams.ROIBool)
+                {
+                    if (caliperTool.caliperParams.EdgeMode == "Edge Pair")
+                        CvInvoke.Line(tempMat, new Point(points1[0], points1[1]), new Point(points1[2], points1[3]), new MCvScalar(150), 1);
+
+                    CvInvoke.Line(tempMat, new Point(points[0], points[1]), new Point(points[2], points[3]), new MCvScalar(150), 1);
+                }
                 else
                 {
                     Point p1 = new Point(points[0] + m_roi.X, m_roi.Y);
                     Point p2 = new Point(points[2] + m_roi.X, m_roi.Y + m_roi.ROI_Height);
-                    CvInvoke.Line(tempMat, p1, p2, new MCvScalar(100, 150), 1);
+                    Point p3 = new Point(points1[0] + m_roi.X, m_roi.Y);
+                    Point p4 = new Point(points1[2] + m_roi.X, m_roi.Y + m_roi.ROI_Height);
+
+                    if (caliperTool.caliperParams.EdgeMode == "Edge Pair")
+                        CvInvoke.Line(tempMat, p3, p4, new MCvScalar(150), 1);
+                    CvInvoke.Line(tempMat, p1, p2, new MCvScalar(150), 1);
                 }
                 m_display.Image = tempMat.ToBitmap();
             }
@@ -617,13 +646,79 @@ namespace OpenCV_Vision_Pro
         private void edge0_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)
-                caliperTool.polarity0 = ((RadioButton)sender).Text;
+                caliperTool.caliperParams.polarity0 = ((RadioButton)sender).Text;
         }
 
         private void edge1_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)
-                caliperTool.polarity1 = ((RadioButton)sender).Text;
+                caliperTool.caliperParams.polarity1 = ((RadioButton)sender).Text;
+        }
+
+        private void m_radioPair_CheckedChanged(object sender, EventArgs e)
+        {
+            if (m_radioPair.Checked)
+            {
+                m_gbEdge1Polarity.Enabled = true;
+                m_NumEdgePairWidth.Enabled = true;
+                caliperTool.caliperParams.EdgeMode = m_radioPair.Text;
+            }
+            else
+            {
+                m_gbEdge1Polarity.Enabled = false;
+                m_NumEdgePairWidth.Enabled = false;
+                caliperTool.caliperParams.EdgeMode = m_radioSingle.Text;
+            }
+        }
+
+        private void m_NumEdgePairWidth_ValueChanged(object sender, EventArgs e)
+        {
+            caliperTool.caliperParams.estimatedWidth = (double)m_NumEdgePairWidth.Value;
+        }
+
+        private void m_NumResult_ValueChanged(object sender, EventArgs e)
+        {
+            caliperTool.caliperParams.maxResult = (int)m_NumResult.Value;
+        }
+
+        private void m_NumContrastThreshold_ValueChanged(object sender, EventArgs e)
+        {
+            caliperTool.caliperParams.contrastThreshold = (int)m_NumContrastThreshold.Value;
+        }
+
+        private void m_NumConnectionMin_ValueChanged(object sender, EventArgs e)
+        {
+            blobTool.minArea = (int) m_NumConnectionMin.Value;
+        }
+
+        private void m_btnDeleteProperties_Click(object sender, EventArgs e)
+        {
+            if (m_BlobMeasurementTable.SelectedRows == null)
+                return;
+            foreach (DataGridViewRow row in m_BlobMeasurementTable.SelectedRows)
+            {
+                String m_strName = row.Cells[0].Value.ToString();
+                m_cbBlobProperties.Items.Add(m_strName);
+                m_BlobMeasurementTable.Rows.Remove(row);
+            }
+        }
+
+        private void m_cbBlobOperation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            m_dgvBlobOperation.Rows.Add(new string[] { m_cbBlobOperation.SelectedItem.ToString() });
+            blobTool.morphologyOperation.Add(m_cbBlobOperation.SelectedItem.ToString());
+        }
+
+        private void m_BtnDeleteOperation_Click(object sender, EventArgs e)
+        {
+            if (m_dgvBlobOperation.SelectedRows == null)
+                return;
+
+            foreach (DataGridViewRow row in m_dgvBlobOperation.SelectedRows)
+            {
+                blobTool.morphologyOperation.RemoveAt(row.Index);
+                m_dgvBlobOperation.Rows.RemoveAt(row.Index);
+            }
         }
     }
 }

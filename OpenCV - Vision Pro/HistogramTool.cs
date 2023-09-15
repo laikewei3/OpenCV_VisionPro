@@ -66,7 +66,12 @@ namespace OpenCV_Vision_Pro
                         cummulative_list.Add(count);
                 }
                 else
-                    cummulative_list.Add(count);
+                {
+                    if (i > 0)
+                        cummulative_list.Add(cummulative_list[i - 1] + count);
+                    else
+                        cummulative_list.Add(count);
+                }
             }
             this.Mode = maxCount;
             this.NumberOfSample = (long)cummulative_list[histogramData.Length - 1];
@@ -91,11 +96,11 @@ namespace OpenCV_Vision_Pro
             });
             double m_doubleCumulativePercent = 0;
             double variance = 0;
-            for (int i = 1; i <= histogramData.Length; i++)
+            for (int i = 0; i < histogramData.Length; i++)
             {
-                m_doubleCumulativePercent += (histogramData[i - 1] * 100.0) / this.NumberOfSample;
-                this.histData.Rows.Add(i, histogramData[i - 1], Math.Round(m_doubleCumulativePercent, 2));
-                double temp = Math.Pow((i - this.Mean), 2) * histogramData[i - 1];
+                m_doubleCumulativePercent += (histogramData[i] * 100.0) / this.NumberOfSample;
+                this.histData.Rows.Add(i, histogramData[i], Math.Round(m_doubleCumulativePercent, 2));
+                double temp = Math.Pow((i - this.Mean), 2) * histogramData[i];
                 variance += temp;
             }
             variance /= this.NumberOfSample;

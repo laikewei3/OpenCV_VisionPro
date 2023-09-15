@@ -86,9 +86,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Blob.cs" />
     <Compile Include="BlobTool.cs" />
-    <Compile Include="Caliper.cs" />
     <Compile Include="CaliperTool.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
