@@ -18,143 +18,80 @@ namespace OpenCV_Vision_Pro
 {
     public partial class Form1 : Form
     {
-        Dictionary<String, Bitmap> bitmapList = new Dictionary<String, Bitmap>();
-        string m_strFileName;
-        ROI m_roi = new ROI();
-        Panel panel;
-        BlobTool blobTool = new BlobTool();
+        
+        
         CaliperTool caliperTool = new CaliperTool();
-
+        DisplayControl m_displayControl;
         public Form1()
         {
             InitializeComponent();
-            panel2.MouseWheel += m_display_MouseWheel;
-            CenterPictureBox(m_display);
-
-            Panel tempPanel = new Panel();
-            panel = new Panel();
-            panel.Height = 65;
-
-            m_HistogramInput.Controls.Add(panel);
-            panel.Controls.Add(tempPanel);
-            tempPanel.Controls.Add(m_roi);
+            m_displayControl = new DisplayControl();
+            m_displayControl.Dock = DockStyle.Fill;
+            splitContainer1.Panel2.Controls.Add(m_displayControl);
+            /*
 
             blobTool.MeasurementProperties = new Dictionary<string, ArrayList>();
-
-            m_roi.Dock = DockStyle.Fill;
-            panel.Dock = DockStyle.Top;
-            tempPanel.Dock = DockStyle.Top;
 
             //m_display.Paint += ROI_Paint;
             m_roi.m_comboBoxROI.SelectedIndexChanged += m_comboBoxROI_SelectedIndexChanged;
 
-            for (int i = 0; i < 3; i++)
-            {
-                m_cbBlobProperties.SelectedIndex = 0;
-                m_cbBlobProperties.SelectedIndex = -1;
-            }
-
-            m_cbSegMode.SelectedIndex = 2;
-            m_cbSegPolarity.SelectedIndex = 0;
-            m_cbConnectMode.SelectedIndex = 0;
-            m_cbConnectClean.SelectedIndex = 2;
-
-            m_NumSegmentation1.Value = 128;
+            */
         }
-
+        
         private void m_OpenBtn_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "All File (*.*) | *.*";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                Bitmap m_image = new Bitmap(openFileDialog.FileName);
+                m_displayControl.m_display.Width = m_image.Width;
+                m_displayControl.m_display.Height = m_image.Height;
 
-                m_strFileName = openFileDialog.FileName;
+                m_displayControl.m_cbImages.Items.Clear();
+                m_displayControl.m_bitmapList.Clear();
+                m_displayControl.m_bitmapList.Add("LastRun.OutputImage", m_image);
 
-                Bitmap m_image = new Bitmap(m_strFileName);
-                m_display.Width = m_image.Width;
-                m_display.Height = m_image.Height;
-
-                m_cbImages.Items.Clear();
-                bitmapList.Clear();
-                bitmapList.Add("LastRun.OutputImage", m_image);
-
-                m_display.Image = bitmapList["LastRun.OutputImage"];
-                m_cbImages.Items.Add("LastRun.OutputImage");
-                m_cbImages.SelectedIndex = 0;
+                m_displayControl.m_display.Image = m_displayControl.m_bitmapList["LastRun.OutputImage"];
+                m_displayControl.m_cbImages.Items.Add("LastRun.OutputImage");
+                m_displayControl.m_cbImages.SelectedIndex = 0;
             }
         }
 
-        private void m_display_MouseWheel(object sender, MouseEventArgs e)
+        private void m_BtnAddTool_Click(object sender, EventArgs e)
         {
-            if (e.Delta != 0 && m_display.Image != null)
-            {
-                if (e.Delta <= 0)
-                {
-                    if (m_roi.FrameControl.Width < 10 || m_roi.FrameControl.Height < 10)
-                    {
-                        m_roi.FrameControl.Width = 10;
-                        m_roi.FrameControl.Height = 10;
-                    }
-                    //set minimum size to zoom
-                    if (m_display.Width < 0)
-                        return;
-                }
-                else
-                {
-                    //set maximum size to zoom
-                    if (m_display.Width > 8000)
-                        return;
-                }
-
-                m_display.Width += Convert.ToInt32(m_display.Width * e.Delta / 1000);
-                m_display.Height += Convert.ToInt32(m_display.Height * e.Delta / 1000);
-                m_roi.FrameControl.Width += Convert.ToInt32(m_roi.FrameControl.Width * e.Delta / 1000);
-                m_roi.FrameControl.Height += Convert.ToInt32(m_roi.FrameControl.Height * e.Delta / 1000);
-                m_roi.FrameControl.X += Convert.ToInt32(m_roi.FrameControl.X * (double)e.Delta / 1000);
-                m_roi.FrameControl.Y += Convert.ToInt32(m_roi.FrameControl.Y * (double)e.Delta / 1000);
-                CenterPictureBox(m_display);
-            }
+            m_AddToolList.Show(m_BtnAddTool, new Point(0, m_BtnAddTool.Height));
         }
 
-        private void CenterPictureBox(PictureBox picBox)
+        private void blobToolMenuItem_Click(object sender, EventArgs e)
         {
-            panel2.AutoScrollPosition = new Point((panel2.Width + picBox.Width / 2),
-                                        picBox.Parent.ClientSize.Height / 2 + picBox.Height / 2);
-
-            picBox.Location = new Point((picBox.Parent.ClientSize.Width / 2 - picBox.Width / 2),
-                                        (picBox.Parent.ClientSize.Height / 2 - picBox.Height / 2));
-            picBox.Refresh();
+            BlobTool blobTool = new BlobTool();
+            
         }
-
-        private void panel2_Resize(object sender, EventArgs e)
-        {
-            CenterPictureBox(m_display);
-        }
-
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (((TabControl)sender).SelectedIndex == 0) //Histogram
-            {
-                if (!m_roi.m_comboBoxROI.Items.Contains("CogRectangle"))
-                    m_roi.m_comboBoxROI.Items.Insert(1, "CogRectangle");
-                m_HistogramInput.Controls.Add(panel);
-            }
-            else if (((TabControl)sender).SelectedIndex == 1) //Blob
-            {
-                if (!m_roi.m_comboBoxROI.Items.Contains("CogRectangle"))
-                    m_roi.m_comboBoxROI.Items.Insert(1, "CogRectangle");
-                m_BlobInput.Controls.Add(panel);
-            }
-            else if (((TabControl)sender).SelectedIndex == 2) //Caliper
-            {
-                if (m_roi.m_comboBoxROI.SelectedIndex != 0 && m_roi.m_comboBoxROI.SelectedIndex != 2)
-                    m_roi.m_comboBoxROI.SelectedIndex = 2;
-                m_roi.m_comboBoxROI.Items.Remove("CogRectangle"); //Remove CogRectangle
-                m_CaliperInput.Controls.Add(panel);
-            }
-        }
-
+        /*
+private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+{
+if (((TabControl)sender).SelectedIndex == 0) //Histogram
+{
+if (!m_roi.m_comboBoxROI.Items.Contains("CogRectangle"))
+  m_roi.m_comboBoxROI.Items.Insert(1, "CogRectangle");
+m_HistogramInput.Controls.Add(panel);
+}
+else if (((TabControl)sender).SelectedIndex == 1) //Blob
+{
+if (!m_roi.m_comboBoxROI.Items.Contains("CogRectangle"))
+  m_roi.m_comboBoxROI.Items.Insert(1, "CogRectangle");
+m_BlobInput.Controls.Add(panel);
+}
+else if (((TabControl)sender).SelectedIndex == 2) //Caliper
+{
+if (m_roi.m_comboBoxROI.SelectedIndex != 0 && m_roi.m_comboBoxROI.SelectedIndex != 2)
+  m_roi.m_comboBoxROI.SelectedIndex = 2;
+m_roi.m_comboBoxROI.Items.Remove("CogRectangle"); //Remove CogRectangle
+m_CaliperInput.Controls.Add(panel);
+}
+}*/
+        /*
         private void m_RunToolBtn_Click(object sender, EventArgs e)
         {
             if (m_display.Image == null)
@@ -171,8 +108,8 @@ namespace OpenCV_Vision_Pro
             int index = m_cbImages.SelectedIndex;
             m_cbImages.SelectedIndex = 0;
             m_cbImages.SelectedIndex = index;
-        }
-
+        }*/
+        /*
         private void runHistogram()
         {
             HistogramTool histogramTool;
@@ -287,22 +224,9 @@ namespace OpenCV_Vision_Pro
                 bitmapList.Add("LastRun.Caliper", caliperTool.caliperImage);
                 m_cbImages.Items.Add("LastRun.Caliper");
             }
-        }
+        }*/
 
-        private void m_cbImages_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-            String m_strSelectedItem = m_cbImages.SelectedItem.ToString();
-            Bitmap selectedBitmap = bitmapList[m_strSelectedItem];
-            m_display.Width = selectedBitmap.Width;
-            m_display.Height = selectedBitmap.Height;
-            m_display.Image = selectedBitmap;
-            CenterPictureBox(m_display);
-            if (m_cbImages.SelectedIndex == 0 && m_display.Controls.Count > 0)
-                m_roi.FrameControl.Visible = true;
-            else if (m_display.Controls.Count > 0)
-                m_roi.FrameControl.Visible = false;
-        }
 
         /*
         private void ROI_Paint(object sender, PaintEventArgs e)
@@ -315,16 +239,7 @@ namespace OpenCV_Vision_Pro
             
         }*/
 
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;   // WS_EX_COMPOSITED       
-                return cp;
-            }
-        }
-
+        /*
         private void m_comboBoxROI_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (m_roi.m_comboBoxROI.SelectedIndex == 0)
@@ -505,8 +420,8 @@ namespace OpenCV_Vision_Pro
         {
             Mat m = ResizeImage(m_display.Image, m_display.Width, m_display.Height).ToMat();
             return new Mat(m, getRegionRect());
-        }
-
+        }*/
+        /*
         private Rectangle getRegionRect()
         {
             int width, height;
@@ -540,8 +455,8 @@ namespace OpenCV_Vision_Pro
             }
 
             return new Rectangle(X, Y, width, height);
-        }
-
+        }*/
+        /*
         private void m_RunBtn_Click(object sender, EventArgs e)
         {
             if (m_display.Image == null)
@@ -559,39 +474,10 @@ namespace OpenCV_Vision_Pro
             m_cbImages.SelectedIndex = 0;
             m_cbImages.SelectedIndex = index;
         }
+        */
 
-        /// <summary>https://stackoverflow.com/a/24199315/1115360
-        /// Resize the image to the specified width and height.
-        /// </summary>
-        /// <param name="image">The image to resize.</param>
-        /// <param name="width">The width to resize to.</param>
-        /// <param name="height">The height to resize to.</param>
-        /// <returns>The resized image.</returns>
-        private Bitmap ResizeImage(Image image, int width, int height)
-        {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
 
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-
-            return destImage;
-        }
-
+        /*
         private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
         {
             if (m_CaliperRes.Rows.Count == 0) { return; }
@@ -719,6 +605,6 @@ namespace OpenCV_Vision_Pro
                 blobTool.morphologyOperation.RemoveAt(row.Index);
                 m_dgvBlobOperation.Rows.RemoveAt(row.Index);
             }
-        }
+        }*/
     }
 }
