@@ -12,9 +12,9 @@ namespace OpenCV_Vision_Pro
 {
     public partial class ROI : UserControl
     {
-        private double m_rotation = 0;
-        private double m_skew = 0;
         private FrameControl frameControl = new FrameControl();
+        public DisplayControl m_displayControl { get; set; }
+
         public ROI()
         {
             InitializeComponent();
@@ -56,23 +56,21 @@ namespace OpenCV_Vision_Pro
             get { return FrameControl.Height; }
         }
 
-        public double ROI_rotation
+        private void m_comboBoxROI_SelectedIndexChanged(object sender, EventArgs e)
         {
-            get { return m_rotation; }
-            set
+            ComboBox m_cbROI = (ComboBox)sender;
+            if(m_displayControl != null )
             {
-                m_rotation = value;
-                Invalidate();
-            }
-        }
-
-        public double ROI_skew
-        {
-            get { return m_skew; }
-            set
-            {
-                m_skew = value;
-                Invalidate();
+                if (m_cbROI.SelectedIndex == 0)
+                {
+                    m_displayControl.m_display.Controls.Clear();
+                    return;
+                }
+                m_displayControl.m_display.Controls.Add(FrameControl);
+                if (m_displayControl.m_cbImages.SelectedItem.ToString() == "Current.InputImage")
+                    FrameControl.Visible = true;
+                else
+                    FrameControl.Visible = false;
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace OpenCV___Vision_Pro
+﻿using System.Windows.Forms;
+
+namespace OpenCV_Vision_Pro
 {
     partial class ToolWindow
     {
@@ -46,14 +48,16 @@
             this.m_RunToolBtn.TabIndex = 3;
             this.m_RunToolBtn.Text = "Run Tool";
             this.m_RunToolBtn.UseVisualStyleBackColor = true;
+            this.m_RunToolBtn.Click += new System.EventHandler(this.m_RunToolBtn_Click);
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(3, 38);
             this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Panel1MinSize = 353;
             this.splitContainer1.Size = new System.Drawing.Size(794, 409);
-            this.splitContainer1.SplitterDistance = 264;
+            this.splitContainer1.SplitterDistance = 353;
             this.splitContainer1.TabIndex = 4;
             // 
             // flowLayoutPanel1
@@ -88,6 +92,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ToolWindow";
             this.Text = "ToolWindow";
+            this.Load += new System.EventHandler(this.ToolWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -100,8 +105,8 @@
         #endregion
 
         private System.Windows.Forms.Button m_RunToolBtn;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        public System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

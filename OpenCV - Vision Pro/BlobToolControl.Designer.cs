@@ -1,4 +1,4 @@
-﻿namespace OpenCV___Vision_Pro
+﻿namespace OpenCV_Vision_Pro
 {
     partial class BlobToolControl
     {
@@ -47,11 +47,7 @@
             this.m_cbBlobOperation = new System.Windows.Forms.ComboBox();
             this.m_BtnDeleteOperation = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.m_cbSegMode = new System.Windows.Forms.ComboBox();
-            this.m_SegMap = new System.Windows.Forms.GroupBox();
-            this.m_labelPolarity = new System.Windows.Forms.Label();
-            this.m_cbSegPolarity = new System.Windows.Forms.ComboBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.m_labelSeg1 = new System.Windows.Forms.Label();
             this.m_NumSegmentation1 = new System.Windows.Forms.NumericUpDown();
@@ -63,6 +59,11 @@
             this.m_NumSegmentation4 = new System.Windows.Forms.NumericUpDown();
             this.m_labelSeg4 = new System.Windows.Forms.Label();
             this.m_NumSegmentation3 = new System.Windows.Forms.NumericUpDown();
+            this.m_cbSegPolarity = new System.Windows.Forms.ComboBox();
+            this.m_labelPolarity = new System.Windows.Forms.Label();
+            this.m_SegMap = new System.Windows.Forms.GroupBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.m_cbSegMode = new System.Windows.Forms.ComboBox();
             this.m_BlobMeasurement = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
@@ -76,7 +77,6 @@
             this.m_BlobHigh = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.m_BlobOutput = new System.Windows.Forms.TabPage();
             this.m_dgvBlobResults = new System.Windows.Forms.DataGridView();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl3.SuspendLayout();
             this.m_BlobInput.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -88,6 +88,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.m_dgvBlobOperation)).BeginInit();
             this.flowLayoutPanel5.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation2)).BeginInit();
@@ -100,7 +101,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.m_BlobMeasurementTable)).BeginInit();
             this.m_BlobOutput.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_dgvBlobResults)).BeginInit();
-            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl3
@@ -112,7 +112,7 @@
             this.tabControl3.Location = new System.Drawing.Point(0, 0);
             this.tabControl3.Name = "tabControl3";
             this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(499, 583);
+            this.tabControl3.Size = new System.Drawing.Size(353, 583);
             this.tabControl3.TabIndex = 2;
             // 
             // m_BlobInput
@@ -122,7 +122,7 @@
             this.m_BlobInput.Location = new System.Drawing.Point(4, 22);
             this.m_BlobInput.Name = "m_BlobInput";
             this.m_BlobInput.Padding = new System.Windows.Forms.Padding(3);
-            this.m_BlobInput.Size = new System.Drawing.Size(491, 557);
+            this.m_BlobInput.Size = new System.Drawing.Size(345, 557);
             this.m_BlobInput.TabIndex = 0;
             this.m_BlobInput.Text = "Input";
             this.m_BlobInput.UseVisualStyleBackColor = true;
@@ -141,7 +141,7 @@
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(485, 350);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(339, 350);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // tableLayoutPanel5
@@ -151,12 +151,12 @@
             this.tableLayoutPanel5.Controls.Add(this.groupBox4, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.groupBox5, 0, 1);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(245, 3);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(172, 3);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 2;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(237, 344);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(164, 344);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // groupBox4
@@ -166,7 +166,7 @@
             this.groupBox4.Location = new System.Drawing.Point(0, 0);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(237, 150);
+            this.groupBox4.Size = new System.Drawing.Size(164, 150);
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Connectivity";
@@ -189,12 +189,12 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(231, 131);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(158, 131);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // m_NumConnectionMin
             // 
-            this.m_NumConnectionMin.Location = new System.Drawing.Point(72, 57);
+            this.m_NumConnectionMin.Location = new System.Drawing.Point(50, 61);
             this.m_NumConnectionMin.Maximum = new decimal(new int[] {
             2147480000,
             0,
@@ -208,25 +208,27 @@
             0,
             0,
             0});
+            this.m_NumConnectionMin.ValueChanged += new System.EventHandler(this.m_NumConnectionMin_ValueChanged);
             // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(5, 59);
+            this.label18.Location = new System.Drawing.Point(5, 63);
             this.label18.Margin = new System.Windows.Forms.Padding(5);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(52, 13);
+            this.label18.Size = new System.Drawing.Size(32, 26);
             this.label18.TabIndex = 6;
             this.label18.Text = "Min Area:";
             // 
             // m_cbConnectClean
             // 
+            this.m_cbConnectClean.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.m_cbConnectClean.FormattingEnabled = true;
             this.m_cbConnectClean.Items.AddRange(new object[] {
             "None",
             "Prune",
             "Fill"});
-            this.m_cbConnectClean.Location = new System.Drawing.Point(72, 30);
+            this.m_cbConnectClean.Location = new System.Drawing.Point(50, 30);
             this.m_cbConnectClean.Name = "m_cbConnectClean";
             this.m_cbConnectClean.Size = new System.Drawing.Size(94, 21);
             this.m_cbConnectClean.TabIndex = 4;
@@ -237,19 +239,20 @@
             this.label17.Location = new System.Drawing.Point(5, 32);
             this.label17.Margin = new System.Windows.Forms.Padding(5, 5, 5, 0);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(49, 13);
+            this.label17.Size = new System.Drawing.Size(34, 26);
             this.label17.TabIndex = 3;
             this.label17.Text = "Cleanup:";
             // 
             // m_cbConnectMode
             // 
             this.m_cbConnectMode.CausesValidation = false;
+            this.m_cbConnectMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.m_cbConnectMode.FormattingEnabled = true;
             this.m_cbConnectMode.Items.AddRange(new object[] {
             "Grey Scale",
             "Labeled",
             "Whole Image"});
-            this.m_cbConnectMode.Location = new System.Drawing.Point(72, 3);
+            this.m_cbConnectMode.Location = new System.Drawing.Point(50, 3);
             this.m_cbConnectMode.Name = "m_cbConnectMode";
             this.m_cbConnectMode.Size = new System.Drawing.Size(94, 21);
             this.m_cbConnectMode.TabIndex = 2;
@@ -271,7 +274,7 @@
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(3, 153);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(231, 188);
+            this.groupBox5.Size = new System.Drawing.Size(158, 188);
             this.groupBox5.TabIndex = 1;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Morphology Operations";
@@ -292,7 +295,7 @@
             this.m_dgvBlobOperation.Name = "m_dgvBlobOperation";
             this.m_dgvBlobOperation.RowHeadersVisible = false;
             this.m_dgvBlobOperation.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.m_dgvBlobOperation.Size = new System.Drawing.Size(225, 139);
+            this.m_dgvBlobOperation.Size = new System.Drawing.Size(152, 139);
             this.m_dgvBlobOperation.TabIndex = 3;
             // 
             // dataGridViewTextBoxColumn3
@@ -309,7 +312,7 @@
             this.flowLayoutPanel5.Location = new System.Drawing.Point(3, 16);
             this.flowLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel5.Name = "flowLayoutPanel5";
-            this.flowLayoutPanel5.Size = new System.Drawing.Size(225, 30);
+            this.flowLayoutPanel5.Size = new System.Drawing.Size(152, 30);
             this.flowLayoutPanel5.TabIndex = 2;
             // 
             // m_cbBlobOperation
@@ -337,6 +340,7 @@
             this.m_cbBlobOperation.Name = "m_cbBlobOperation";
             this.m_cbBlobOperation.Size = new System.Drawing.Size(21, 21);
             this.m_cbBlobOperation.TabIndex = 0;
+            this.m_cbBlobOperation.SelectedIndexChanged += new System.EventHandler(this.m_cbBlobOperation_SelectedIndexChanged);
             // 
             // m_BtnDeleteOperation
             // 
@@ -346,6 +350,7 @@
             this.m_BtnDeleteOperation.TabIndex = 1;
             this.m_BtnDeleteOperation.Text = "X";
             this.m_BtnDeleteOperation.UseVisualStyleBackColor = true;
+            this.m_BtnDeleteOperation.Click += new System.EventHandler(this.m_BtnDeleteOperation_Click);
             // 
             // groupBox1
             // 
@@ -354,70 +359,33 @@
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(242, 350);
+            this.groupBox1.Size = new System.Drawing.Size(169, 350);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Segmentation";
             // 
-            // label13
+            // tableLayoutPanel2
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(5, 5);
-            this.label13.Margin = new System.Windows.Forms.Padding(5, 5, 5, 0);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(37, 13);
-            this.label13.TabIndex = 0;
-            this.label13.Text = "Mode:";
-            // 
-            // m_cbSegMode
-            // 
-            this.m_cbSegMode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.m_cbSegMode.FormattingEnabled = true;
-            this.m_cbSegMode.Items.AddRange(new object[] {
-            "None",
-            "Map",
-            "Hard Threshold (Fixed)",
-            "Hard Threshold (Relative)",
-            "Hard Threshold (Dynamic)",
-            "Soft Threshold (Fixed)",
-            "Soft Threshold (Relative)",
-            "Subtraction Image"});
-            this.m_cbSegMode.Location = new System.Drawing.Point(3, 21);
-            this.m_cbSegMode.Name = "m_cbSegMode";
-            this.m_cbSegMode.Size = new System.Drawing.Size(230, 21);
-            this.m_cbSegMode.TabIndex = 1;
-            // 
-            // m_SegMap
-            // 
-            this.m_SegMap.Location = new System.Drawing.Point(3, 48);
-            this.m_SegMap.Name = "m_SegMap";
-            this.m_SegMap.Size = new System.Drawing.Size(178, 100);
-            this.m_SegMap.TabIndex = 16;
-            this.m_SegMap.TabStop = false;
-            this.m_SegMap.Text = "Map";
-            this.m_SegMap.Visible = false;
-            // 
-            // m_labelPolarity
-            // 
-            this.m_labelPolarity.AutoSize = true;
-            this.m_labelPolarity.Location = new System.Drawing.Point(5, 156);
-            this.m_labelPolarity.Margin = new System.Windows.Forms.Padding(5, 5, 5, 0);
-            this.m_labelPolarity.Name = "m_labelPolarity";
-            this.m_labelPolarity.Size = new System.Drawing.Size(44, 13);
-            this.m_labelPolarity.TabIndex = 2;
-            this.m_labelPolarity.Text = "Polarity:";
-            // 
-            // m_cbSegPolarity
-            // 
-            this.m_cbSegPolarity.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.m_cbSegPolarity.FormattingEnabled = true;
-            this.m_cbSegPolarity.Items.AddRange(new object[] {
-            "Dark blobs, Light background",
-            "Light blobs, Dark background"});
-            this.m_cbSegPolarity.Location = new System.Drawing.Point(3, 172);
-            this.m_cbSegPolarity.Name = "m_cbSegPolarity";
-            this.m_cbSegPolarity.Size = new System.Drawing.Size(230, 21);
-            this.m_cbSegPolarity.TabIndex = 3;
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel7, 0, 5);
+            this.tableLayoutPanel2.Controls.Add(this.m_cbSegPolarity, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.m_labelPolarity, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.m_SegMap, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.label13, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.m_cbSegMode, 0, 1);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 6;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(163, 331);
+            this.tableLayoutPanel2.TabIndex = 1;
             // 
             // tableLayoutPanel7
             // 
@@ -467,6 +435,7 @@
             this.m_NumSegmentation1.Name = "m_NumSegmentation1";
             this.m_NumSegmentation1.Size = new System.Drawing.Size(70, 20);
             this.m_NumSegmentation1.TabIndex = 6;
+            this.m_NumSegmentation1.ValueChanged += new System.EventHandler(this.m_NumSegmentation1_ValueChanged);
             // 
             // m_labelSeg2
             // 
@@ -584,13 +553,76 @@
             0});
             this.m_NumSegmentation3.Visible = false;
             // 
+            // m_cbSegPolarity
+            // 
+            this.m_cbSegPolarity.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_cbSegPolarity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.m_cbSegPolarity.FormattingEnabled = true;
+            this.m_cbSegPolarity.Items.AddRange(new object[] {
+            "Dark blobs, Light background",
+            "Light blobs, Dark background"});
+            this.m_cbSegPolarity.Location = new System.Drawing.Point(3, 172);
+            this.m_cbSegPolarity.Name = "m_cbSegPolarity";
+            this.m_cbSegPolarity.Size = new System.Drawing.Size(157, 21);
+            this.m_cbSegPolarity.TabIndex = 3;
+            this.m_cbSegPolarity.SelectedIndexChanged += new System.EventHandler(this.m_cbSegPolarity_SelectedIndexChanged);
+            // 
+            // m_labelPolarity
+            // 
+            this.m_labelPolarity.AutoSize = true;
+            this.m_labelPolarity.Location = new System.Drawing.Point(5, 156);
+            this.m_labelPolarity.Margin = new System.Windows.Forms.Padding(5, 5, 5, 0);
+            this.m_labelPolarity.Name = "m_labelPolarity";
+            this.m_labelPolarity.Size = new System.Drawing.Size(44, 13);
+            this.m_labelPolarity.TabIndex = 2;
+            this.m_labelPolarity.Text = "Polarity:";
+            // 
+            // m_SegMap
+            // 
+            this.m_SegMap.Location = new System.Drawing.Point(3, 48);
+            this.m_SegMap.Name = "m_SegMap";
+            this.m_SegMap.Size = new System.Drawing.Size(157, 100);
+            this.m_SegMap.TabIndex = 16;
+            this.m_SegMap.TabStop = false;
+            this.m_SegMap.Text = "Map";
+            this.m_SegMap.Visible = false;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(5, 5);
+            this.label13.Margin = new System.Windows.Forms.Padding(5, 5, 5, 0);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(37, 13);
+            this.label13.TabIndex = 0;
+            this.label13.Text = "Mode:";
+            // 
+            // m_cbSegMode
+            // 
+            this.m_cbSegMode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_cbSegMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.m_cbSegMode.FormattingEnabled = true;
+            this.m_cbSegMode.Items.AddRange(new object[] {
+            "None",
+            "Map",
+            "Hard Threshold (Fixed)",
+            "Hard Threshold (Relative)",
+            "Hard Threshold (Dynamic)",
+            "Soft Threshold (Fixed)",
+            "Soft Threshold (Relative)",
+            "Subtraction Image"});
+            this.m_cbSegMode.Location = new System.Drawing.Point(3, 21);
+            this.m_cbSegMode.Name = "m_cbSegMode";
+            this.m_cbSegMode.Size = new System.Drawing.Size(157, 21);
+            this.m_cbSegMode.TabIndex = 1;
+            // 
             // m_BlobMeasurement
             // 
             this.m_BlobMeasurement.Controls.Add(this.tableLayoutPanel6);
             this.m_BlobMeasurement.Location = new System.Drawing.Point(4, 22);
             this.m_BlobMeasurement.Name = "m_BlobMeasurement";
             this.m_BlobMeasurement.Padding = new System.Windows.Forms.Padding(3);
-            this.m_BlobMeasurement.Size = new System.Drawing.Size(491, 557);
+            this.m_BlobMeasurement.Size = new System.Drawing.Size(345, 557);
             this.m_BlobMeasurement.TabIndex = 2;
             this.m_BlobMeasurement.Text = "Measurement";
             this.m_BlobMeasurement.UseVisualStyleBackColor = true;
@@ -618,7 +650,7 @@
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(485, 551);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(339, 551);
             this.tableLayoutPanel6.TabIndex = 5;
             // 
             // flowLayoutPanel3
@@ -629,7 +661,7 @@
             this.flowLayoutPanel3.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(485, 30);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(339, 30);
             this.flowLayoutPanel3.TabIndex = 1;
             // 
             // m_cbBlobProperties
@@ -689,6 +721,7 @@
             this.m_cbBlobProperties.Name = "m_cbBlobProperties";
             this.m_cbBlobProperties.Size = new System.Drawing.Size(21, 21);
             this.m_cbBlobProperties.TabIndex = 0;
+            this.m_cbBlobProperties.SelectedIndexChanged += new System.EventHandler(this.m_cbBlobProperties_SelectedIndexChanged);
             // 
             // m_btnDeleteProperties
             // 
@@ -698,6 +731,7 @@
             this.m_btnDeleteProperties.TabIndex = 1;
             this.m_btnDeleteProperties.Text = "X";
             this.m_btnDeleteProperties.UseVisualStyleBackColor = true;
+            this.m_btnDeleteProperties.Click += new System.EventHandler(this.m_btnDeleteProperties_Click);
             // 
             // m_BlobMeasurementTable
             // 
@@ -715,8 +749,11 @@
             this.m_BlobMeasurementTable.Name = "m_BlobMeasurementTable";
             this.m_BlobMeasurementTable.RowHeadersVisible = false;
             this.m_BlobMeasurementTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.m_BlobMeasurementTable.Size = new System.Drawing.Size(479, 515);
+            this.m_BlobMeasurementTable.Size = new System.Drawing.Size(333, 515);
             this.m_BlobMeasurementTable.TabIndex = 2;
+            this.m_BlobMeasurementTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_BlobMeasurementTable_CellEndEdit);
+            this.m_BlobMeasurementTable.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_BlobMeasurementTable_CellValueChanged);
+            this.m_BlobMeasurementTable.CurrentCellDirtyStateChanged += new System.EventHandler(this.m_BlobMeasurementTable_CurrentCellDirtyStateChanged);
             // 
             // m_BlobProperties
             // 
@@ -765,7 +802,7 @@
             this.m_BlobOutput.Location = new System.Drawing.Point(4, 22);
             this.m_BlobOutput.Name = "m_BlobOutput";
             this.m_BlobOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.m_BlobOutput.Size = new System.Drawing.Size(491, 557);
+            this.m_BlobOutput.Size = new System.Drawing.Size(345, 557);
             this.m_BlobOutput.TabIndex = 1;
             this.m_BlobOutput.Text = "Output";
             this.m_BlobOutput.UseVisualStyleBackColor = true;
@@ -780,31 +817,9 @@
             this.m_dgvBlobResults.Name = "m_dgvBlobResults";
             this.m_dgvBlobResults.RowHeadersVisible = false;
             this.m_dgvBlobResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.m_dgvBlobResults.Size = new System.Drawing.Size(485, 551);
+            this.m_dgvBlobResults.Size = new System.Drawing.Size(339, 551);
             this.m_dgvBlobResults.TabIndex = 0;
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel7, 0, 5);
-            this.tableLayoutPanel2.Controls.Add(this.m_cbSegPolarity, 0, 4);
-            this.tableLayoutPanel2.Controls.Add(this.m_labelPolarity, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.m_SegMap, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.label13, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.m_cbSegMode, 0, 1);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 6;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(236, 331);
-            this.tableLayoutPanel2.TabIndex = 1;
+            this.m_dgvBlobResults.SelectionChanged += new System.EventHandler(this.m_dgvBlobResults_SelectionChanged);
             // 
             // BlobToolControl
             // 
@@ -812,8 +827,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this.tabControl3);
+            this.MinimumSize = new System.Drawing.Size(353, 0);
             this.Name = "BlobToolControl";
-            this.Size = new System.Drawing.Size(499, 583);
+            this.Size = new System.Drawing.Size(353, 583);
             this.tabControl3.ResumeLayout(false);
             this.m_BlobInput.ResumeLayout(false);
             this.m_BlobInput.PerformLayout();
@@ -827,6 +843,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.m_dgvBlobOperation)).EndInit();
             this.flowLayoutPanel5.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation1)).EndInit();
@@ -840,8 +858,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.m_BlobMeasurementTable)).EndInit();
             this.m_BlobOutput.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.m_dgvBlobResults)).EndInit();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -894,8 +910,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn m_BlobLow;
         private System.Windows.Forms.DataGridViewTextBoxColumn m_BlobHigh;
         private System.Windows.Forms.TabPage m_BlobOutput;
-        private System.Windows.Forms.DataGridView m_dgvBlobResults;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        public System.Windows.Forms.DataGridView m_dgvBlobResults;
     }
 }

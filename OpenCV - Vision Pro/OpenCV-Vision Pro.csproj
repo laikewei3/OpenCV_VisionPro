@@ -130,6 +130,7 @@
     <Compile Include="ROI.Designer.cs">
       <DependentUpon>ROI.cs</DependentUpon>
     </Compile>
+    <Compile Include="ToolsClass.cs" />
     <Compile Include="ToolWindow.cs">
       <SubType>Form</SubType>
     </Compile>

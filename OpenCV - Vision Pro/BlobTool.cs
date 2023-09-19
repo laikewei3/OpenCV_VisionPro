@@ -12,14 +12,15 @@ using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
-{//https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html
+{
+    //https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html
     public class BlobTool
     {
-        public String polarity { get; set; }
-        public List<Blob> blobs { get; set; }
-        public Dictionary<int,VectorOfPoint> contourByRow { get; set; }
+        public string polarity { get; set; }
+        public List<Blob> blobs { get; set; } = new List<Blob>();
+        public Dictionary<int,VectorOfPoint> contourByRow { get; set; } = new Dictionary<int,VectorOfPoint>();
         public Bitmap BlobImage { get; set; }
-        public Dictionary<String,ArrayList> MeasurementProperties { get; set; }
+        public Dictionary<string,ArrayList> MeasurementProperties { get; set; } = new Dictionary<string,ArrayList>();
         public double threshold { get; set; }
         public int minArea { get; set; } = 10;
         public List<String> morphologyOperation {  get; set; } = new List<String>();
@@ -142,7 +143,7 @@ namespace OpenCV_Vision_Pro
             return image;
         }
 
-        private String createFilterString(Dictionary<String, ArrayList> MeasurementProperties, String m_strBlobsFilter)
+        private string createFilterString(Dictionary<String, ArrayList> MeasurementProperties, String m_strBlobsFilter)
         {
             if (MeasurementProperties.Count == 0)
             {
@@ -229,7 +230,7 @@ namespace OpenCV_Vision_Pro
         public double Area { get; set; }
         public double CenterMassX { get; set; }
         public double CenterMassY { get; set; }
-        public String ConnectivityLabel { get; set; }
+        public string ConnectivityLabel { get; set; }
         public double Angle { get; set; }
         public double BoundaryPixelLength { get; set; }
         public double Perimeter { get; set; }

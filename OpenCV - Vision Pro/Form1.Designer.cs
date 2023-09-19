@@ -36,6 +36,7 @@
             this.m_OpenBtn = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.m_treeViewTools = new System.Windows.Forms.TreeView();
             this.m_AddToolList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,6 +44,7 @@
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.m_AddToolList.SuspendLayout();
             this.SuspendLayout();
@@ -126,9 +128,21 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.splitContainer1.Panel1.Controls.Add(this.m_treeViewTools);
             this.splitContainer1.Size = new System.Drawing.Size(794, 419);
             this.splitContainer1.SplitterDistance = 264;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // m_treeViewTools
+            // 
+            this.m_treeViewTools.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_treeViewTools.Location = new System.Drawing.Point(0, 0);
+            this.m_treeViewTools.Name = "m_treeViewTools";
+            this.m_treeViewTools.Size = new System.Drawing.Size(264, 419);
+            this.m_treeViewTools.TabIndex = 0;
+            this.m_treeViewTools.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseClick);
+            this.m_treeViewTools.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseDoubleClick);
             // 
             // m_AddToolList
             // 
@@ -137,12 +151,12 @@
             this.caliperToolMenuItem,
             this.histogramToolMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(181, 92);
+            this.m_AddToolList.Size = new System.Drawing.Size(156, 70);
             // 
             // blobToolMenuItem
             // 
             this.blobToolMenuItem.Name = "blobToolMenuItem";
-            this.blobToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.blobToolMenuItem.Size = new System.Drawing.Size(155, 22);
             this.blobToolMenuItem.Text = "Blob Tool";
             this.blobToolMenuItem.Click += new System.EventHandler(this.blobToolMenuItem_Click);
             // 
@@ -151,12 +165,14 @@
             this.caliperToolMenuItem.Name = "caliperToolMenuItem";
             this.caliperToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.caliperToolMenuItem.Text = "Caliper Tool";
+            this.caliperToolMenuItem.Click += new System.EventHandler(this.caliperToolMenuItem_Click);
             // 
             // histogramToolMenuItem
             // 
             this.histogramToolMenuItem.Name = "histogramToolMenuItem";
             this.histogramToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.histogramToolMenuItem.Text = "Histogram Tool";
+            this.histogramToolMenuItem.Click += new System.EventHandler(this.histogramToolMenuItem_Click);
             // 
             // Form1
             // 
@@ -169,6 +185,7 @@
             this.Text = "OpenCV - Vision Pro";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.m_AddToolList.ResumeLayout(false);
@@ -189,6 +206,7 @@
         private System.Windows.Forms.ToolStripMenuItem blobToolMenuItem;
         private System.Windows.Forms.ToolStripMenuItem caliperToolMenuItem;
         private System.Windows.Forms.ToolStripMenuItem histogramToolMenuItem;
+        private System.Windows.Forms.TreeView m_treeViewTools;
     }
 }
 

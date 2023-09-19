@@ -1,4 +1,4 @@
-﻿namespace OpenCV___Vision_Pro
+﻿namespace OpenCV_Vision_Pro
 {
     partial class HistogramToolControl
     {
@@ -67,7 +67,7 @@
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(494, 545);
+            this.tabControl2.Size = new System.Drawing.Size(200, 545);
             this.tabControl2.TabIndex = 1;
             // 
             // m_HistogramInput
@@ -76,7 +76,7 @@
             this.m_HistogramInput.Location = new System.Drawing.Point(4, 22);
             this.m_HistogramInput.Name = "m_HistogramInput";
             this.m_HistogramInput.Padding = new System.Windows.Forms.Padding(3);
-            this.m_HistogramInput.Size = new System.Drawing.Size(486, 519);
+            this.m_HistogramInput.Size = new System.Drawing.Size(192, 519);
             this.m_HistogramInput.TabIndex = 0;
             this.m_HistogramInput.Text = "Input";
             this.m_HistogramInput.UseVisualStyleBackColor = true;
@@ -321,8 +321,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tabControl2);
+            this.MinimumSize = new System.Drawing.Size(200, 0);
             this.Name = "HistogramToolControl";
-            this.Size = new System.Drawing.Size(494, 545);
+            this.Size = new System.Drawing.Size(200, 545);
             this.tabControl2.ResumeLayout(false);
             this.m_HistogramOutput.ResumeLayout(false);
             this.m_HistogramOutput.PerformLayout();
