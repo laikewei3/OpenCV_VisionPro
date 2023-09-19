@@ -93,6 +93,7 @@
             this.m_RunBtn.TabIndex = 0;
             this.m_RunBtn.Text = "Run";
             this.m_RunBtn.UseVisualStyleBackColor = true;
+            this.m_RunBtn.Click += new System.EventHandler(this.m_RunBtn_Click);
             // 
             // m_OpenBtn
             // 
@@ -163,14 +164,14 @@
             // caliperToolMenuItem
             // 
             this.caliperToolMenuItem.Name = "caliperToolMenuItem";
-            this.caliperToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.caliperToolMenuItem.Size = new System.Drawing.Size(155, 22);
             this.caliperToolMenuItem.Text = "Caliper Tool";
             this.caliperToolMenuItem.Click += new System.EventHandler(this.caliperToolMenuItem_Click);
             // 
             // histogramToolMenuItem
             // 
             this.histogramToolMenuItem.Name = "histogramToolMenuItem";
-            this.histogramToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.histogramToolMenuItem.Size = new System.Drawing.Size(155, 22);
             this.histogramToolMenuItem.Text = "Histogram Tool";
             this.histogramToolMenuItem.Click += new System.EventHandler(this.histogramToolMenuItem_Click);
             // 

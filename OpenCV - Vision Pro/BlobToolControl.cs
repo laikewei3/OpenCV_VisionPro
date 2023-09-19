@@ -1,16 +1,10 @@
 ﻿using Emgu.CV.Structure;
 using Emgu.CV;
-using OpenCV_Vision_Pro;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
@@ -19,7 +13,7 @@ namespace OpenCV_Vision_Pro
     {
         public BlobTool blobTool { get; set; } = new BlobTool();
         public Mat resultSelectedImage { get; set; }
-        public ROI m_roi { get; } = new ROI();
+        public ROI m_roi { get; set; } = new ROI();
         public Dictionary<string, Bitmap> m_bitmapList { get; set; } = new Dictionary<string, Bitmap>();
 
         public BlobToolControl()
@@ -253,7 +247,7 @@ namespace OpenCV_Vision_Pro
                 return;
             foreach (DataGridViewRow row in m_BlobMeasurementTable.SelectedRows)
             {
-                String m_strName = row.Cells[0].Value.ToString();
+                string m_strName = row.Cells[0].Value.ToString();
                 m_cbBlobProperties.Items.Add(m_strName);
                 m_BlobMeasurementTable.Rows.Remove(row);
             }

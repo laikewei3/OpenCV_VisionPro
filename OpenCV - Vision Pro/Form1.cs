@@ -128,15 +128,20 @@ namespace OpenCV_Vision_Pro
                 }
             }
         }
-        /*
-        private void ROI_Paint(object sender, PaintEventArgs e)
+
+        private void m_RunBtn_Click(object sender, EventArgs e)
         {
-            if(m_display.Controls.Count <= 0)
-                return;
-            e.Graphics.ExcludeClip(m_display.Controls[0].Bounds);
-            using (var b = new SolidBrush(Color.FromArgb(100, Color.Black)))
-                e.Graphics.FillRectangle(b, m_display.ClientRectangle);
-            
-        }*/
+
+        }
+        /*
+private void ROI_Paint(object sender, PaintEventArgs e)
+{
+   if(m_display.Controls.Count <= 0)
+       return;
+   e.Graphics.ExcludeClip(m_display.Controls[0].Bounds);
+   using (var b = new SolidBrush(Color.FromArgb(100, Color.Black)))
+       e.Graphics.FillRectangle(b, m_display.ClientRectangle);
+
+}*/
     }
 }

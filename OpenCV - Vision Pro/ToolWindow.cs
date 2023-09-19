@@ -71,6 +71,7 @@ namespace OpenCV_Vision_Pro
             
             m_displayControl.m_roi = this.m_roi;
             m_roi.m_displayControl = this.m_displayControl;
+            m_roi.m_displayControl.m_display.Controls.Add(m_roi.FrameControl);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -134,7 +135,6 @@ namespace OpenCV_Vision_Pro
             }
             
             blobToolControl.m_bitmapList = CloneDictionaryCloningValues<string, Bitmap>(m_displayControl.m_bitmapList);
-            
             blobToolControl.m_dgvBlobResults.SelectionChanged += m_dgvBlobResults_SelectionChanged;
         }
         

@@ -12,15 +12,17 @@ namespace OpenCV_Vision_Pro
 {
     public partial class ROI : UserControl
     {
-        private FrameControl frameControl = new FrameControl();
+        private FrameControl frameControl;
         public DisplayControl m_displayControl { get; set; }
 
         public ROI()
         {
             InitializeComponent();
             m_comboBoxROI.SelectedIndex = 0;
+            frameControl = new FrameControl();
             frameControl.Size = new Size(100, 100);
             frameControl.Location = new Point(0, 0);
+            frameControl.Visible = false;
         }
 
         public Rectangle ROI_Region
@@ -61,16 +63,21 @@ namespace OpenCV_Vision_Pro
             ComboBox m_cbROI = (ComboBox)sender;
             if(m_displayControl != null )
             {
+                FrameControl.Visible = false;
                 if (m_cbROI.SelectedIndex == 0)
                 {
                     m_displayControl.m_display.Controls.Clear();
                     return;
                 }
                 m_displayControl.m_display.Controls.Add(FrameControl);
-                if (m_displayControl.m_cbImages.SelectedItem.ToString() == "Current.InputImage")
-                    FrameControl.Visible = true;
-                else
-                    FrameControl.Visible = false;
+                if (m_displayControl.m_cbImages.SelectedItem != null)
+                {
+                    if (m_displayControl.m_cbImages.SelectedItem.ToString() == "Current.InputImage")
+                        FrameControl.Visible = true;
+                    else
+                        FrameControl.Visible = false;
+                }
+
             }
         }
     }

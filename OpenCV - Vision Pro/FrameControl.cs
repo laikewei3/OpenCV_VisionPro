@@ -49,6 +49,8 @@ namespace OpenCV_Vision_Pro
                 e.Graphics.DrawRectangle(cornerP, 0, Height-3, 3, 3);
                 e.Graphics.DrawRectangle(cornerP, Width-3, 0, 3, 3);
                 e.Graphics.DrawRectangle(cornerP, Width-3, Height-3, 3, 3);
+                cornerP.Dispose();
+                p.Dispose();
             }
         }
         const int WM_NCHITTEST = 0x84;

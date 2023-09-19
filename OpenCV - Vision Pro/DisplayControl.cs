@@ -81,9 +81,9 @@ namespace OpenCV_Vision_Pro
             CenterPictureBox();
             if(m_roi!=null)
             {
-                if (m_cbImages.SelectedIndex == 0)
+                if (m_cbImages.SelectedIndex == 0 && m_roi.m_comboBoxROI.SelectedIndex != 0)
                     m_roi.FrameControl.Visible = true;
-                else if (m_display.Controls.Count > 0)
+                else
                     m_roi.FrameControl.Visible = false;
             }
         }
@@ -179,6 +179,5 @@ namespace OpenCV_Vision_Pro
 
             return new Rectangle(X, Y, width, height);
         }
-
     }
 }
