@@ -26,40 +26,44 @@ namespace OpenCV_Vision_Pro
 
         private void ToolWindow_Load(object sender, EventArgs e)
         {
-            m_strControlType = splitContainer1.Panel1.Controls[0].GetType().Name;
+            m_strControlType = tableLayoutPanel1.GetControlFromPosition(0,1).GetType().Name;
             switch (m_strControlType)
             {
                 case "BlobToolControl":
-                    blobToolControl = (BlobToolControl)splitContainer1.Panel1.Controls[0];
+                    blobToolControl = (BlobToolControl)tableLayoutPanel1.GetControlFromPosition(0, 1);
                     break;
                 case "CaliperToolControl":
-                    caliperToolControl = (CaliperToolControl)splitContainer1.Panel1.Controls[0];
+                    caliperToolControl = (CaliperToolControl)tableLayoutPanel1.GetControlFromPosition(0, 1);
                     break;
                 case "HistogramToolControl":
-                    histogramToolControl = (HistogramToolControl)splitContainer1.Panel1.Controls[0];
+                    histogramToolControl = (HistogramToolControl)tableLayoutPanel1.GetControlFromPosition(0, 1);
                     break;
                 default:
                     MessageBox.Show("Error");
                     break;
             }
-            if (m_displayControl.m_bitmapList.Count > 0)
+
+            if(m_displayControl.m_bitmapList != null)
             {
-                if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Count == 1)
+                if (m_displayControl.m_bitmapList.Count > 0)
                 {
-                    Bitmap image = m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["Current.InputImage"];
-                    m_displayControl.m_display.Width = image.Width;
-                    m_displayControl.m_display.Height = image.Height;
-                    m_displayControl.m_display.Image = image;
-                    m_displayControl.m_cbImages.Items.Add("Current.InputImage");
-                    m_displayControl.m_cbImages.SelectedIndex = 0;
-                }
-                else if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Count > 1)
-                {
-                    foreach (string imageStr in m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Keys)
+                    if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Count == 1)
                     {
-                        m_displayControl.m_cbImages.Items.Add(imageStr);
+                        Bitmap image = m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["Current.InputImage"];
+                        m_displayControl.m_display.Width = image.Width;
+                        m_displayControl.m_display.Height = image.Height;
+                        m_displayControl.m_display.Image = image;
+                        m_displayControl.m_cbImages.Items.Add("Current.InputImage");
+                        m_displayControl.m_cbImages.SelectedIndex = 0;
                     }
-                    m_displayControl.m_cbImages.SelectedIndex = 0;
+                    else if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Count > 1)
+                    {
+                        foreach (string imageStr in m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Keys)
+                        {
+                            m_displayControl.m_cbImages.Items.Add(imageStr);
+                        }
+                        m_displayControl.m_cbImages.SelectedIndex = 0;
+                    }
                 }
             }
             

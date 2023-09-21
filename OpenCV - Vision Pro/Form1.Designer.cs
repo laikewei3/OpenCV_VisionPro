@@ -29,11 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.m_BtnAddTool = new System.Windows.Forms.Button();
             this.m_RunBtn = new System.Windows.Forms.Button();
             this.m_OpenBtn = new System.Windows.Forms.Button();
+            this.m_RunBtnContinuous = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.m_treeViewTools = new System.Windows.Forms.TreeView();
@@ -41,7 +43,7 @@
             this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.m_RunBtnContinuous = new System.Windows.Forms.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -59,13 +61,14 @@
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(0, 450);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.m_BtnAddTool);
             this.flowLayoutPanel1.Controls.Add(this.m_RunBtn);
             this.flowLayoutPanel1.Controls.Add(this.m_OpenBtn);
@@ -74,38 +77,60 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(800, 25);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(800, 32);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // m_BtnAddTool
             // 
+            this.m_BtnAddTool.AutoSize = true;
+            this.m_BtnAddTool.Image = ((System.Drawing.Image)(resources.GetObject("m_BtnAddTool.Image")));
             this.m_BtnAddTool.Location = new System.Drawing.Point(3, 3);
             this.m_BtnAddTool.Name = "m_BtnAddTool";
-            this.m_BtnAddTool.Size = new System.Drawing.Size(75, 23);
+            this.m_BtnAddTool.Size = new System.Drawing.Size(80, 26);
             this.m_BtnAddTool.TabIndex = 3;
             this.m_BtnAddTool.Text = "Add Tool";
+            this.m_BtnAddTool.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.m_BtnAddTool.UseVisualStyleBackColor = true;
             this.m_BtnAddTool.Click += new System.EventHandler(this.m_BtnAddTool_Click);
             // 
             // m_RunBtn
             // 
-            this.m_RunBtn.Location = new System.Drawing.Point(84, 3);
+            this.m_RunBtn.AutoSize = true;
+            this.m_RunBtn.Image = ((System.Drawing.Image)(resources.GetObject("m_RunBtn.Image")));
+            this.m_RunBtn.Location = new System.Drawing.Point(89, 3);
             this.m_RunBtn.Name = "m_RunBtn";
-            this.m_RunBtn.Size = new System.Drawing.Size(75, 23);
+            this.m_RunBtn.Size = new System.Drawing.Size(75, 26);
             this.m_RunBtn.TabIndex = 0;
             this.m_RunBtn.Text = "Run";
+            this.m_RunBtn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.m_RunBtn.UseVisualStyleBackColor = true;
             this.m_RunBtn.Click += new System.EventHandler(this.m_RunBtn_Click);
             // 
             // m_OpenBtn
             // 
-            this.m_OpenBtn.Location = new System.Drawing.Point(165, 3);
+            this.m_OpenBtn.AutoSize = true;
+            this.m_OpenBtn.Image = ((System.Drawing.Image)(resources.GetObject("m_OpenBtn.Image")));
+            this.m_OpenBtn.Location = new System.Drawing.Point(170, 3);
             this.m_OpenBtn.Name = "m_OpenBtn";
-            this.m_OpenBtn.Size = new System.Drawing.Size(75, 23);
+            this.m_OpenBtn.Size = new System.Drawing.Size(75, 26);
             this.m_OpenBtn.TabIndex = 1;
             this.m_OpenBtn.Text = "Open";
+            this.m_OpenBtn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.m_OpenBtn.UseVisualStyleBackColor = true;
             this.m_OpenBtn.Click += new System.EventHandler(this.m_OpenBtn_Click);
+            // 
+            // m_RunBtnContinuous
+            // 
+            this.m_RunBtnContinuous.AutoSize = true;
+            this.m_RunBtnContinuous.Image = ((System.Drawing.Image)(resources.GetObject("m_RunBtnContinuous.Image")));
+            this.m_RunBtnContinuous.Location = new System.Drawing.Point(251, 3);
+            this.m_RunBtnContinuous.Name = "m_RunBtnContinuous";
+            this.m_RunBtnContinuous.Size = new System.Drawing.Size(113, 26);
+            this.m_RunBtnContinuous.TabIndex = 4;
+            this.m_RunBtnContinuous.Text = "Run Continuous";
+            this.m_RunBtnContinuous.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.m_RunBtnContinuous.UseVisualStyleBackColor = true;
+            this.m_RunBtnContinuous.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_RunBtnContinuous_MouseClick);
             // 
             // tableLayoutPanel2
             // 
@@ -125,14 +150,14 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 28);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 35);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.splitContainer1.Panel1.Controls.Add(this.m_treeViewTools);
-            this.splitContainer1.Size = new System.Drawing.Size(794, 419);
+            this.splitContainer1.Size = new System.Drawing.Size(794, 412);
             this.splitContainer1.SplitterDistance = 264;
             this.splitContainer1.TabIndex = 3;
             // 
@@ -140,9 +165,12 @@
             // 
             this.m_treeViewTools.BackColor = System.Drawing.SystemColors.ControlLight;
             this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_treeViewTools.ImageIndex = 0;
+            this.m_treeViewTools.ImageList = this.imageList1;
             this.m_treeViewTools.Location = new System.Drawing.Point(0, 0);
             this.m_treeViewTools.Name = "m_treeViewTools";
-            this.m_treeViewTools.Size = new System.Drawing.Size(264, 419);
+            this.m_treeViewTools.SelectedImageIndex = 0;
+            this.m_treeViewTools.Size = new System.Drawing.Size(264, 412);
             this.m_treeViewTools.TabIndex = 0;
             this.m_treeViewTools.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseClick);
             this.m_treeViewTools.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseDoubleClick);
@@ -158,6 +186,7 @@
             // 
             // blobToolMenuItem
             // 
+            this.blobToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("blobToolMenuItem.Image")));
             this.blobToolMenuItem.Name = "blobToolMenuItem";
             this.blobToolMenuItem.Size = new System.Drawing.Size(155, 22);
             this.blobToolMenuItem.Text = "Blob Tool";
@@ -165,6 +194,7 @@
             // 
             // caliperToolMenuItem
             // 
+            this.caliperToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("caliperToolMenuItem.Image")));
             this.caliperToolMenuItem.Name = "caliperToolMenuItem";
             this.caliperToolMenuItem.Size = new System.Drawing.Size(155, 22);
             this.caliperToolMenuItem.Text = "Caliper Tool";
@@ -172,20 +202,19 @@
             // 
             // histogramToolMenuItem
             // 
+            this.histogramToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("histogramToolMenuItem.Image")));
             this.histogramToolMenuItem.Name = "histogramToolMenuItem";
             this.histogramToolMenuItem.Size = new System.Drawing.Size(155, 22);
             this.histogramToolMenuItem.Text = "Histogram Tool";
             this.histogramToolMenuItem.Click += new System.EventHandler(this.histogramToolMenuItem_Click);
             // 
-            // m_RunBtnContinuous
+            // imageList1
             // 
-            this.m_RunBtnContinuous.Location = new System.Drawing.Point(246, 3);
-            this.m_RunBtnContinuous.Name = "m_RunBtnContinuous";
-            this.m_RunBtnContinuous.Size = new System.Drawing.Size(94, 23);
-            this.m_RunBtnContinuous.TabIndex = 4;
-            this.m_RunBtnContinuous.Text = "Run Continuous";
-            this.m_RunBtnContinuous.UseVisualStyleBackColor = true;
-            this.m_RunBtnContinuous.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_RunBtnContinuous_MouseClick);
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "blob.png");
+            this.imageList1.Images.SetKeyName(1, "caliper.png");
+            this.imageList1.Images.SetKeyName(2, "histogram.png");
             // 
             // Form1
             // 
@@ -194,10 +223,13 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "OpenCV - Vision Pro";
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -221,6 +253,7 @@
         private System.Windows.Forms.ToolStripMenuItem histogramToolMenuItem;
         private System.Windows.Forms.TreeView m_treeViewTools;
         private System.Windows.Forms.Button m_RunBtnContinuous;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }
 

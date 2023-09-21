@@ -84,6 +84,18 @@ namespace OpenCV_Vision_Pro
 
         private void m_RunBtn_Click(object sender, EventArgs e)
         {
+            if (m_displayControl.m_display.Image == null)
+            {
+                runContinue = false;
+                m_timer.Stop();
+                m_OpenBtn.Enabled = true;
+                m_BtnAddTool.Enabled = true;
+                m_treeViewTools.Enabled = true;
+                MessageBox.Show("No Input Image");
+                return;
+            }
+            if (m_inputImagesList == null)
+                return;
             if (m_inputImagesList.Count <= 0)
                 return;
             
@@ -110,11 +122,12 @@ namespace OpenCV_Vision_Pro
                     tool.m_bitmapList = m_inputImagesList.Select(x => new Dictionary<string, Bitmap> { { "Current.InputImage", x } }).ToList();
                     newImage = true;
                 }
-
+                
                 switch (m_strToolType) { 
                     case "BlobToolControl":
                         BlobToolControl m_tempBlobControl = tool.BlobToolControl;
-                        toolWindow.splitContainer1.Panel1.Controls.Add(m_tempBlobControl);
+                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempBlobControl);
+                        toolWindow.tableLayoutPanel1.SetRow(m_tempBlobControl,1);
                         toolWindow.m_roi = m_tempBlobControl.m_roi;
                         if (m_tempBlobControl.m_bitmapList != null || !newImage)
                             tool.m_bitmapList = m_tempBlobControl.m_bitmapList;
@@ -124,7 +137,8 @@ namespace OpenCV_Vision_Pro
                         break;
                     case "CaliperToolControl":
                         CaliperToolControl m_tempCaliperControl = tool.CaliperToolControl;
-                        toolWindow.splitContainer1.Panel1.Controls.Add(m_tempCaliperControl);
+                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempCaliperControl);
+                        toolWindow.tableLayoutPanel1.SetRow(m_tempCaliperControl,1);
                         toolWindow.m_roi = m_tempCaliperControl.m_roi;
                         if (m_tempCaliperControl.m_bitmapList != null || !newImage)
                             tool.m_bitmapList = m_tempCaliperControl.m_bitmapList;
@@ -134,7 +148,8 @@ namespace OpenCV_Vision_Pro
                         break;
                     case "HistogramToolControl":
                         HistogramToolControl m_tempHistControl = tool.HistogramToolControl;
-                        toolWindow.splitContainer1.Panel1.Controls.Add(m_tempHistControl);
+                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempHistControl);
+                        toolWindow.tableLayoutPanel1.SetRow(m_tempHistControl,1);
                         toolWindow.m_roi = m_tempHistControl.m_roi;
                         if (m_tempHistControl.m_bitmapList != null || !newImage)
                             tool.m_bitmapList = m_tempHistControl.m_bitmapList;
@@ -160,33 +175,48 @@ namespace OpenCV_Vision_Pro
 
         private void blobToolMenuItem_Click(object sender, EventArgs e)
         {
-            m_treeViewTools.Nodes.Add("CogBlobTool" + (++m_intCntBlob).ToString());
+            TreeNode m_treeNode = new TreeNode("BlobTool" + (++m_intCntBlob).ToString())
+            {
+                ImageIndex = 0,
+                SelectedImageIndex = 0
+            };
+            m_treeViewTools.Nodes.Add(m_treeNode);
             BlobToolControl blobTool = new BlobToolControl
             {
                 Dock = DockStyle.Fill,
-                Name = "CogBlobTool" + (m_intCntBlob)
+                Name = "BlobTool" + (m_intCntBlob)
             };
             m_toolsList.Add(new ToolsClass(blobTool));
         }
 
         private void caliperToolMenuItem_Click(object sender, EventArgs e)
         {
-            m_treeViewTools.Nodes.Add("CogCaliperTool" + (++m_intCntCaliper).ToString());
+            TreeNode m_treeNode = new TreeNode("CaliperTool" + (++m_intCntCaliper).ToString())
+            {
+                ImageIndex = 1,
+                SelectedImageIndex = 1
+            };
+            m_treeViewTools.Nodes.Add(m_treeNode);
             CaliperToolControl caliperTool = new CaliperToolControl
             {
                 Dock = DockStyle.Fill,
-                Name = "CogCaliperTool" + (m_intCntCaliper)
+                Name = "CaliperTool" + (m_intCntCaliper)
             };
             m_toolsList.Add(new ToolsClass(caliperTool));
         }
 
         private void histogramToolMenuItem_Click(object sender, EventArgs e)
         {
-            m_treeViewTools.Nodes.Add("CogHistogramTool" + (++m_intCntHistogram).ToString());
+            TreeNode m_treeNode = new TreeNode("HistogramTool" + (++m_intCntHistogram).ToString())
+            {
+                ImageIndex = 2,
+                SelectedImageIndex = 2
+            };
+            m_treeViewTools.Nodes.Add(m_treeNode);
             HistogramToolControl histogramTool = new HistogramToolControl
             {
                 Dock = DockStyle.Fill,
-                Name = "CogHistogramTool" + (m_intCntHistogram)
+                Name = "HistogramTool" + (m_intCntHistogram)
             };
             m_toolsList.Add(new ToolsClass(histogramTool));
         }
@@ -222,8 +252,11 @@ namespace OpenCV_Vision_Pro
                 bool newImage = false;
                 if (tool.m_bitmapList == null || tool.m_bitmapList.Count == 0)
                 {
-                    tool.m_bitmapList = m_inputImagesList.Select(x => new Dictionary<string, Bitmap> { { "Current.InputImage", x } }).ToList();
-                    newImage = true;
+                    if(m_inputImagesList != null)
+                    {
+                        tool.m_bitmapList = m_inputImagesList.Select(x => new Dictionary<string, Bitmap> { { "Current.InputImage", x } }).ToList();
+                        newImage = true;
+                    }
                 }
 
                 string m_strToolType = tool.TypeFilled.ToString();
@@ -231,7 +264,8 @@ namespace OpenCV_Vision_Pro
                 {
                     case "BlobToolControl":
                         BlobToolControl m_tempBlobControl = tool.BlobToolControl;
-                        toolWindow.splitContainer1.Panel1.Controls.Add(m_tempBlobControl);
+                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempBlobControl);
+                        toolWindow.tableLayoutPanel1.SetRow(m_tempBlobControl,1);
                         toolWindow.m_roi = m_tempBlobControl.m_roi;
                         if (m_tempBlobControl.m_bitmapList != null || !newImage)
                             tool.m_bitmapList = m_tempBlobControl.m_bitmapList;
@@ -240,7 +274,8 @@ namespace OpenCV_Vision_Pro
                         break;
                     case "CaliperToolControl":
                         CaliperToolControl m_tempCaliperControl = tool.CaliperToolControl;
-                        toolWindow.splitContainer1.Panel1.Controls.Add(m_tempCaliperControl);
+                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempCaliperControl);
+                        toolWindow.tableLayoutPanel1.SetRow(m_tempCaliperControl,1);
                         toolWindow.m_roi = m_tempCaliperControl.m_roi;
                         if (m_tempCaliperControl.m_bitmapList != null || !newImage)
                             tool.m_bitmapList = m_tempCaliperControl.m_bitmapList;
@@ -249,7 +284,8 @@ namespace OpenCV_Vision_Pro
                         break;
                     case "HistogramToolControl":
                         HistogramToolControl m_tempHistControl = tool.HistogramToolControl;
-                        toolWindow.splitContainer1.Panel1.Controls.Add(m_tempHistControl);
+                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempHistControl);
+                        toolWindow.tableLayoutPanel1.SetRow(m_tempHistControl,1);
                         toolWindow.m_roi = m_tempHistControl.m_roi;
                         if (m_tempHistControl.m_bitmapList != null || !newImage)
                             tool.m_bitmapList = m_tempHistControl.m_bitmapList;
@@ -260,7 +296,6 @@ namespace OpenCV_Vision_Pro
                         MessageBox.Show("Error");
                         break;
                 }
-
                 toolWindow.m_displayControl.m_bitmapList = tool.m_bitmapList;
 
                 toolWindow.Show();
@@ -277,10 +312,10 @@ namespace OpenCV_Vision_Pro
             {
                 // Start continuous clicking of m_RunBtnContinuous when m_RunBtn is clicked for the first time.
                 runContinue = true;
+                m_timer.Start();
                 m_OpenBtn.Enabled = false;
                 m_BtnAddTool.Enabled = false;
                 m_treeViewTools.Enabled = false;
-                m_timer.Start();
             }
             else
             {
