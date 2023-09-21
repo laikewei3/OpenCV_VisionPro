@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace OpenCV_Vision_Pro
 {
-    public class ToolsClass
+    public class ToolsClass: IDisposable
     {
         public enum EType { BlobToolControl, CaliperToolControl, HistogramToolControl };
         public EType TypeFilled { get; set; }
-        public Dictionary<string, Bitmap> m_bitmapList { get; set; }
+        public List<Dictionary<string, Bitmap>> m_bitmapList { get; set; }
 
         BlobToolControl m_BlobToolControl;
         CaliperToolControl m_CaliperToolControl;
         HistogramToolControl m_HistogramToolControl;
-
+        
         public BlobToolControl BlobToolControl
         {
             get { return m_BlobToolControl; }
-            set { m_BlobToolControl = value; TypeFilled = EType.BlobToolControl; m_bitmapList = value.m_bitmapList; }
+            set { m_BlobToolControl = value; TypeFilled = EType.BlobToolControl; }
         }
 
         public CaliperToolControl CaliperToolControl
@@ -46,9 +46,21 @@ namespace OpenCV_Vision_Pro
             HistogramToolControl = h;
         }
 
-        
+        public void Dispose()
+        {
+            if (m_BlobToolControl != null)
+            {
+                m_BlobToolControl.Dispose();
+            }else if (m_CaliperToolControl != null)
+            {
+                m_CaliperToolControl.Dispose();
+            }else if (m_HistogramToolControl != null)
+            {
+                m_HistogramToolControl.Dispose();
+            }
+        }
 
-        
-        
+
+
     }
 }

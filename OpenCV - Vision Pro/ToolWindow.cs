@@ -1,17 +1,8 @@
 ﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using OpenCV_Vision_Pro;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace OpenCV_Vision_Pro
 {
@@ -51,27 +42,32 @@ namespace OpenCV_Vision_Pro
                     MessageBox.Show("Error");
                     break;
             }
-            if (m_displayControl.m_bitmapList.Count == 1)
+            if (m_displayControl.m_bitmapList.Count > 0)
             {
-                Bitmap image = m_displayControl.m_bitmapList["Current.InputImage"];
-                m_displayControl.m_display.Width = image.Width;
-                m_displayControl.m_display.Height = image.Height;
-                m_displayControl.m_display.Image = image;
-                m_displayControl.m_cbImages.Items.Add("Current.InputImage");
-                m_displayControl.m_cbImages.SelectedIndex = 0;
-            }
-            else if(m_displayControl.m_bitmapList.Count > 1)
-            {
-                foreach(string imageStr in m_displayControl.m_bitmapList.Keys)
+                if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Count == 1)
                 {
-                    m_displayControl.m_cbImages.Items.Add(imageStr);
+                    Bitmap image = m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["Current.InputImage"];
+                    m_displayControl.m_display.Width = image.Width;
+                    m_displayControl.m_display.Height = image.Height;
+                    m_displayControl.m_display.Image = image;
+                    m_displayControl.m_cbImages.Items.Add("Current.InputImage");
+                    m_displayControl.m_cbImages.SelectedIndex = 0;
                 }
-                m_displayControl.m_cbImages.SelectedIndex = 0;
+                else if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Count > 1)
+                {
+                    foreach (string imageStr in m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Keys)
+                    {
+                        m_displayControl.m_cbImages.Items.Add(imageStr);
+                    }
+                    m_displayControl.m_cbImages.SelectedIndex = 0;
+                }
             }
             
             m_displayControl.m_roi = this.m_roi;
             m_roi.m_displayControl = this.m_displayControl;
             m_roi.m_displayControl.m_display.Controls.Add(m_roi.FrameControl);
+            if (m_roi.m_comboBoxROI.SelectedIndex != 0)
+                m_roi.FrameControl.Visible = true;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -82,10 +78,11 @@ namespace OpenCV_Vision_Pro
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 splitContainer1.Panel1.Controls.Clear();
+                m_displayControl.m_display.Controls.Clear();
             }
         }
 
-        private void m_RunToolBtn_Click(object sender, EventArgs e)
+        public void m_RunToolBtn_Click(object sender, EventArgs e)
         {
             if (m_displayControl.m_display.Image == null)
             {
@@ -117,24 +114,26 @@ namespace OpenCV_Vision_Pro
             if (m_displayControl.m_roi.m_comboBoxROI.SelectedIndex != 0)
                 blobToolControl.blobTool.Run(m_displayControl.getRegion());
             else
-                blobToolControl.blobTool.Run(m_displayControl.m_bitmapList["Current.InputImage"].ToMat());
+                blobToolControl.blobTool.Run(m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["Current.InputImage"].ToMat());
             
-            List<Blob> m_blobResult = blobToolControl.blobTool.blobs;
+            List<Blob> m_blobResult = blobToolControl.blobTool.blobResults.blobs;
             blobToolControl.showBlobResult(m_blobResult);
-            if (m_displayControl.m_bitmapList.ContainsKey("LastRun."+this.Text+".BlobImage"))
+            if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].ContainsKey("LastRun."+this.Text+".BlobImage"))
             {
-                m_displayControl.m_bitmapList["LastRun." + this.Text + ".BlobImage"] = blobToolControl.blobTool.BlobImage;
-                Form1.m_displayControl.m_bitmapList["LastRun." + this.Text + ".BlobImage"] = blobToolControl.blobTool.BlobImage;
+                m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["LastRun." + this.Text + ".BlobImage"] = blobToolControl.blobTool.blobResults.BlobImage;
+                Form1.m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["LastRun." + this.Text + ".BlobImage"] = blobToolControl.blobTool.blobResults.BlobImage;
             }
             else
             {
-                Form1.m_displayControl.m_bitmapList.Add("LastRun." + this.Text + ".BlobImage", blobToolControl.blobTool.BlobImage);
-                Form1.m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".BlobImage");
-                m_displayControl.m_bitmapList.Add("LastRun." + this.Text + ".BlobImage", blobToolControl.blobTool.BlobImage);
-                m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".BlobImage");
+                Form1.m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Add("LastRun." + this.Text + ".BlobImage", blobToolControl.blobTool.blobResults.BlobImage);
+                m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Add("LastRun." + this.Text + ".BlobImage", blobToolControl.blobTool.blobResults.BlobImage);
+                if(!Form1.m_displayControl.m_cbImages.Items.Contains("LastRun." + this.Text + ".BlobImage"))
+                    Form1.m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".BlobImage");
+                if(!m_displayControl.m_cbImages.Items.Contains("LastRun." + this.Text + ".BlobImage"))
+                    m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".BlobImage");
             }
             
-            blobToolControl.m_bitmapList = CloneDictionaryCloningValues<string, Bitmap>(m_displayControl.m_bitmapList);
+            blobToolControl.m_bitmapList[Form1.m_cntImageIndex] = CloneDictionaryCloningValues<string, Bitmap>(m_displayControl.m_bitmapList[Form1.m_cntImageIndex]);
             blobToolControl.m_dgvBlobResults.SelectionChanged += m_dgvBlobResults_SelectionChanged;
         }
         
@@ -144,6 +143,79 @@ namespace OpenCV_Vision_Pro
             try
             {
                 m_displayControl.m_display.Image = blobToolControl.resultSelectedImage.ToBitmap();
+                blobToolControl.resultSelectedImage.Dispose();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void runHistogram()
+        {
+            HistogramTool histogramTool;
+            if (m_roi.m_comboBoxROI.SelectedIndex != 0)
+            {
+                histogramTool = new HistogramTool(m_displayControl.getRegion());
+            }
+            else
+                histogramTool = new HistogramTool(m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["Current.InputImage"]);
+
+            histogramToolControl.showResult(histogramTool);
+
+            if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].ContainsKey("LastRun." + this.Text + ".Histogram"))
+            {
+                m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["LastRun." + this.Text + ".Histogram"] = histogramTool.HistogramResult.histogram;
+                Form1.m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["LastRun." + this.Text + ".Histogram"] = histogramTool.HistogramResult.histogram;
+            }
+            else
+            {
+                Form1.m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Add("LastRun." + this.Text + ".Histogram", histogramTool.HistogramResult.histogram);
+                m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Add("LastRun." + this.Text + ".Histogram", histogramTool.HistogramResult.histogram);
+                if (!Form1.m_displayControl.m_cbImages.Items.Contains("LastRun." + this.Text + ".Histogram"))
+                    Form1.m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".Histogram");
+                if (!m_displayControl.m_cbImages.Items.Contains("LastRun." + this.Text + ".Histogram"))
+                    m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".Histogram");
+            }
+                    
+        }
+        
+        private void runCaliper()
+        {
+            caliperToolControl.m_CaliperRes.Columns.Clear();
+            caliperToolControl.m_CaliperRes.DataSource = null;
+            caliperToolControl.m_CaliperRes.Refresh();
+            if (m_roi.m_comboBoxROI.SelectedIndex != 0)
+                caliperToolControl.caliperTool.Run(m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["Current.InputImage"].ToMat(), m_displayControl.getRegionRect());
+            else
+                caliperToolControl.caliperTool.Run(m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["Current.InputImage"].ToMat(), new Rectangle());
+
+            caliperToolControl.m_CaliperRes.DataSource = caliperToolControl.caliperTool.caliperResult;
+            caliperToolControl.m_CaliperRes.Columns[0].Frozen = true;
+            if (m_displayControl.m_bitmapList[Form1.m_cntImageIndex].ContainsKey("LastRun." + this.Text + ".Caliper"))
+            {
+                m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["LastRun." + this.Text + ".Caliper"] = caliperToolControl.caliperTool.caliperImage;
+                Form1.m_displayControl.m_bitmapList[Form1.m_cntImageIndex]["LastRun." + this.Text + ".Caliper"] = caliperToolControl.caliperTool.caliperImage;
+            }
+            else
+            {
+                Form1.m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Add("LastRun." + this.Text + ".Caliper", caliperToolControl.caliperTool.caliperImage);
+                m_displayControl.m_bitmapList[Form1.m_cntImageIndex].Add("LastRun." + this.Text + ".Caliper", caliperToolControl.caliperTool.caliperImage);
+                if (!Form1.m_displayControl.m_cbImages.Items.Contains("LastRun." + this.Text + ".Caliper"))
+                    Form1.m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".Caliper");
+                if (!m_displayControl.m_cbImages.Items.Contains("LastRun." + this.Text + ".Caliper"))
+                    m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".Caliper");
+            }
+            caliperToolControl.m_CaliperRes.SelectionChanged += m_CaliperRes_SelectionChanged;
+        }
+
+        private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
+        {
+            if (m_displayControl.m_cbImages.SelectedItem.ToString() != "LastRun." + this.Text + ".Caliper") { return; }
+            try
+            {
+                m_displayControl.m_display.Image = caliperToolControl.resultSelectedImage.ToBitmap();
+                caliperToolControl.resultSelectedImage.Dispose();
             }
             catch (Exception ex)
             {
@@ -161,67 +233,7 @@ namespace OpenCV_Vision_Pro
             }
             return ret;
         }
-
-        private void runHistogram()
-        {
-            HistogramTool histogramTool;
-            if (m_roi.m_comboBoxROI.SelectedIndex != 0)
-            {
-                Bitmap bitmap = new Bitmap(m_displayControl.m_display.Image);
-                histogramTool = new HistogramTool(m_displayControl.getRegion());
-            }
-            else
-                histogramTool = new HistogramTool(m_displayControl.m_bitmapList["Current.InputImage"]);
-
-            histogramToolControl.showResult(histogramTool);
-
-            if (m_displayControl.m_bitmapList.ContainsKey("LastRun." + this.Text + ".Histogram"))
-            {
-                m_displayControl.m_bitmapList["LastRun." + this.Text + ".Histogram"] = histogramTool.histogram;
-                Form1.m_displayControl.m_bitmapList["LastRun." + this.Text + ".Histogram"] = histogramTool.histogram;
-            }
-            else
-            {
-                Form1.m_displayControl.m_bitmapList.Add("LastRun." + this.Text + ".Histogram", histogramTool.histogram);
-                Form1.m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".Histogram");
-                m_displayControl.m_bitmapList.Add("LastRun." + this.Text + ".Histogram", histogramTool.histogram);
-                m_displayControl.m_cbImages.Items.Add("LastRun." + this.Text + ".Histogram");
-            }
-        }
         
-        private void runCaliper()
-        {
-            caliperToolControl.m_CaliperRes.Columns.Clear();
-            caliperToolControl.m_CaliperRes.DataSource = null;
-            caliperToolControl.m_CaliperRes.Refresh();
-            caliperToolControl.m_CaliperRes.SelectionChanged += m_CaliperRes_SelectionChanged;
-            if (m_roi.m_comboBoxROI.SelectedIndex != 0)
-                caliperToolControl.caliperTool.Run(m_displayControl.m_bitmapList["Current.InputImage"].ToMat(), m_displayControl.getRegionRect());
-            else
-                caliperToolControl.caliperTool.Run(m_displayControl.m_bitmapList["Current.InputImage"].ToMat(), new Rectangle());
 
-            caliperToolControl.m_CaliperRes.DataSource = caliperToolControl.caliperTool.caliperResult;
-            caliperToolControl.m_CaliperRes.Columns[0].Frozen = true;
-            if (m_displayControl.m_bitmapList.ContainsKey("LastRun.Caliper"))
-                m_displayControl.m_bitmapList["LastRun.Caliper"] = caliperToolControl.caliperTool.caliperImage;
-            else
-            {
-                m_displayControl.m_bitmapList.Add("LastRun.Caliper", caliperToolControl.caliperTool.caliperImage);
-                m_displayControl.m_cbImages.Items.Add("LastRun.Caliper");
-            }
-        }
-
-        private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
-        {
-            if (m_displayControl.m_cbImages.SelectedItem.ToString() != "LastRun.Caliper") { return; }
-            try
-            {
-                m_displayControl.m_display.Image = caliperToolControl.resultSelectedImage.ToBitmap();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
     }
 }

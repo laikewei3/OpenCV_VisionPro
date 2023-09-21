@@ -41,6 +41,7 @@
             this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.m_RunBtnContinuous = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -68,6 +69,7 @@
             this.flowLayoutPanel1.Controls.Add(this.m_BtnAddTool);
             this.flowLayoutPanel1.Controls.Add(this.m_RunBtn);
             this.flowLayoutPanel1.Controls.Add(this.m_OpenBtn);
+            this.flowLayoutPanel1.Controls.Add(this.m_RunBtnContinuous);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -175,6 +177,16 @@
             this.histogramToolMenuItem.Text = "Histogram Tool";
             this.histogramToolMenuItem.Click += new System.EventHandler(this.histogramToolMenuItem_Click);
             // 
+            // m_RunBtnContinuous
+            // 
+            this.m_RunBtnContinuous.Location = new System.Drawing.Point(246, 3);
+            this.m_RunBtnContinuous.Name = "m_RunBtnContinuous";
+            this.m_RunBtnContinuous.Size = new System.Drawing.Size(94, 23);
+            this.m_RunBtnContinuous.TabIndex = 4;
+            this.m_RunBtnContinuous.Text = "Run Continuous";
+            this.m_RunBtnContinuous.UseVisualStyleBackColor = true;
+            this.m_RunBtnContinuous.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_RunBtnContinuous_MouseClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -208,6 +220,7 @@
         private System.Windows.Forms.ToolStripMenuItem caliperToolMenuItem;
         private System.Windows.Forms.ToolStripMenuItem histogramToolMenuItem;
         private System.Windows.Forms.TreeView m_treeViewTools;
+        private System.Windows.Forms.Button m_RunBtnContinuous;
     }
 }
 

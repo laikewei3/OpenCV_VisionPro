@@ -182,6 +182,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BitMiracle.LibTiff.NET">
+      <Version>2.4.649</Version>
+    </PackageReference>
     <PackageReference Include="Emgu.CV">
       <Version>4.7.0.5276</Version>
     </PackageReference>

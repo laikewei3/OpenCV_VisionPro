@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -14,7 +10,7 @@ using Emgu.CV.Util;
 
 namespace OpenCV_Vision_Pro
 {
-    public class HistogramTool
+    public class HistogramResult
     {
         public int Minimum { get; set; }
         public int Maximum { get; set; }
@@ -26,24 +22,41 @@ namespace OpenCV_Vision_Pro
         public long NumberOfSample { get; set; }
         public Bitmap histogram { get; set; }
         public DataTable histData { get; set; }
+    }
 
-        private bool getMin = false;
-        private int maxCount = 0;
-        private List<float> cummulative_list = new List<float>(); 
-
+    public class HistogramTool
+    {
+        public HistogramResult HistogramResult { get; set; } = new HistogramResult();
         private void calcHist(Mat gray)
         {
+            //=============================================== Declare Variable =============================================
+            List<float> cummulative_list = new List<float>();
+            bool getMin = false;
+            int maxCount = 0;
             Mat m_matHist = new Mat();
             VectorOfMat m_vomat = new VectorOfMat();
+            HistogramResult.histData = new DataTable();
+            HistogramResult.histData.Columns.AddRange(new DataColumn[]
+            {
+                new DataColumn("Grey Level"),
+                new DataColumn("Count"),
+                new DataColumn("Cumulative %")
+            });
+            //==============================================================================================================
+
+            //=============================================== Calculate Result =============================================
             m_vomat.Push(gray);
             CvInvoke.CalcHist(m_vomat, new int[] { 0 }, null, m_matHist, new int[] { 256 }, new float[] { 0, 256 }, false);
+            //==============================================================================================================
+            m_vomat.Dispose();
+            gray.Dispose();
 
-
+            //================================= Calculate Statistics/ Prepare Chart Data ===================================
             float[] histogramData = new float[m_matHist.Rows];
             double calMean = 0;
             for (int i = 0; i < m_matHist.Rows; i++)
             {
-                float count = (float)m_matHist.GetData().GetValue(new int[] { i, 0 });
+                float count = (float)m_matHist.GetData().GetValue(new int[] { i, 0 }); // get the pixel count from Mat
                 histogramData[i] = count;
                 calMean += i * count;
 
@@ -52,10 +65,11 @@ namespace OpenCV_Vision_Pro
                     if (!getMin)
                     {
                         getMin = true;
-                        this.Minimum = i;
+                        HistogramResult.Minimum = i;
                     }
-                    if (i > Maximum)
-                        this.Maximum = i;
+
+                    if (i > HistogramResult.Maximum)
+                        HistogramResult.Maximum = i;
                     if (i > 0)
                     {
                         if (count > histogramData[maxCount])
@@ -73,40 +87,36 @@ namespace OpenCV_Vision_Pro
                         cummulative_list.Add(count);
                 }
             }
-            this.Mode = maxCount;
-            this.NumberOfSample = (long)cummulative_list[histogramData.Length - 1];
-            this.Mean = calMean / this.NumberOfSample;
+            HistogramResult.Mode = maxCount;
+            HistogramResult.NumberOfSample = (long)cummulative_list[histogramData.Length - 1];
+            HistogramResult.Mean = calMean / HistogramResult.NumberOfSample;
+            m_matHist.Dispose();
 
-            double m_doubleHalf = this.NumberOfSample / 2;
+            double m_doubleHalf = HistogramResult.NumberOfSample / 2;
             for (int i = 0; i < cummulative_list.Count; i++)
             {
                 if (cummulative_list[i] > m_doubleHalf)
                 {
-                    this.Median = i;
+                    HistogramResult.Median = i;
                     break;
                 }
             }
-
-            this.histData = new DataTable();
-            this.histData.Columns.AddRange(new DataColumn[]
-            {
-                new DataColumn("Grey Level"),
-                new DataColumn("Count"),
-                new DataColumn("Cumulative %")
-            });
+            
             double m_doubleCumulativePercent = 0;
             double variance = 0;
             for (int i = 0; i < histogramData.Length; i++)
             {
-                m_doubleCumulativePercent += (histogramData[i] * 100.0) / this.NumberOfSample;
-                this.histData.Rows.Add(i, histogramData[i], Math.Round(m_doubleCumulativePercent, 2));
-                double temp = Math.Pow((i - this.Mean), 2) * histogramData[i];
+                m_doubleCumulativePercent += (histogramData[i] * 100.0) / HistogramResult.NumberOfSample;
+                HistogramResult.histData.Rows.Add(i, histogramData[i], Math.Round(m_doubleCumulativePercent, 2));
+                double temp = Math.Pow((i - HistogramResult.Mean), 2) * histogramData[i];
                 variance += temp;
             }
-            variance /= this.NumberOfSample;
-            this.Variance = variance;
-            this.StandardDeviation = Math.Sqrt(variance);
+            variance /= HistogramResult.NumberOfSample;
+            HistogramResult.Variance = variance;
+            HistogramResult.StandardDeviation = Math.Sqrt(variance);
+            //==============================================================================================================
 
+            //================================================ Plot the Chart ==============================================
             Chart histogramChart = new Chart
             {
                 Size = new Size(800, 500),
@@ -135,9 +145,9 @@ namespace OpenCV_Vision_Pro
             {
                 StripWidth = 1,
                 BackColor = Color.White,
-                IntervalOffset = this.Mean,
+                IntervalOffset = HistogramResult.Mean,
                 Interval = 0,
-                Text = Math.Round(this.Mean, 4).ToString(),
+                Text = Math.Round(HistogramResult.Mean, 4).ToString(),
                 ForeColor = Color.White
             };
 
@@ -146,25 +156,25 @@ namespace OpenCV_Vision_Pro
 
             Bitmap chartBitmap = new Bitmap(histogramChart.Width, histogramChart.Height);
             histogramChart.DrawToBitmap(chartBitmap, new Rectangle(0, 0, histogramChart.Width, histogramChart.Height));
-            this.histogram = chartBitmap;
+            HistogramResult.histogram = chartBitmap;
+            //==============================================================================================================
         }
 
-        public HistogramTool(Bitmap image)
+        public HistogramTool(Bitmap image) // Whole Image
         {
-            Image<Bgr, byte> m_grayImage = image.ToImage<Bgr, byte>();
-
             Mat gray = new Mat();
+            Image<Bgr, byte> m_grayImage = image.ToImage<Bgr, byte>();
             CvInvoke.CvtColor(m_grayImage, gray, ColorConversion.Bgr2Gray);
-
             calcHist(gray);
+            gray.Dispose();
         }
 
-        public HistogramTool(Mat image)
+        public HistogramTool(Mat image) // ROI Image
         {
             Mat gray = new Mat();
             CvInvoke.CvtColor(image, gray, ColorConversion.Bgr2Gray);
-
             calcHist(gray);
+            gray.Dispose();
         }
     }
 }

@@ -14,22 +14,24 @@ namespace OpenCV_Vision_Pro
         public BlobTool blobTool { get; set; } = new BlobTool();
         public Mat resultSelectedImage { get; set; }
         public ROI m_roi { get; set; } = new ROI();
-        public Dictionary<string, Bitmap> m_bitmapList { get; set; } = new Dictionary<string, Bitmap>();
+        public List<Dictionary<string, Bitmap>> m_bitmapList { get; set; }
 
         public BlobToolControl()
         {
             InitializeComponent();
-            Panel panel = new Panel();
-            Panel tempPanel = new Panel();
-            panel = new Panel();
-            panel.Height = 65;
-            
-            this.Controls.Add(panel);
-            panel.Controls.Add(tempPanel);
+            Panel panel = new Panel
+            {
+                Height = 65,
+                Dock = DockStyle.Top
+            };
+            Panel tempPanel = new Panel
+            {
+                Dock = DockStyle.Top
+            };
             tempPanel.Controls.Add(m_roi);
             m_roi.Dock = DockStyle.Fill;
-            panel.Dock = DockStyle.Top;
-            tempPanel.Dock = DockStyle.Top;
+            panel.Controls.Add(tempPanel);
+            this.Controls.Add(panel);
 
             for (int i = 0; i < 3; i++)
             {
@@ -90,6 +92,24 @@ namespace OpenCV_Vision_Pro
             return m_dgvBlobResults;
         }
 
+        private void m_dgvBlobResults_SelectionChanged(object sender, EventArgs e)
+        {
+            if (m_dgvBlobResults.Rows.Count == 0) { return; }
+            if (m_dgvBlobResults.SelectedRows.Count == 0) { return; }
+            try
+            {
+                int N = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
+                Mat tempMat = blobTool.blobResults.BlobImage.ToMat();
+                CvInvoke.Polylines(tempMat, blobTool.contourByRow[N], true, new MCvScalar(100, 150), 2);
+                resultSelectedImage = tempMat;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+        }
+
         private void m_cbBlobProperties_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox m_comboBox = (ComboBox)sender;
@@ -115,6 +135,15 @@ namespace OpenCV_Vision_Pro
         private void m_cbSegPolarity_SelectedIndexChanged(object sender, EventArgs e)
         {
             blobTool.polarity = m_cbSegPolarity.SelectedItem.ToString();
+        }
+        private void m_NumSegmentation1_ValueChanged(object sender, EventArgs e)
+        {
+            blobTool.threshold = (double)m_NumSegmentation1.Value;
+        }
+
+        private void m_NumConnectionMin_ValueChanged(object sender, EventArgs e)
+        {
+            blobTool.minArea = (int)m_NumConnectionMin.Value;
         }
 
         private void m_BlobMeasurementTable_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -231,16 +260,6 @@ namespace OpenCV_Vision_Pro
             m_BlobMeasurementTable.CommitEdit(DataGridViewDataErrorContexts.Commit);
         }
 
-        private void m_NumSegmentation1_ValueChanged(object sender, EventArgs e)
-        {
-            blobTool.threshold = (double)m_NumSegmentation1.Value;
-        }
-
-        private void m_NumConnectionMin_ValueChanged(object sender, EventArgs e)
-        {
-            blobTool.minArea = (int)m_NumConnectionMin.Value;
-        }
-
         private void m_btnDeleteProperties_Click(object sender, EventArgs e)
         {
             if (m_BlobMeasurementTable.SelectedRows == null)
@@ -252,7 +271,7 @@ namespace OpenCV_Vision_Pro
                 m_BlobMeasurementTable.Rows.Remove(row);
             }
         }
-
+        
         private void m_cbBlobOperation_SelectedIndexChanged(object sender, EventArgs e)
         {
             m_dgvBlobOperation.Rows.Add(new string[] { m_cbBlobOperation.SelectedItem.ToString() });
@@ -271,23 +290,5 @@ namespace OpenCV_Vision_Pro
             }
         }
 
-        private void m_dgvBlobResults_SelectionChanged(object sender, EventArgs e)
-        {
-            if (m_dgvBlobResults.Rows.Count == 0) { return; }
-            if (m_dgvBlobResults.SelectedRows.Count == 0) { return; }
-            try
-            {
-                int m_intNum = m_dgvBlobResults.SelectedRows[0].Index;
-                int N = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
-                Mat tempMat = blobTool.BlobImage.ToMat();
-                CvInvoke.Polylines(tempMat, blobTool.contourByRow[N], true, new MCvScalar(100, 150), 2);
-                resultSelectedImage = tempMat;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-
-        }
     }
 }

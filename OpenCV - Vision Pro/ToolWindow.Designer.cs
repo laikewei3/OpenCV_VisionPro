@@ -103,10 +103,9 @@ namespace OpenCV_Vision_Pro
         }
 
         #endregion
-
-        private System.Windows.Forms.Button m_RunToolBtn;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         public System.Windows.Forms.SplitContainer splitContainer1;
+        public Button m_RunToolBtn;
     }
 }

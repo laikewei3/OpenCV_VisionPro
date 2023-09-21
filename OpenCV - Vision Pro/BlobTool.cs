@@ -13,29 +13,39 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    //https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html
     public class BlobTool
-    {
-        public string polarity { get; set; }
-        public List<Blob> blobs { get; set; } = new List<Blob>();
+    {   //https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html
+        public BlobResults blobResults { get; set; } = new BlobResults();
+
+        //================================================= Parameters ====================================================
         public Dictionary<int,VectorOfPoint> contourByRow { get; set; } = new Dictionary<int,VectorOfPoint>();
-        public Bitmap BlobImage { get; set; }
         public Dictionary<string,ArrayList> MeasurementProperties { get; set; } = new Dictionary<string,ArrayList>();
+        public List<string> morphologyOperation { get; set; } = new List<string>();
         public double threshold { get; set; }
         public int minArea { get; set; } = 10;
-        public List<String> morphologyOperation {  get; set; } = new List<String>();
+        public string polarity { get; set; }
+        //=================================================================================================================
 
         public async void Run(Mat image)
         {
-            CvInvoke.CvtColor(image, image, ColorConversion.Bgr2Gray);
-            //CvInvoke.GaussianBlur(image, image, new Size(3, 3), 3);
+            contourByRow.Clear();
+            //================================================= Pre-Processing ============================================
             Mat filter_image = new Mat();
+            CvInvoke.CvtColor(image, image, ColorConversion.Bgr2Gray);
             CvInvoke.BilateralFilter(image, filter_image, 9, 20, 20);
             if (polarity == "Light blobs, Dark background")
                 CvInvoke.Threshold(filter_image, image, threshold, 255, ThresholdType.Binary);
             else
                 CvInvoke.Threshold(filter_image, image, threshold, 255, ThresholdType.BinaryInv);
-            
+            filter_image.Dispose();
+            if (morphologyOperation.Count > 0)
+            {
+                foreach (string operation in morphologyOperation)
+                    image = RunMorphologyOperation(image, operation);
+            }
+            //=============================================================================================================
+
+            //====================================== Find Blobs => Contours ===============================================
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             Mat hierarchy = new Mat();
             /*
@@ -48,16 +58,10 @@ namespace OpenCV_Vision_Pro
              * https://stackoverflow.com/questions/60095520/understanding-contour-hierarchies-how-to-distinguish-filled-circle-contour-and
              * [next, previous, first child, parent]
              */
-            if(morphologyOperation.Count > 0)
-            {
-                foreach(String operation in  morphologyOperation)
-                {
-                    image = RunMorphologyOperation(image,operation);
-                }
-            }
             CvInvoke.FindContours(image, contours, hierarchy, RetrType.Tree, ChainApproxMethod.ChainApproxSimple);
-            blobs = new List<Blob>();
-            contourByRow = new Dictionary<int,VectorOfPoint>();
+            //=============================================================================================================
+
+            //====================================== Draw Blobs + Calculation =============================================
             Bitmap combinedImage = new Bitmap(image.Width, image.Height);
             using (Graphics graphics = Graphics.FromImage(combinedImage))
             {
@@ -104,23 +108,30 @@ namespace OpenCV_Vision_Pro
                     using (Graphics contourGraphics = Graphics.FromImage(combinedImage))
                     {
                         contourGraphics.DrawPolygon(pen, contours[i].ToArray());
+                        pen.Dispose();
+                        contourGraphics.Dispose();
                     }
                     contourByRow.Add(j++, contours[i]);
-                    blobs.Add(m_blob);
+                    blobResults.blobs.Add(m_blob);
+                    graphics.Dispose();
                 }
-                BlobImage = combinedImage;
+                blobResults.BlobImage = combinedImage;
             }
-            String m_strBlobsFilter = "";
+            contours.Dispose();
+            hierarchy.Dispose();
+            //=============================================================================================================
+
+            //============================================= Filter Results ================================================
+            string m_strBlobsFilter = "";
             m_strBlobsFilter = createFilterString(MeasurementProperties, m_strBlobsFilter);
             if (m_strBlobsFilter != "")
             {
                 var options = ScriptOptions.Default.AddReferences(typeof(Blob).Assembly);
                 Func<Blob, bool> FilterExpression = await CSharpScript.EvaluateAsync<Func<Blob, bool>>(m_strBlobsFilter, options);
-                blobs = blobs.Where(FilterExpression).ToList();
+                blobResults.blobs = blobResults.blobs.Where(FilterExpression).ToList();
             }
-            hierarchy.Dispose();
+            //=============================================================================================================
         }
-
         private Mat RunMorphologyOperation(Mat image,string operation)
         {
             Mat kernel;
@@ -140,9 +151,9 @@ namespace OpenCV_Vision_Pro
             else if (operation.StartsWith("Open"))
                 CvInvoke.MorphologyEx(image, image, MorphOp.Open, kernel, new Point(), 1, BorderType.Default, new MCvScalar());
 
+            kernel.Dispose();
             return image;
         }
-
         private string createFilterString(Dictionary<String, ArrayList> MeasurementProperties, String m_strBlobsFilter)
         {
             if (MeasurementProperties.Count == 0)
@@ -154,7 +165,7 @@ namespace OpenCV_Vision_Pro
                 m_strBlobsFilter = "res => ";
             foreach (var condition in MeasurementProperties)
             {
-                String m_strName = condition.Key;
+                string m_strName = condition.Key;
                 ArrayList c = condition.Value;
                 if ((String)c[0] == "Exclude")
                 {
@@ -222,8 +233,6 @@ namespace OpenCV_Vision_Pro
         }*/
     }
 
-
-
     public class Blob
     {
         public int ID { get; set; }
@@ -270,5 +279,10 @@ namespace OpenCV_Vision_Pro
         public double BoundPrincipalHeight { get; set; }
         public double BoundPrincipalAspect { get; set; }
         public double NotClipped { get; set; }
+    }
+    public class BlobResults
+    {
+        public List<Blob> blobs { get; set; } = new List<Blob>();
+        public Bitmap BlobImage { get; set; }
     }
 }
