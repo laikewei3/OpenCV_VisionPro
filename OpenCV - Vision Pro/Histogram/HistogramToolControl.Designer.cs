@@ -89,7 +89,7 @@
             this.m_HistogramOutput.Location = new System.Drawing.Point(4, 22);
             this.m_HistogramOutput.Name = "m_HistogramOutput";
             this.m_HistogramOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.m_HistogramOutput.Size = new System.Drawing.Size(486, 519);
+            this.m_HistogramOutput.Size = new System.Drawing.Size(192, 519);
             this.m_HistogramOutput.TabIndex = 1;
             this.m_HistogramOutput.Text = "Output";
             this.m_HistogramOutput.UseVisualStyleBackColor = true;
@@ -129,7 +129,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(463, 305);
+            this.groupBox2.Size = new System.Drawing.Size(309, 305);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Statictics";
@@ -168,13 +168,13 @@
             this.m_HisOutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.m_HisOutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.m_HisOutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.m_HisOutTable.Size = new System.Drawing.Size(457, 286);
+            this.m_HisOutTable.Size = new System.Drawing.Size(303, 286);
             this.m_HisOutTable.TabIndex = 0;
             // 
             // m_tbSample
             // 
             this.m_tbSample.Enabled = false;
-            this.m_tbSample.Location = new System.Drawing.Point(130, 248);
+            this.m_tbSample.Location = new System.Drawing.Point(87, 248);
             this.m_tbSample.Name = "m_tbSample";
             this.m_tbSample.Size = new System.Drawing.Size(100, 20);
             this.m_tbSample.TabIndex = 15;
@@ -182,7 +182,7 @@
             // m_tbVariance
             // 
             this.m_tbVariance.Enabled = false;
-            this.m_tbVariance.Location = new System.Drawing.Point(130, 213);
+            this.m_tbVariance.Location = new System.Drawing.Point(87, 213);
             this.m_tbVariance.Name = "m_tbVariance";
             this.m_tbVariance.Size = new System.Drawing.Size(100, 20);
             this.m_tbVariance.TabIndex = 14;
@@ -190,7 +190,7 @@
             // m_tbSD
             // 
             this.m_tbSD.Enabled = false;
-            this.m_tbSD.Location = new System.Drawing.Point(130, 178);
+            this.m_tbSD.Location = new System.Drawing.Point(87, 178);
             this.m_tbSD.Name = "m_tbSD";
             this.m_tbSD.Size = new System.Drawing.Size(100, 20);
             this.m_tbSD.TabIndex = 13;
@@ -198,7 +198,7 @@
             // m_tbMean
             // 
             this.m_tbMean.Enabled = false;
-            this.m_tbMean.Location = new System.Drawing.Point(130, 143);
+            this.m_tbMean.Location = new System.Drawing.Point(87, 143);
             this.m_tbMean.Name = "m_tbMean";
             this.m_tbMean.Size = new System.Drawing.Size(100, 20);
             this.m_tbMean.TabIndex = 12;
@@ -206,7 +206,7 @@
             // m_tbMode
             // 
             this.m_tbMode.Enabled = false;
-            this.m_tbMode.Location = new System.Drawing.Point(130, 108);
+            this.m_tbMode.Location = new System.Drawing.Point(87, 108);
             this.m_tbMode.Name = "m_tbMode";
             this.m_tbMode.Size = new System.Drawing.Size(100, 20);
             this.m_tbMode.TabIndex = 11;
@@ -214,7 +214,7 @@
             // m_tbMedian
             // 
             this.m_tbMedian.Enabled = false;
-            this.m_tbMedian.Location = new System.Drawing.Point(130, 73);
+            this.m_tbMedian.Location = new System.Drawing.Point(87, 73);
             this.m_tbMedian.Name = "m_tbMedian";
             this.m_tbMedian.Size = new System.Drawing.Size(100, 20);
             this.m_tbMedian.TabIndex = 10;
@@ -222,7 +222,7 @@
             // m_tbMax
             // 
             this.m_tbMax.Enabled = false;
-            this.m_tbMax.Location = new System.Drawing.Point(130, 38);
+            this.m_tbMax.Location = new System.Drawing.Point(87, 38);
             this.m_tbMax.Name = "m_tbMax";
             this.m_tbMax.Size = new System.Drawing.Size(100, 20);
             this.m_tbMax.TabIndex = 9;
@@ -300,7 +300,7 @@
             // m_tbMin
             // 
             this.m_tbMin.Enabled = false;
-            this.m_tbMin.Location = new System.Drawing.Point(130, 3);
+            this.m_tbMin.Location = new System.Drawing.Point(87, 3);
             this.m_tbMin.Name = "m_tbMin";
             this.m_tbMin.Size = new System.Drawing.Size(100, 20);
             this.m_tbMin.TabIndex = 8;
@@ -324,6 +324,7 @@
             this.MinimumSize = new System.Drawing.Size(200, 0);
             this.Name = "HistogramToolControl";
             this.Size = new System.Drawing.Size(200, 545);
+            this.Load += new System.EventHandler(this.HistogramToolControl_Load);
             this.tabControl2.ResumeLayout(false);
             this.m_HistogramOutput.ResumeLayout(false);
             this.m_HistogramOutput.PerformLayout();

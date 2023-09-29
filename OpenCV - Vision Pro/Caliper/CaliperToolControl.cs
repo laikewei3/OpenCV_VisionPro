@@ -4,18 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using OpenCV_Vision_Pro.Interface;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class CaliperToolControl : UserControl
+    public partial class CaliperToolControl : UserControlBase
     {
         public Mat resultSelectedImage { get; set; } = new Mat();
-        public CaliperTool caliperTool { get; set; } = new CaliperTool();
-        public ROI m_roi { get; } = new ROI();
-        public List<Dictionary<string, Bitmap>> m_bitmapList { get; set; }
-        public CaliperToolControl()
+        public CaliperParams CaliperParams { get; set;}
+        public override DataGridView resultDataGrid { get; set; }
+        public override ROI m_roi { get { return CaliperParams.m_roi; } set {  } }
+        public override IParams parameter { get; set; }
+
+        public CaliperToolControl(IParams caliperParams)
         {
             InitializeComponent();
+            resultDataGrid = m_CaliperRes;
+            parameter = caliperParams;
+            CaliperParams = (CaliperParams)parameter;
+
             Panel panel = new Panel
             {
                 Height = 65,
@@ -25,19 +32,49 @@ namespace OpenCV_Vision_Pro
             {
                 Dock = DockStyle.Top
             };
-            tempPanel.Controls.Add(m_roi);
-            m_roi.Dock = DockStyle.Fill;
+            tempPanel.Controls.Add(CaliperParams.m_roi);
+            CaliperParams.m_roi.Dock = DockStyle.Fill;
             panel.Controls.Add(tempPanel);
             this.Controls.Add(panel);
         }
 
-        private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
+        private void CaliperToolControl_Load(object sender, EventArgs e)
         {
+            if (parameter.m_boolHasROI)
+            {
+                parameter.m_roi.m_comboBoxROI.SelectedIndex = 1;
+            }
+            if(CaliperParams.EdgeMode == m_radioPair.Text)
+                m_radioPair.Checked = true;
+            else
+                m_radioSingle.Checked = true;
+
+            if (CaliperParams.polarity1 == m_DL1.Text)
+                m_DL1.Checked = true;
+            else if (CaliperParams.polarity1 == m_LD1.Text)
+                m_LD1.Checked = true;
+            else
+                m_Any1.Checked = true;
+
+            if (CaliperParams.polarity0 == m_DL0.Text)
+                m_DL0.Checked = true;
+            else if (CaliperParams.polarity0 == m_LD0.Text)
+                m_LD0.Checked = true;
+            else
+                m_Any0.Checked = true;
+
+            m_NumEdgePairWidth.Value = (decimal)CaliperParams.estimatedWidth;
+            m_NumResult.Value = CaliperParams.maxResult;
+            m_NumContrastThreshold.Value = CaliperParams.contrastThreshold;
+        }
+
+        private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
+        {/*
             if (m_CaliperRes.Rows.Count == 0) { return; } // 什么row都没有
             if (m_CaliperRes.SelectedRows.Count == 0) { return; } // 目前没有row被selected
             try
             {
-                Mat tempMat = caliperTool.caliperImage.ToMat(); // for future reference
+                Mat tempMat = caliperTool.caliperImage; // for future reference
 
                 int edge0 = int.Parse(m_CaliperRes.SelectedRows[0].Cells[2].Value.ToString());
                 List<int> points = caliperTool.caliperPoints[edge0]; // 提取edge0资料
@@ -67,7 +104,7 @@ namespace OpenCV_Vision_Pro
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-            }
+            }*/
         }
         
         private void m_radioPair_CheckedChanged(object sender, EventArgs e)
@@ -76,41 +113,42 @@ namespace OpenCV_Vision_Pro
             {
                 m_gbEdge1Polarity.Enabled = true;
                 m_NumEdgePairWidth.Enabled = true;
-                caliperTool.caliperParams.EdgeMode = m_radioPair.Text;
+                CaliperParams.EdgeMode = m_radioPair.Text;
             }
             else
             {
                 m_gbEdge1Polarity.Enabled = false;
                 m_NumEdgePairWidth.Enabled = false;
-                caliperTool.caliperParams.EdgeMode = m_radioSingle.Text;
+                CaliperParams.EdgeMode = m_radioSingle.Text;
             }
         }
         
         private void edge0_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)
-                caliperTool.caliperParams.polarity0 = ((RadioButton)sender).Text;
+                CaliperParams.polarity0 = ((RadioButton)sender).Text;
         }
 
         private void edge1_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)
-                caliperTool.caliperParams.polarity1 = ((RadioButton)sender).Text;
+                CaliperParams.polarity1 = ((RadioButton)sender).Text;
         }
 
         private void m_NumEdgePairWidth_ValueChanged(object sender, EventArgs e)
         {
-            caliperTool.caliperParams.estimatedWidth = (double)m_NumEdgePairWidth.Value;
+            CaliperParams.estimatedWidth = (double)m_NumEdgePairWidth.Value;
         }
         
         void m_NumContrastThreshold_ValueChanged(object sender, EventArgs e)
         {
-            caliperTool.caliperParams.contrastThreshold = (int)m_NumContrastThreshold.Value;
+            CaliperParams.contrastThreshold = (int)m_NumContrastThreshold.Value;
         }
         
         private void m_NumResult_ValueChanged(object sender, EventArgs e)
         {
-            caliperTool.caliperParams.maxResult = (int)m_NumResult.Value;
+            CaliperParams.maxResult = (int)m_NumResult.Value;
         }
+
     }
 }

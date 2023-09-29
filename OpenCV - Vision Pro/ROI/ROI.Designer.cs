@@ -48,7 +48,6 @@
             this.m_comboBoxROI.Name = "m_comboBoxROI";
             this.m_comboBoxROI.Size = new System.Drawing.Size(309, 21);
             this.m_comboBoxROI.TabIndex = 1;
-            this.m_comboBoxROI.SelectedIndexChanged += new System.EventHandler(this.m_comboBoxROI_SelectedIndexChanged);
             // 
             // groupBox1
             // 

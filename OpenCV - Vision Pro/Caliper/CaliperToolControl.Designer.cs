@@ -438,6 +438,7 @@
             this.MinimumSize = new System.Drawing.Size(263, 0);
             this.Name = "CaliperToolControl";
             this.Size = new System.Drawing.Size(263, 495);
+            this.Load += new System.EventHandler(this.CaliperToolControl_Load);
             this.tabControl4.ResumeLayout(false);
             this.m_CaliperInput.ResumeLayout(false);
             this.panel1.ResumeLayout(false);

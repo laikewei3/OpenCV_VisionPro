@@ -39,17 +39,22 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.m_treeViewTools = new System.Windows.Forms.TreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.m_AddToolList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.m_GetInputImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.openImageFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.m_AddToolList.SuspendLayout();
+            this.m_GetInputImageMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -63,7 +68,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(0, 450);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(0, 561);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // flowLayoutPanel1
@@ -77,7 +82,7 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(800, 32);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(784, 32);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // m_BtnAddTool
@@ -144,7 +149,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(800, 450);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(784, 561);
             this.tableLayoutPanel2.TabIndex = 4;
             // 
             // splitContainer1
@@ -157,8 +162,12 @@
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.splitContainer1.Panel1.Controls.Add(this.m_treeViewTools);
-            this.splitContainer1.Size = new System.Drawing.Size(794, 412);
-            this.splitContainer1.SplitterDistance = 264;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.splitContainer1.Size = new System.Drawing.Size(778, 523);
+            this.splitContainer1.SplitterDistance = 258;
             this.splitContainer1.TabIndex = 3;
             // 
             // m_treeViewTools
@@ -170,10 +179,18 @@
             this.m_treeViewTools.Location = new System.Drawing.Point(0, 0);
             this.m_treeViewTools.Name = "m_treeViewTools";
             this.m_treeViewTools.SelectedImageIndex = 0;
-            this.m_treeViewTools.Size = new System.Drawing.Size(264, 412);
+            this.m_treeViewTools.Size = new System.Drawing.Size(258, 523);
             this.m_treeViewTools.TabIndex = 0;
             this.m_treeViewTools.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseClick);
             this.m_treeViewTools.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseDoubleClick);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "blob.png");
+            this.imageList1.Images.SetKeyName(1, "caliper.png");
+            this.imageList1.Images.SetKeyName(2, "histogram.png");
             // 
             // m_AddToolList
             // 
@@ -208,22 +225,48 @@
             this.histogramToolMenuItem.Text = "Histogram Tool";
             this.histogramToolMenuItem.Click += new System.EventHandler(this.histogramToolMenuItem_Click);
             // 
-            // imageList1
+            // m_GetInputImageMenu
             // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "blob.png");
-            this.imageList1.Images.SetKeyName(1, "caliper.png");
-            this.imageList1.Images.SetKeyName(2, "histogram.png");
+            this.m_GetInputImageMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openImageFileToolStripMenuItem,
+            this.openVideoFileToolStripMenuItem,
+            this.openCameraToolStripMenuItem});
+            this.m_GetInputImageMenu.Name = "m_GetInputImageMenu";
+            this.m_GetInputImageMenu.Size = new System.Drawing.Size(161, 70);
+            // 
+            // openImageFileToolStripMenuItem
+            // 
+            this.openImageFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openImageFileToolStripMenuItem.Image")));
+            this.openImageFileToolStripMenuItem.Name = "openImageFileToolStripMenuItem";
+            this.openImageFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openImageFileToolStripMenuItem.Text = "Open Image File";
+            this.openImageFileToolStripMenuItem.Click += new System.EventHandler(this.openImageFileToolStripMenuItem_Click);
+            // 
+            // openVideoFileToolStripMenuItem
+            // 
+            this.openVideoFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openVideoFileToolStripMenuItem.Image")));
+            this.openVideoFileToolStripMenuItem.Name = "openVideoFileToolStripMenuItem";
+            this.openVideoFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openVideoFileToolStripMenuItem.Text = "Open Video File";
+            this.openVideoFileToolStripMenuItem.Click += new System.EventHandler(this.openVideoFileToolStripMenuItem_Click);
+            // 
+            // openCameraToolStripMenuItem
+            // 
+            this.openCameraToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openCameraToolStripMenuItem.Image")));
+            this.openCameraToolStripMenuItem.Name = "openCameraToolStripMenuItem";
+            this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openCameraToolStripMenuItem.Text = "Open Camera";
+            this.openCameraToolStripMenuItem.Click += new System.EventHandler(this.openCameraToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "Form1";
             this.Text = "OpenCV - Vision Pro";
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -234,6 +277,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.m_AddToolList.ResumeLayout(false);
+            this.m_GetInputImageMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -253,7 +297,11 @@
         private System.Windows.Forms.ToolStripMenuItem histogramToolMenuItem;
         private System.Windows.Forms.TreeView m_treeViewTools;
         private System.Windows.Forms.Button m_RunBtnContinuous;
-        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ContextMenuStrip m_GetInputImageMenu;
+        private System.Windows.Forms.ToolStripMenuItem openImageFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openCameraToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openVideoFileToolStripMenuItem;
+        public System.Windows.Forms.ImageList imageList1;
     }
 }
 

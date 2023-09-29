@@ -1,4 +1,6 @@
-﻿namespace OpenCV_Vision_Pro
+﻿using System;
+
+namespace OpenCV_Vision_Pro
 {
     partial class BlobToolControl
     {
@@ -61,9 +63,9 @@
             this.m_NumSegmentation3 = new System.Windows.Forms.NumericUpDown();
             this.m_cbSegPolarity = new System.Windows.Forms.ComboBox();
             this.m_labelPolarity = new System.Windows.Forms.Label();
-            this.m_SegMap = new System.Windows.Forms.GroupBox();
             this.label13 = new System.Windows.Forms.Label();
             this.m_cbSegMode = new System.Windows.Forms.ComboBox();
+            this.m_SegMap = new System.Windows.Forms.GroupBox();
             this.m_BlobMeasurement = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
@@ -371,9 +373,9 @@
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel7, 0, 5);
             this.tableLayoutPanel2.Controls.Add(this.m_cbSegPolarity, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.m_labelPolarity, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.m_SegMap, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.label13, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.m_cbSegMode, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.m_SegMap, 0, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -577,16 +579,6 @@
             this.m_labelPolarity.TabIndex = 2;
             this.m_labelPolarity.Text = "Polarity:";
             // 
-            // m_SegMap
-            // 
-            this.m_SegMap.Location = new System.Drawing.Point(3, 48);
-            this.m_SegMap.Name = "m_SegMap";
-            this.m_SegMap.Size = new System.Drawing.Size(157, 100);
-            this.m_SegMap.TabIndex = 16;
-            this.m_SegMap.TabStop = false;
-            this.m_SegMap.Text = "Map";
-            this.m_SegMap.Visible = false;
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
@@ -615,6 +607,16 @@
             this.m_cbSegMode.Name = "m_cbSegMode";
             this.m_cbSegMode.Size = new System.Drawing.Size(157, 21);
             this.m_cbSegMode.TabIndex = 1;
+            // 
+            // m_SegMap
+            // 
+            this.m_SegMap.Location = new System.Drawing.Point(3, 48);
+            this.m_SegMap.Name = "m_SegMap";
+            this.m_SegMap.Size = new System.Drawing.Size(157, 100);
+            this.m_SegMap.TabIndex = 16;
+            this.m_SegMap.TabStop = false;
+            this.m_SegMap.Text = "Map";
+            this.m_SegMap.Visible = false;
             // 
             // m_BlobMeasurement
             // 
@@ -671,51 +673,6 @@
             this.m_cbBlobProperties.DropDownWidth = 150;
             this.m_cbBlobProperties.FormattingEnabled = true;
             this.m_cbBlobProperties.IntegralHeight = false;
-            this.m_cbBlobProperties.Items.AddRange(new object[] {
-            "Area",
-            "CenterMassX",
-            "CenterMassY",
-            "ConnectivityLabel",
-            "Angle",
-            "BoundaryPixelLength",
-            "Perimeter",
-            "NumChildren",
-            "InertiaX",
-            "InertiaY",
-            "InertiaMin",
-            "InertiaMax",
-            "Elongation",
-            "Acircularity",
-            "AcircularityRms",
-            "ImageBoundCenterX",
-            "ImageBoundCenterY",
-            "ImageBoundMinX",
-            "ImageBoundMaxX",
-            "ImageBoundMinY",
-            "ImageBoundMaxY",
-            "ImageBoundWidth",
-            "ImageBoundHeight",
-            "ImageBoundAspect",
-            "MedianX",
-            "MedianY",
-            "BoundCenterX",
-            "BoundCenterY",
-            "BoundMinX",
-            "BoundMaxX",
-            "BoundMinY",
-            "BoundMaxY",
-            "BoundWidth",
-            "BoundHeight",
-            "BoundAspect",
-            "BoundPrincipalMinX",
-            "BoundPrincipalMaxX",
-            "BoundPrincipalMinY",
-            "BoundPrincipalMaxY",
-            "BoundPrincipalWidth",
-            "BoundPrincipalHeight",
-            "BoundPrincipalAspect",
-            "NotClipped",
-            "<ADD ALL>"});
             this.m_cbBlobProperties.Location = new System.Drawing.Point(3, 3);
             this.m_cbBlobProperties.MaxDropDownItems = 50;
             this.m_cbBlobProperties.Name = "m_cbBlobProperties";
@@ -811,14 +768,18 @@
             // 
             this.m_dgvBlobResults.AllowUserToAddRows = false;
             this.m_dgvBlobResults.AllowUserToDeleteRows = false;
+            this.m_dgvBlobResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
             this.m_dgvBlobResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.m_dgvBlobResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_dgvBlobResults.Location = new System.Drawing.Point(3, 3);
+            this.m_dgvBlobResults.MultiSelect = false;
             this.m_dgvBlobResults.Name = "m_dgvBlobResults";
-            this.m_dgvBlobResults.RowHeadersVisible = false;
+            this.m_dgvBlobResults.ReadOnly = true;
             this.m_dgvBlobResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.m_dgvBlobResults.Size = new System.Drawing.Size(339, 551);
             this.m_dgvBlobResults.TabIndex = 0;
+            this.m_dgvBlobResults.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.m_dgvBlobResults_ColumnAdded);
+            this.m_dgvBlobResults.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.m_dgvBlobResults_DataBindingComplete);
             this.m_dgvBlobResults.SelectionChanged += new System.EventHandler(this.m_dgvBlobResults_SelectionChanged);
             // 
             // BlobToolControl
@@ -830,6 +791,7 @@
             this.MinimumSize = new System.Drawing.Size(353, 0);
             this.Name = "BlobToolControl";
             this.Size = new System.Drawing.Size(353, 583);
+            this.Load += new System.EventHandler(this.BlobToolControl_Load);
             this.tabControl3.ResumeLayout(false);
             this.m_BlobInput.ResumeLayout(false);
             this.m_BlobInput.PerformLayout();

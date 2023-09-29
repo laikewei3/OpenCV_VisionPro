@@ -6,75 +6,240 @@ using System.IO;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Threading.Tasks;
+using Emgu.CV.Dnn;
+using System.Text.RegularExpressions;
+using Emgu.CV.CvEnum;
+using Microsoft.CodeAnalysis.FlowAnalysis;
+using Emgu.CV.Reg;
+using Emgu.CV.UI;
+using System.ComponentModel;
+using System.Collections;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace OpenCV_Vision_Pro
 {
     public partial class Form1 : Form
     {
-        public static DisplayControl m_displayControl;
-        public static int m_cntImageIndex = 0;
-        private List<ToolsClass> m_toolsList = new List<ToolsClass>();
-        public static List<Bitmap> m_inputImagesList;
-        private bool runContinue = false;
+        private static DisplayControl m_displayControl;
+        public static AutoDisposeDict<string,Mat> m_bitmapList {  get { return m_displayControl.m_bitmapList; } private set { m_displayControl.m_bitmapList = value; } }
+        public static BindingList<string> m_form1DisplaySelection { get; private set; }
+
+        public static int m_cntImageIndex = 0; 
+        public static AutoDisposeList<Mat> m_inputImagesList;
+        private AutoDisposeList<IToolBase> m_toolsList;
         private bool openNewImage = false;
         private int m_intCntBlob = 0;
         private int m_intCntCaliper = 0;
         private int m_intCntHistogram = 0;
         private Timer m_timer;
 
+        private VideoCapture videoCapture;
+        private bool processing = false; // Flag to avoid processing multiple frames simultaneously
+        private bool resizedOnce = false;
+
+        private static bool checkContinue = false;
+        public static bool runContinue
+        {
+            get { return checkContinue; }
+            set { 
+                checkContinue = value;
+                ToolWindow.runContinue = value;
+            }
+        }
+        
         public Form1()
         {
             InitializeComponent();
-            m_displayControl = new DisplayControl();
-            m_displayControl.Dock = DockStyle.Fill;
+            m_displayControl = new DisplayControl()
+            {
+                Dock = DockStyle.Fill,
+                m_DisplaySelection = new BindingList<string>()
+            };
             splitContainer1.Panel2.Controls.Add(m_displayControl);
-            //m_display.Paint += ROI_Paint;
-            m_timer = new Timer();
-            m_timer.Tick += timer1_Tick;
+            m_form1DisplaySelection = m_displayControl.m_DisplaySelection;
+            BindingSource m_bindingSource = new BindingSource();
+            m_bindingSource.DataSource = m_form1DisplaySelection;
+            m_displayControl.m_cbImages.DataSource = m_bindingSource;
+            m_toolsList = new AutoDisposeList<IToolBase>();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // Check if the form is closing due to user action (not application exit).
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                Application.Idle -= ProcessFrame;
+                if(videoCapture != null)
+                {
+                    videoCapture.Stop();
+                    videoCapture.Dispose();
+                }
+            }
         }
 
         private void m_OpenBtn_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "All File (*.*) | *.*";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                m_displayControl.m_cbImages.Items.Clear();
-                m_displayControl.m_bitmapList.Clear();
-                using (Image image = Image.FromFile(openFileDialog.FileName))
-                {
-                    if (image != null)
-                    {
-                        m_cntImageIndex = 0;
-                        int numberOfPages = image.GetFrameCount(System.Drawing.Imaging.FrameDimension.Page);
-                        m_inputImagesList = new List<Bitmap>();
-                        for (int page = 0; page < numberOfPages; page++)
-                        {
-                            image.SelectActiveFrame(FrameDimension.Page, page); // Switch to the current page
+            m_GetInputImageMenu.Show(m_OpenBtn, new Point(0, m_OpenBtn.Height));
+        }
 
-                            using (MemoryStream memStream = new MemoryStream())
+        private void openImageFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "All File (*.*) | *.*";
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        if (videoCapture != null)
+                        {
+                            Application.Idle -= ProcessFrame;
+                            if (videoCapture != null)
                             {
-                                image.Save(memStream, ImageFormat.Bmp);
-                                using (Bitmap m_image = (Bitmap)Bitmap.FromStream(memStream))
-                                {
-                                    m_displayControl.m_display.Width = m_image.Width;
-                                    m_displayControl.m_display.Height = m_image.Height;
-                                    m_inputImagesList.Add(new Bitmap(m_image));
-                                    m_image.Dispose();
-                                }
-                                memStream.Dispose();
+                                videoCapture.Stop();
+                                videoCapture.Dispose();
                             }
                         }
-                        m_displayControl.m_bitmapList = m_inputImagesList.Select(x => new Dictionary<string, Bitmap> { { "LastRun.OutputImage", x } }).ToList();
-                        m_displayControl.m_display.Image = m_displayControl.m_bitmapList[0]["LastRun.OutputImage"];
-                        m_displayControl.m_cbImages.Items.Add("LastRun.OutputImage");
-                        m_displayControl.m_cbImages.SelectedIndex = 0;
-                        openNewImage = true;
+                        m_form1DisplaySelection.Clear();
+                        m_bitmapList?.Dispose();
+                        using (Image image = Image.FromFile(openFileDialog.FileName))
+                        {
+                            if (image != null)
+                            {
+                                m_cntImageIndex = 0;
+                                int numberOfPages = image.GetFrameCount(FrameDimension.Page);
+
+                                m_inputImagesList = new AutoDisposeList<Mat>();
+                                for (int page = 0; page < numberOfPages; page++)
+                                {
+                                    image.SelectActiveFrame(FrameDimension.Page, page); // Switch to the current page
+
+                                    using (MemoryStream memStream = new MemoryStream())
+                                    {
+                                        image.Save(memStream, ImageFormat.Bmp);
+                                        using (Bitmap m_image = (Bitmap)Bitmap.FromStream(memStream))
+                                        {
+                                            m_displayControl.m_display.Width = m_image.Width;
+                                            m_displayControl.m_display.Height = m_image.Height;
+                                            Mat m_mat = new Mat();
+                                            CvInvoke.CvtColor(m_image.ToMat(), m_mat, ColorConversion.Bgr2Gray);
+                                            m_inputImagesList.Add(m_mat);
+                                        }
+                                    }
+                                }
+                                m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
+                                m_displayControl.m_display.Image = m_bitmapList["LastRun.OutputImage"];
+                                m_form1DisplaySelection.Add("LastRun.OutputImage");
+                                openNewImage = true;
+                            }
+                        }
                     }
-                    image.Dispose();
                 }
             }
-            openFileDialog.Dispose();
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid Images Input");
+            }
+        }
+        
+        private async void ProcessFrame(object sender, EventArgs e)
+        {
+            if (processing) return; 
+            processing = true;
+
+            try
+            {
+                Mat frame = new Mat();
+                videoCapture.Read(frame);
+                if (videoCapture != null && !frame.IsEmpty)
+                {
+                    if(!resizedOnce)
+                    {
+                        double widthScale = (double)m_displayControl.m_display.Width / frame.Width;
+                        double heightScale = (double)m_displayControl.m_display.Height / frame.Height;
+                        double minScale = Math.Min(widthScale, heightScale);
+
+                        Size newSize = new Size((int)(frame.Width * minScale), (int)(frame.Height * minScale));
+                        CvInvoke.Resize(frame, frame, newSize);
+                        m_displayControl.m_display.Size = newSize;
+                    }
+
+                    CvInvoke.CvtColor(frame, frame, ColorConversion.Bgr2Gray);
+                    
+                    await Task.Run(() =>
+                    {
+                        if (m_displayControl.m_display.Image != null)
+                            m_displayControl.m_display.Image.Dispose();
+
+                        if (m_inputImagesList != null)
+                        {
+                            m_inputImagesList[0].Dispose();
+                            m_inputImagesList[0] = frame.Clone();
+                        }
+                        else
+                            m_inputImagesList = new AutoDisposeList<Mat> { frame.Clone() };
+
+                        m_bitmapList?.Dispose();
+                        m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[0].Clone() } };
+                        System.Threading.Thread.Sleep(10);
+
+                    });
+
+                    if (String.Compare(m_displayControl.m_cbImages.SelectedItem.ToString(), "LastRun.OutputImage") == 0)
+                        m_displayControl.m_display.Image = m_bitmapList["LastRun.OutputImage"].Clone();
+                    else
+                    {
+                        m_displayControl.m_display.Image?.Dispose();
+                        if (m_bitmapList.ContainsKey("LastRun.HistogramTool1.Histogram"))
+                            m_displayControl.m_display.Image = m_bitmapList["LastRun.HistogramTool1.Histogram"].Clone();
+                    }
+                    frame.Dispose();
+                }
+            }
+            finally
+            {
+                processing = false;
+            }
+        }
+
+        private void openCameraToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_displayControl.m_cbImages.Items.Clear();
+            videoCapture = new VideoCapture(0);
+            resizedOnce = false;
+            processing = false;
+            m_displayControl.m_VideoCapture = videoCapture;
+            m_displayControl.m_cbImages.Items.Add("LastRun.OutputImage");
+            m_displayControl.m_cbImages.SelectedIndex = 0;
+            Application.Idle += ProcessFrame;
+        }
+
+        private void openVideoFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "Video File (*.mp4) | *.mp4";
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        m_bitmapList?.Dispose();
+
+                        resizedOnce = false;
+                        processing = false;
+                        m_form1DisplaySelection.Clear();
+                        
+                        videoCapture = new VideoCapture(openFileDialog.FileName);
+                        m_displayControl.m_VideoCapture = videoCapture;
+                        m_form1DisplaySelection.Add("LastRun.OutputImage");
+                        Application.Idle += ProcessFrame;
+                    }
+                }
+            }
+            catch(Exception ex) { MessageBox.Show(ex.ToString()); }
         }
 
         private void m_BtnAddTool_Click(object sender, EventArgs e)
@@ -84,93 +249,50 @@ namespace OpenCV_Vision_Pro
 
         private void m_RunBtn_Click(object sender, EventArgs e)
         {
-            if (m_displayControl.m_display.Image == null)
+            // Return if no input
+            if (m_inputImagesList == null && videoCapture == null)
             {
                 runContinue = false;
-                m_timer.Stop();
+                m_timer?.Stop();
                 m_OpenBtn.Enabled = true;
                 m_BtnAddTool.Enabled = true;
                 m_treeViewTools.Enabled = true;
                 MessageBox.Show("No Input Image");
                 return;
             }
-            if (m_inputImagesList == null)
-                return;
+
+            // Return if no input
             if (m_inputImagesList.Count <= 0)
                 return;
             
+            // Update input image index
             m_cntImageIndex++;
             if (m_cntImageIndex == m_inputImagesList.Count)
                 m_cntImageIndex = 0;
+            
+            m_bitmapList?.Dispose();
+            m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
 
-            foreach (ToolsClass tool in m_toolsList)
+            // Continuously run all the tool
+            foreach (IToolBase tool in m_toolsList)
             {
-                string m_strToolType = tool.TypeFilled.ToString();
-                ToolWindow toolWindow = new ToolWindow()
-                {
-                    Size = new Size(0, 0),
-                    FormBorderStyle = FormBorderStyle.FixedToolWindow,
-                    WindowState = FormWindowState.Minimized,
-                    ShowInTaskbar = false
-                };
+                tool.m_bitmapList?.Dispose();
+                tool.m_bitmapList = new AutoDisposeDict<string, Mat> { { "Current.InputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
+                if (!tool.m_DisplaySelection.Contains("Current.InputImage"))
+                    tool.m_DisplaySelection.Add("Current.InputImage");
 
-                if (openNewImage) { tool.m_bitmapList = null; }
+                Rectangle m_rectangle;
+                if (tool.m_rectROI == null || !tool.parameter.m_boolHasROI)
+                    m_rectangle = new Rectangle();
+                else
+                    m_rectangle = tool.m_rectROI;
 
-                bool newImage = false;
-                if (tool.m_bitmapList == null)
-                {
-                    tool.m_bitmapList = m_inputImagesList.Select(x => new Dictionary<string, Bitmap> { { "Current.InputImage", x } }).ToList();
-                    newImage = true;
-                }
-                
-                switch (m_strToolType) { 
-                    case "BlobToolControl":
-                        BlobToolControl m_tempBlobControl = tool.BlobToolControl;
-                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempBlobControl);
-                        toolWindow.tableLayoutPanel1.SetRow(m_tempBlobControl,1);
-                        toolWindow.m_roi = m_tempBlobControl.m_roi;
-                        if (m_tempBlobControl.m_bitmapList != null || !newImage)
-                            tool.m_bitmapList = m_tempBlobControl.m_bitmapList;
-                        else
-                            m_tempBlobControl.m_bitmapList = tool.m_bitmapList;
-                        toolWindow.Text = m_tempBlobControl.Name;
-                        break;
-                    case "CaliperToolControl":
-                        CaliperToolControl m_tempCaliperControl = tool.CaliperToolControl;
-                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempCaliperControl);
-                        toolWindow.tableLayoutPanel1.SetRow(m_tempCaliperControl,1);
-                        toolWindow.m_roi = m_tempCaliperControl.m_roi;
-                        if (m_tempCaliperControl.m_bitmapList != null || !newImage)
-                            tool.m_bitmapList = m_tempCaliperControl.m_bitmapList;
-                        else
-                            m_tempCaliperControl.m_bitmapList = tool.m_bitmapList;
-                        toolWindow.Text = m_tempCaliperControl.Name;
-                        break;
-                    case "HistogramToolControl":
-                        HistogramToolControl m_tempHistControl = tool.HistogramToolControl;
-                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempHistControl);
-                        toolWindow.tableLayoutPanel1.SetRow(m_tempHistControl,1);
-                        toolWindow.m_roi = m_tempHistControl.m_roi;
-                        if (m_tempHistControl.m_bitmapList != null || !newImage)
-                            tool.m_bitmapList = m_tempHistControl.m_bitmapList;
-                        else
-                            m_tempHistControl.m_bitmapList = tool.m_bitmapList;
-                        toolWindow.Text = m_tempHistControl.Name;
-                        break;
-                    default:
-                        MessageBox.Show("Error");
-                        break;
-                }
-                toolWindow.m_displayControl.m_bitmapList = tool.m_bitmapList;
-
-                toolWindow.Show(); 
-                toolWindow.m_RunToolBtn.PerformClick();
-                System.Threading.Thread.Sleep(1);
-                toolWindow.Close();
-                toolWindow.Dispose();
+                tool.Run(tool.m_bitmapList["Current.InputImage"], m_rectangle);
+                tool.showResultImages();
             }
-            openNewImage = false;
-            m_displayControl.m_display.Image = m_displayControl.m_bitmapList[m_cntImageIndex][m_displayControl.m_cbImages.SelectedItem.ToString()];
+
+            // Update the display image according to the combo box selection
+            m_displayControl.m_display.Image = m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()];
         }
 
         private void blobToolMenuItem_Click(object sender, EventArgs e)
@@ -181,12 +303,8 @@ namespace OpenCV_Vision_Pro
                 SelectedImageIndex = 0
             };
             m_treeViewTools.Nodes.Add(m_treeNode);
-            BlobToolControl blobTool = new BlobToolControl
-            {
-                Dock = DockStyle.Fill,
-                Name = "BlobTool" + (m_intCntBlob)
-            };
-            m_toolsList.Add(new ToolsClass(blobTool));
+            BlobTool blobTool = new BlobTool("BlobTool" + (m_intCntBlob).ToString());
+            m_toolsList.Add(blobTool);
         }
 
         private void caliperToolMenuItem_Click(object sender, EventArgs e)
@@ -197,12 +315,8 @@ namespace OpenCV_Vision_Pro
                 SelectedImageIndex = 1
             };
             m_treeViewTools.Nodes.Add(m_treeNode);
-            CaliperToolControl caliperTool = new CaliperToolControl
-            {
-                Dock = DockStyle.Fill,
-                Name = "CaliperTool" + (m_intCntCaliper)
-            };
-            m_toolsList.Add(new ToolsClass(caliperTool));
+            CaliperTool caliperTool = new CaliperTool("CaliperTool" + (m_intCntCaliper).ToString());
+            m_toolsList.Add(caliperTool);
         }
 
         private void histogramToolMenuItem_Click(object sender, EventArgs e)
@@ -213,24 +327,29 @@ namespace OpenCV_Vision_Pro
                 SelectedImageIndex = 2
             };
             m_treeViewTools.Nodes.Add(m_treeNode);
-            HistogramToolControl histogramTool = new HistogramToolControl
-            {
-                Dock = DockStyle.Fill,
-                Name = "HistogramTool" + (m_intCntHistogram)
-            };
-            m_toolsList.Add(new ToolsClass(histogramTool));
+            HistogramTool histogramTool = new HistogramTool("HistogramTool" + (m_intCntHistogram).ToString());
+            m_toolsList.Add(histogramTool);
         }
 
         private void m_treeViewTools_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {   
             if(e.Button == MouseButtons.Right) {
                 TreeView m_treeView = (TreeView)sender;
+                if (m_treeView == null)
+                    return;
+                if(m_treeView.SelectedNode == null)
+                    return;
                 DialogResult m_deleteSelection = MessageBox.Show("Are u sure want to delete "+ m_treeView.SelectedNode.Text+"?","",MessageBoxButtons.YesNo);
                 if (m_deleteSelection == DialogResult.Yes)
                 {
-                    m_toolsList[m_treeView.SelectedNode.Index].Dispose();
-                    m_toolsList.RemoveAt(m_treeView.SelectedNode.Index);
-                    m_treeView.Nodes.Remove(m_treeView.SelectedNode);
+                    TreeNode node = m_treeView.SelectedNode;
+                    string toolNode = node.Text;
+                    if (m_form1DisplaySelection.Any<string>(x => ((String)x).Contains(toolNode)))
+                        m_form1DisplaySelection.Remove(m_form1DisplaySelection.First<string>(x => ((String)x).Contains(toolNode)));
+                    m_toolsList[node.Index].m_bitmapList?.Dispose();
+                    m_toolsList[node.Index].Dispose();
+                    m_toolsList.RemoveAt(node.Index);
+                    m_treeView.Nodes.Remove(node);
                 }
             }
         }
@@ -242,63 +361,39 @@ namespace OpenCV_Vision_Pro
                 TreeView m_treeView = (TreeView)sender;
                 if (m_treeView == null)
                     return;
-                ToolWindow toolWindow = new ToolWindow
-                {
-                    Text = m_treeView.SelectedNode.Text
-                };
-                ToolsClass tool = m_toolsList[m_treeView.SelectedNode.Index];
-                if (openNewImage) { tool.m_bitmapList = null; openNewImage = false; }
+                
+                IToolBase tool = m_toolsList[m_treeView.SelectedNode.Index];
 
-                bool newImage = false;
-                if (tool.m_bitmapList == null || tool.m_bitmapList.Count == 0)
+                if (tool.m_bitmapList == null || openNewImage)
                 {
-                    if(m_inputImagesList != null)
+                    if (m_bitmapList != null)
                     {
-                        tool.m_bitmapList = m_inputImagesList.Select(x => new Dictionary<string, Bitmap> { { "Current.InputImage", x } }).ToList();
-                        newImage = true;
+                        tool.m_DisplaySelection.Clear();
+                        tool.m_bitmapList = new AutoDisposeDict<string, Mat> { { "Current.InputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
+                        tool.m_DisplaySelection.Add("Current.InputImage");
+                    }
+                    openNewImage = false;
+                }
+                else
+                {
+                    if (m_bitmapList != null)
+                    {
+                        tool.m_bitmapList["Current.InputImage"]?.Dispose();
+                        tool.m_bitmapList["Current.InputImage"] = m_inputImagesList[m_cntImageIndex].Clone();
                     }
                 }
+                ToolWindow fc = Application.OpenForms[tool.ToolName] as ToolWindow;
+                fc?.Close();
+                fc?.Dispose();
 
-                string m_strToolType = tool.TypeFilled.ToString();
-                switch (m_strToolType)
+                ToolWindow toolWindow = new ToolWindow(tool)
                 {
-                    case "BlobToolControl":
-                        BlobToolControl m_tempBlobControl = tool.BlobToolControl;
-                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempBlobControl);
-                        toolWindow.tableLayoutPanel1.SetRow(m_tempBlobControl,1);
-                        toolWindow.m_roi = m_tempBlobControl.m_roi;
-                        if (m_tempBlobControl.m_bitmapList != null || !newImage)
-                            tool.m_bitmapList = m_tempBlobControl.m_bitmapList;
-                        else
-                            m_tempBlobControl.m_bitmapList = tool.m_bitmapList;
-                        break;
-                    case "CaliperToolControl":
-                        CaliperToolControl m_tempCaliperControl = tool.CaliperToolControl;
-                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempCaliperControl);
-                        toolWindow.tableLayoutPanel1.SetRow(m_tempCaliperControl,1);
-                        toolWindow.m_roi = m_tempCaliperControl.m_roi;
-                        if (m_tempCaliperControl.m_bitmapList != null || !newImage)
-                            tool.m_bitmapList = m_tempCaliperControl.m_bitmapList;
-                        else
-                            m_tempCaliperControl.m_bitmapList = tool.m_bitmapList;
-                        break;
-                    case "HistogramToolControl":
-                        HistogramToolControl m_tempHistControl = tool.HistogramToolControl;
-                        toolWindow.tableLayoutPanel1.Controls.Add(m_tempHistControl);
-                        toolWindow.tableLayoutPanel1.SetRow(m_tempHistControl,1);
-                        toolWindow.m_roi = m_tempHistControl.m_roi;
-                        if (m_tempHistControl.m_bitmapList != null || !newImage)
-                            tool.m_bitmapList = m_tempHistControl.m_bitmapList;
-                        else
-                            m_tempHistControl.m_bitmapList = tool.m_bitmapList;
-                        break;
-                    default:
-                        MessageBox.Show("Error");
-                        break;
-                }
-                toolWindow.m_displayControl.m_bitmapList = tool.m_bitmapList;
+                    Text = m_treeView.SelectedNode.Text,
+                    Name = tool.ToolName
+                };
 
                 toolWindow.Show();
+                
             }
             catch (Exception ex)
             {
@@ -311,20 +406,21 @@ namespace OpenCV_Vision_Pro
             if (!runContinue)
             {
                 // Start continuous clicking of m_RunBtnContinuous when m_RunBtn is clicked for the first time.
+                m_timer = new Timer();
+                m_timer.Tick += timer1_Tick;
                 runContinue = true;
                 m_timer.Start();
                 m_OpenBtn.Enabled = false;
                 m_BtnAddTool.Enabled = false;
-                m_treeViewTools.Enabled = false;
             }
             else
             {
                 // Stop continuous clicking of m_RunBtnContinuous when m_RunBtn is clicked for the second time.
                 runContinue = false;
                 m_timer.Stop();
+                m_timer.Dispose();
                 m_OpenBtn.Enabled = true;
                 m_BtnAddTool.Enabled = true;
-                m_treeViewTools.Enabled = true;
             }
         }
 
@@ -342,7 +438,6 @@ namespace OpenCV_Vision_Pro
             e.Graphics.ExcludeClip(m_display.Controls[0].Bounds);
             using (var b = new SolidBrush(Color.FromArgb(100, Color.Black)))
                 e.Graphics.FillRectangle(b, m_display.ClientRectangle);
-
         }*/
     }
 }

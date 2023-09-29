@@ -1,6 +1,6 @@
 ﻿using Emgu.CV;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -10,37 +10,43 @@ namespace OpenCV_Vision_Pro
 {
     public partial class DisplayControl : UserControl
     {
-        public List<Dictionary<string, Bitmap>> m_bitmapList {  get; set; } = new List<Dictionary<string, Bitmap>>();
+        public VideoCapture m_VideoCapture { get; set; }
+        public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public ROI m_roi { get; set; }
-
+        public BindingList<string> m_DisplaySelection { get; set; }
         public DisplayControl()
         {
             InitializeComponent();
             panel2.MouseWheel += panel2_MouseWheel;
-        }
-        
-        private void m_cbImages_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string m_strSelectedItem = m_cbImages.SelectedItem.ToString();
-            Bitmap selectedBitmap;
-            if (Form1.m_cntImageIndex <= 0)
-               selectedBitmap = m_bitmapList[0][m_strSelectedItem];
-            else
-                selectedBitmap = m_bitmapList[Form1.m_cntImageIndex][m_strSelectedItem];
-            m_display.Width = selectedBitmap.Width;
-            m_display.Height = selectedBitmap.Height;
-            m_display.Image = selectedBitmap;
             CenterPictureBox();
+        }
 
-            if (m_roi!=null)
+        private void m_cbImages_SelectedIndexChanged(object sender, EventArgs e)
+        {   
+            if(m_VideoCapture == null)
             {
-                if (m_cbImages.SelectedIndex == 0 && m_roi.m_comboBoxROI.SelectedIndex != 0)
-                    m_roi.FrameControl.Visible = true;
+                if (m_cbImages.SelectedItem == null) return;
+                string m_strSelectedItem = m_cbImages.SelectedItem.ToString();
+                Mat selectedImage;
+                if (Form1.m_cntImageIndex <= 0)
+                    selectedImage = m_bitmapList[m_strSelectedItem];
                 else
-                    m_roi.FrameControl.Visible = false;
+                    selectedImage = m_bitmapList[m_strSelectedItem];
+                m_display.Width = selectedImage.Width;
+                m_display.Height = selectedImage.Height;
+                m_display.Image = selectedImage;
+                CenterPictureBox();
+
+                if (m_roi != null)
+                {
+                    if (m_cbImages.SelectedIndex == 0 && m_roi.m_comboBoxROI.SelectedIndex != 0)
+                        m_roi.FrameControl.Visible = true;
+                    else
+                        m_roi.FrameControl.Visible = false;
+                }
             }
         }
-
+        /*
         /// <summary>https://stackoverflow.com/a/24199315/1115360
         /// Resize the image to the specified width and height.
         /// </summary>
@@ -48,8 +54,9 @@ namespace OpenCV_Vision_Pro
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        private Bitmap ResizeImage(Image image, int width, int height)
+        private Mat ResizeImage(Mat image, int width, int height)
         {
+             //use Image as input Image
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
 
@@ -67,15 +74,14 @@ namespace OpenCV_Vision_Pro
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                    wrapMode.Dispose();
                 }
-                graphics.Dispose();
             }
-
+        Mat destImage = new Mat();
+            CvInvoke.Resize(image, destImage, new Size(width, height));
             return destImage;
-        }
+        }*/
 
-        private void panel2_Resize(object sender, EventArgs e)
+        private void resize(object sender, EventArgs e)
         {
             CenterPictureBox();
         }
@@ -117,7 +123,7 @@ namespace OpenCV_Vision_Pro
         
         private void CenterPictureBox()
         {
-            panel2.AutoScrollPosition = new Point((panel2.Width + m_display.Width / 2),
+            panel2.AutoScrollPosition = new Point((m_display.Parent.ClientSize.Width + m_display.Width / 2),
                                         m_display.Parent.ClientSize.Height / 2 + m_display.Height / 2);
 
             m_display.Location = new Point((m_display.Parent.ClientSize.Width / 2 - m_display.Width / 2),
@@ -125,48 +131,14 @@ namespace OpenCV_Vision_Pro
             m_display.Refresh();
         }
 
+        /*
         public Mat getRegion()
         {
-            Mat m = ResizeImage(m_display.Image, m_display.Width, m_display.Height).ToMat();
-            Mat regionImage =  new Mat(m, getRegionRect());
-            m.Dispose();
-            return regionImage;
-        }
-
-        public Rectangle getRegionRect()
-        {
-            int width, height;
-            int X = 0;
-            int Y = 0;
-
-            if (X < 0)
-                width = m_roi.ROI_Width + m_roi.X;
-            else if (m_roi.X + m_roi.ROI_Width > m_display.Width)
-            {
-                X = m_roi.X;
-                width = m_display.Width - m_roi.X;
-            }
-            else
-            {
-                X = m_roi.X;
-                width = m_roi.ROI_Width;
-            }
-
-            if (m_roi.Y < 0)
-                height = m_roi.ROI_Height + m_roi.Y;
-            else if (m_roi.Y + m_roi.ROI_Height > m_display.Height)
-            {
-                Y = m_roi.Y;
-                height = m_display.Height - m_roi.Y;
-            }
-            else
-            {
-                Y = m_roi.Y;
-                height = m_roi.ROI_Height;
-            }
-
-            return new Rectangle(X, Y, width, height);
-        }
+            Mat m = ResizeImage((Mat)m_display.Image, m_display.Width, m_display.Height);
+            //Mat regionImage = new Mat(m, getRegionRect());
+            //m.Dispose();
+            return m;
+        }*/
 
         protected override CreateParams CreateParams
         {

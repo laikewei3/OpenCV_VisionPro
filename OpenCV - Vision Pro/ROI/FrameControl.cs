@@ -10,9 +10,7 @@ namespace OpenCV_Vision_Pro
         public int FrameHeight{ get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-
-        private Point previousMouseLocation;
-        private double rotationAngle = 0.0;
+        public Size m_displayControlSize { get; set; } = new Size(500, 400);
 
         public FrameControl()
         {
@@ -20,7 +18,6 @@ namespace OpenCV_Vision_Pro
             DoubleBuffered = true;
             ResizeRedraw = true;
             BackColor = Color.Transparent;
-            previousMouseLocation = new Point(X, Y);
             this.SizeChanged += sizeChanged;
             this.Move += moved;
         }
@@ -101,6 +98,43 @@ namespace OpenCV_Vision_Pro
                 else
                     m.Result = new IntPtr(2); //Move
             }
+        }
+
+        public Rectangle getRegionRect()
+        {
+            if (this == null)
+                return new Rectangle();
+            int width, height;
+            int x = 0;
+            int y = 0;
+
+            if (x < 0)
+                width = FrameWidth + X;
+            else if (X + FrameWidth > m_displayControlSize.Width)
+            {
+                x = X;
+                width = m_displayControlSize.Width - X;
+            }
+            else
+            {
+                x = X;
+                width = FrameWidth;
+            }
+
+            if (Y < 0)
+                height = FrameHeight + Y;
+            else if (Y + FrameHeight > m_displayControlSize.Height)
+            {
+                y = Y;
+                height = m_displayControlSize.Height - Y;
+            }
+            else
+            {
+                y = Y;
+                height = FrameHeight;
+            }
+
+            return new Rectangle(x, y, width, height);
         }
     }
 }
