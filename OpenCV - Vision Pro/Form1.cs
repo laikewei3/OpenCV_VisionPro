@@ -1,21 +1,13 @@
 ﻿using Emgu.CV;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
-using Emgu.CV.Dnn;
-using System.Text.RegularExpressions;
 using Emgu.CV.CvEnum;
-using Microsoft.CodeAnalysis.FlowAnalysis;
-using Emgu.CV.Reg;
-using Emgu.CV.UI;
 using System.ComponentModel;
-using System.Collections;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace OpenCV_Vision_Pro
 {
@@ -25,10 +17,9 @@ namespace OpenCV_Vision_Pro
         public static AutoDisposeDict<string,Mat> m_bitmapList {  get { return m_displayControl.m_bitmapList; } private set { m_displayControl.m_bitmapList = value; } }
         public static BindingList<string> m_form1DisplaySelection { get; private set; }
 
-        public static int m_cntImageIndex = 0; 
         public static AutoDisposeList<Mat> m_inputImagesList;
         private AutoDisposeList<IToolBase> m_toolsList;
-        private bool openNewImage = false;
+        private bool getNewInput = false;
         private int m_intCntBlob = 0;
         private int m_intCntCaliper = 0;
         private int m_intCntHistogram = 0;
@@ -37,6 +28,7 @@ namespace OpenCV_Vision_Pro
         private VideoCapture videoCapture;
         private bool processing = false; // Flag to avoid processing multiple frames simultaneously
         private bool resizedOnce = false;
+        private static int m_cntImageIndex = 0;
 
         private static bool checkContinue = false;
         public static bool runContinue
@@ -48,6 +40,17 @@ namespace OpenCV_Vision_Pro
             }
         }
         
+        private static bool m_boolNextImage = false;
+        public static bool nextImage
+        {
+            get { return m_boolNextImage; }
+            set
+            {
+                m_boolNextImage = value;
+                ToolWindow.nextImage = value;
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -66,18 +69,16 @@ namespace OpenCV_Vision_Pro
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            base.OnFormClosing(e);
-
-            // Check if the form is closing due to user action (not application exit).
-            if (e.CloseReason == CloseReason.UserClosing)
+            videoCapture?.Stop();
+            videoCapture?.Dispose();
+            Application.Idle -= ProcessFrame;
+            if (runContinue)
             {
-                Application.Idle -= ProcessFrame;
-                if(videoCapture != null)
-                {
-                    videoCapture.Stop();
-                    videoCapture.Dispose();
-                }
+                runContinue = false;
+                m_timer.Stop();
+                m_timer.Dispose();
             }
+            base.OnFormClosing(e);
         }
 
         private void m_OpenBtn_Click(object sender, EventArgs e)
@@ -133,7 +134,7 @@ namespace OpenCV_Vision_Pro
                                 m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
                                 m_displayControl.m_display.Image = m_bitmapList["LastRun.OutputImage"];
                                 m_form1DisplaySelection.Add("LastRun.OutputImage");
-                                openNewImage = true;
+                                getNewInput = true;
                             }
                         }
                     }
@@ -144,7 +145,7 @@ namespace OpenCV_Vision_Pro
                 MessageBox.Show("Invalid Images Input");
             }
         }
-        
+
         private async void ProcessFrame(object sender, EventArgs e)
         {
             if (processing) return; 
@@ -156,7 +157,7 @@ namespace OpenCV_Vision_Pro
                 videoCapture.Read(frame);
                 if (videoCapture != null && !frame.IsEmpty)
                 {
-                    if(!resizedOnce)
+                    if (!resizedOnce)
                     {
                         double widthScale = (double)m_displayControl.m_display.Width / frame.Width;
                         double heightScale = (double)m_displayControl.m_display.Height / frame.Height;
@@ -169,6 +170,7 @@ namespace OpenCV_Vision_Pro
 
                     CvInvoke.CvtColor(frame, frame, ColorConversion.Bgr2Gray);
                     
+                    m_bitmapList?.Dispose();
                     await Task.Run(() =>
                     {
                         if (m_displayControl.m_display.Image != null)
@@ -176,27 +178,21 @@ namespace OpenCV_Vision_Pro
 
                         if (m_inputImagesList != null)
                         {
-                            m_inputImagesList[0].Dispose();
+                            m_inputImagesList[0]?.Dispose();
                             m_inputImagesList[0] = frame.Clone();
                         }
                         else
                             m_inputImagesList = new AutoDisposeList<Mat> { frame.Clone() };
-
-                        m_bitmapList?.Dispose();
                         m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[0].Clone() } };
-                        System.Threading.Thread.Sleep(10);
-
                     });
-
+                    
+                    if (!runContinue)
+                        m_displayControl.m_display.Image = null;
                     if (String.Compare(m_displayControl.m_cbImages.SelectedItem.ToString(), "LastRun.OutputImage") == 0)
-                        m_displayControl.m_display.Image = m_bitmapList["LastRun.OutputImage"].Clone();
-                    else
-                    {
-                        m_displayControl.m_display.Image?.Dispose();
-                        if (m_bitmapList.ContainsKey("LastRun.HistogramTool1.Histogram"))
-                            m_displayControl.m_display.Image = m_bitmapList["LastRun.HistogramTool1.Histogram"].Clone();
-                    }
-                    frame.Dispose();
+                        m_displayControl.m_display.Image = m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()];//.Clone();
+
+                    frame.Dispose(); 
+                    System.Threading.Thread.Sleep(15);
                 }
             }
             finally
@@ -207,14 +203,16 @@ namespace OpenCV_Vision_Pro
 
         private void openCameraToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_displayControl.m_cbImages.Items.Clear();
+            m_bitmapList?.Dispose();
+            m_inputImagesList?.Dispose();
+            m_form1DisplaySelection.Clear();
             videoCapture = new VideoCapture(0);
             resizedOnce = false;
             processing = false;
             m_displayControl.m_VideoCapture = videoCapture;
-            m_displayControl.m_cbImages.Items.Add("LastRun.OutputImage");
-            m_displayControl.m_cbImages.SelectedIndex = 0;
+            m_form1DisplaySelection.Add("LastRun.OutputImage");
             Application.Idle += ProcessFrame;
+            getNewInput = true;
         }
 
         private void openVideoFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -227,15 +225,22 @@ namespace OpenCV_Vision_Pro
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         m_bitmapList?.Dispose();
+                        m_inputImagesList?.Dispose();
 
                         resizedOnce = false;
                         processing = false;
                         m_form1DisplaySelection.Clear();
-                        
                         videoCapture = new VideoCapture(openFileDialog.FileName);
                         m_displayControl.m_VideoCapture = videoCapture;
                         m_form1DisplaySelection.Add("LastRun.OutputImage");
+
+                        double fps = videoCapture.Get(CapProp.Fps);
+                        int minutes = 2;
+                        int seconds = 28;
+                        int frame_id = (int)(fps * (minutes * 60 + seconds));
+                        videoCapture.Set(CapProp.PosFrames, frame_id);
                         Application.Idle += ProcessFrame;
+                        getNewInput = true;
                     }
                 }
             }
@@ -269,7 +274,7 @@ namespace OpenCV_Vision_Pro
             m_cntImageIndex++;
             if (m_cntImageIndex == m_inputImagesList.Count)
                 m_cntImageIndex = 0;
-            
+           
             m_bitmapList?.Dispose();
             m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
 
@@ -280,7 +285,7 @@ namespace OpenCV_Vision_Pro
                 tool.m_bitmapList = new AutoDisposeDict<string, Mat> { { "Current.InputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
                 if (!tool.m_DisplaySelection.Contains("Current.InputImage"))
                     tool.m_DisplaySelection.Add("Current.InputImage");
-
+                nextImage = true;
                 Rectangle m_rectangle;
                 if (tool.m_rectROI == null || !tool.parameter.m_boolHasROI)
                     m_rectangle = new Rectangle();
@@ -364,24 +369,21 @@ namespace OpenCV_Vision_Pro
                 
                 IToolBase tool = m_toolsList[m_treeView.SelectedNode.Index];
 
-                if (tool.m_bitmapList == null || openNewImage)
+                if (m_bitmapList != null)
                 {
-                    if (m_bitmapList != null)
+                    if (tool.m_bitmapList == null)
                     {
                         tool.m_DisplaySelection.Clear();
                         tool.m_bitmapList = new AutoDisposeDict<string, Mat> { { "Current.InputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
                         tool.m_DisplaySelection.Add("Current.InputImage");
                     }
-                    openNewImage = false;
-                }
-                else
-                {
-                    if (m_bitmapList != null)
+                    else
                     {
                         tool.m_bitmapList["Current.InputImage"]?.Dispose();
                         tool.m_bitmapList["Current.InputImage"] = m_inputImagesList[m_cntImageIndex].Clone();
                     }
                 }
+
                 ToolWindow fc = Application.OpenForms[tool.ToolName] as ToolWindow;
                 fc?.Close();
                 fc?.Dispose();
@@ -393,7 +395,6 @@ namespace OpenCV_Vision_Pro
                 };
 
                 toolWindow.Show();
-                
             }
             catch (Exception ex)
             {
@@ -428,6 +429,29 @@ namespace OpenCV_Vision_Pro
         {
             // When the Timer ticks, simulate a click on Button
             m_RunBtn.PerformClick();
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Space)
+            {
+                if(videoCapture != null)
+                {
+                    Console.WriteLine("Paused");
+                    Application.Idle -= ProcessFrame;
+                }
+                
+            }
+
+            if (e.KeyCode == Keys.A)
+            {
+                if (videoCapture != null)
+                {
+                    Console.WriteLine("Resumed");
+                    Application.Idle += ProcessFrame;
+                }
+            }
+
         }
 
         /*

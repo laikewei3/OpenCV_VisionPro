@@ -15,7 +15,6 @@ namespace OpenCV_Vision_Pro
     public partial class BlobToolControl : UserControlBase
     {
         public Mat resultSelectedImage { get; set; }
-        public DataGridView test {  get; set; } 
         public BlobParams BlobParams { get; private set; }
         public BindingList<string> m_measurementList { get; set; } = new BindingList<string>()
         {
@@ -26,13 +25,14 @@ namespace OpenCV_Vision_Pro
             "BoundPrincipalMaxY","BoundPrincipalWidth","BoundPrincipalHeight","BoundPrincipalAspect","NotClipped","<ADD ALL>"
         };
         public override DataGridView resultDataGrid { get; set; }
-        public override ROI m_roi { get { return BlobParams.m_roi; } set { } }
+        public override ROI m_roi { get { return BlobParams.m_roi; } }
         public override IParams parameter { get; set; }
 
         public BlobToolControl(IParams blobParams)
         {
             InitializeComponent();
             resultDataGrid = m_dgvBlobResults;
+            resultDataGrid.RowPrePaint += m_dgvBlobResults_RowPrePaint;
             parameter = blobParams;
             BlobParams = (BlobParams)parameter;
             BindingSource bindingSource = new BindingSource() { DataSource = m_measurementList };
@@ -50,7 +50,7 @@ namespace OpenCV_Vision_Pro
             tempPanel.Controls.Add(BlobParams.m_roi);
             BlobParams.m_roi.Dock = DockStyle.Fill;
             panel.Controls.Add(tempPanel);
-            this.Controls.Add(panel); 
+            m_BlobInput.Controls.Add(panel); 
         }
 
         private void BlobToolControl_Load(object sender, EventArgs e)
@@ -94,17 +94,21 @@ namespace OpenCV_Vision_Pro
         }
 
         private void m_dgvBlobResults_SelectionChanged(object sender, EventArgs e)
-        {/*
+        {
+            /*
             if (m_dgvBlobResults.Rows.Count == 0) { return; }
             if (m_dgvBlobResults.SelectedRows.Count == 0) { return; }
-            if(blobTool.blobResults.BlobImage == null) { return; }
+            ToolWindow m_toolWindow = (ToolWindow)this.ParentForm;
+            if(m_toolWindow.m_displayControl.m_bitmapList == null) { return; }
+            if (!m_toolWindow.m_displayControl.m_cbImages.SelectedItem.ToString().EndsWith("BlobImage")) { return; }
             try
             {
                 int N = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
-                Mat tempMat = blobTool.blobResults.BlobImage.Clone();
+                //Mat tempMat = m_toolWindow.m_displayControl.m_bitmapList["LastRun.BlobTool1.BlobImage"];
                 //CvInvoke.Polylines(tempMat, blobTool.contourByRow[N], true, new MCvScalar(100, 150), 2);
-                resultSelectedImage = tempMat.Clone();
-                tempMat.Clone();
+                //resultSelectedImage = tempMat.Clone();
+                //tempMat.Clone();
+                CvInvoke.Imshow("", m_toolWindow.m_displayControl.m_bitmapList["LastRun.BlobTool1.BlobImage"]);
             }
             catch (Exception ex)
             {
@@ -312,6 +316,17 @@ namespace OpenCV_Vision_Pro
                 newColumn.Visible = false;
             else
                 newColumn.Visible = true;
+        }
+
+        private void m_dgvBlobResults_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            e.PaintCells(e.ClipBounds, DataGridViewPaintParts.All);
+            e.PaintHeader(DataGridViewPaintParts.Background
+                | DataGridViewPaintParts.Border
+                | DataGridViewPaintParts.Focus
+                | DataGridViewPaintParts.SelectionBackground
+                | DataGridViewPaintParts.ContentForeground);
+            e.Handled = true;
         }
     }
 }

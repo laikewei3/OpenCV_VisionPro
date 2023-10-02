@@ -346,13 +346,6 @@
         private System.Windows.Forms.DataGridView m_dgvHisData;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TableLayoutPanel m_HisOutTable;
-        private System.Windows.Forms.TextBox m_tbSample;
-        private System.Windows.Forms.TextBox m_tbVariance;
-        private System.Windows.Forms.TextBox m_tbSD;
-        private System.Windows.Forms.TextBox m_tbMean;
-        private System.Windows.Forms.TextBox m_tbMode;
-        private System.Windows.Forms.TextBox m_tbMedian;
-        private System.Windows.Forms.TextBox m_tbMax;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
@@ -360,7 +353,14 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox m_tbMin;
         private System.Windows.Forms.Label label8;
+        internal System.Windows.Forms.TextBox m_tbMin;
+        internal System.Windows.Forms.TextBox m_tbSample;
+        internal System.Windows.Forms.TextBox m_tbVariance;
+        internal System.Windows.Forms.TextBox m_tbSD;
+        internal System.Windows.Forms.TextBox m_tbMean;
+        internal System.Windows.Forms.TextBox m_tbMode;
+        internal System.Windows.Forms.TextBox m_tbMedian;
+        internal System.Windows.Forms.TextBox m_tbMax;
     }
 }

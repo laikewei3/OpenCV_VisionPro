@@ -242,7 +242,7 @@ namespace OpenCV_Vision_Pro
 
             BindingList<Blob> resultList = new BindingList<Blob>();
             resultSource.DataSource = resultList;
-
+            
             foreach (Blob r in blobResults.blobs)
             {
                 /*
@@ -261,7 +261,7 @@ namespace OpenCV_Vision_Pro
                 m_dgvBlobResults.Rows.Add(m_listTemp);*/
                 resultList.Add(r);
             }
-
+           
             return resultSource;
         }
 
@@ -278,6 +278,7 @@ namespace OpenCV_Vision_Pro
                 if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".BlobImage"))
                     Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".BlobImage");
             }
+
             if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".BlobImage"))
             {
                 m_bitmapList["LastRun." + ToolName + ".BlobImage"]?.Dispose();

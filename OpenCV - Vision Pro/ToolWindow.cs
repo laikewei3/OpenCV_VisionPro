@@ -11,8 +11,12 @@ namespace OpenCV_Vision_Pro
         private IToolBase m_toolBase;
         private Timer m_timer;
         public static bool runContinue { get; set; } = false;
+        public static bool nextImage { get; set; } = false;
+
         private bool m_boolHasROI = false;
-        
+        private BindingSource bindingSource;
+
+
         public ToolWindow(IToolBase tool)
         {
             m_toolBase = tool;
@@ -23,9 +27,9 @@ namespace OpenCV_Vision_Pro
                 m_DisplaySelection = m_toolBase.m_DisplaySelection,
                 m_bitmapList = m_toolBase.m_bitmapList
             };
-            BindingSource bindingSource = new BindingSource();
-            bindingSource.DataSource = m_displayControl.m_DisplaySelection;
+            bindingSource = new BindingSource() { DataSource = m_displayControl.m_DisplaySelection };
             m_displayControl.m_cbImages.DataSource = bindingSource;
+
             splitContainer1.Panel2.Controls.Add(m_displayControl);
             m_toolBase.getGUI();
             tableLayoutPanel1.Controls.Add(m_toolBase.m_toolControl);
@@ -33,27 +37,25 @@ namespace OpenCV_Vision_Pro
 
             m_toolBase.m_toolControl.m_roi.FrameControl.m_displayControlSize = m_displayControl.m_display.Size;
             m_toolBase.m_toolControl.m_roi.m_comboBoxROI.SelectedIndexChanged += m_comboBoxROI_SelectedIndexChanged;
+
+            m_timer = new Timer();
+            m_timer.Start();
+            m_timer.Tick += timer1_Tick;
         }
 
         private void ToolWindow_Load(object sender, EventArgs e)
         {
-            m_toolBase.m_toolControl.SetDataSource((BindingSource)m_toolBase.showResult());
-
-            if (runContinue)
-            {
-                m_timer = new Timer();
-                m_timer.Tick += timer1_Tick;
-                m_timer.Start();
-            }
+            m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
 
             if (m_displayControl.m_bitmapList != null)
             {
                 if (m_displayControl.m_bitmapList.Count > 0)
                 {
-                    Mat image = m_displayControl.m_bitmapList["Current.InputImage"];
+                    Mat image = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
                     m_displayControl.m_display.Width = image.Width;
                     m_displayControl.m_display.Height = image.Height;
-                    m_displayControl.m_display.Image = image;
+                    m_displayControl.m_display.Image = image.Clone();
+                    image?.Dispose();
                 }
             }
 
@@ -73,7 +75,8 @@ namespace OpenCV_Vision_Pro
             m_toolBase.parameter.m_roi = m_displayControl.m_roi.Clone();
             m_displayControl.m_roi = null;
             m_toolBase.parameter.m_boolHasROI = m_boolHasROI;
-
+            m_timer.Dispose();
+            bindingSource?.Dispose();
             base.OnFormClosing(e);
         }
 
@@ -86,14 +89,17 @@ namespace OpenCV_Vision_Pro
             }
 
             Rectangle m_rectangle;
+
             if (m_displayControl.m_roi.m_comboBoxROI.SelectedIndex == 0)
                 m_rectangle = new Rectangle();
             else
                 m_rectangle = m_toolBase.m_toolControl.m_roi.FrameControl.getRegionRect();
-
-            m_toolBase.Run(m_displayControl.m_bitmapList["Current.InputImage"], m_rectangle);
+            
+            Mat m_imageProcess = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
+            m_toolBase.Run(m_imageProcess, m_rectangle);
             m_toolBase.showResultImages();
-            m_toolBase.m_toolControl.SetDataSource((BindingSource)m_toolBase.showResult());
+            m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
+            m_imageProcess?.Dispose();
             int index = m_displayControl.m_cbImages.SelectedIndex;
             m_displayControl.m_cbImages.SelectedIndex = 0;
             m_displayControl.m_cbImages.SelectedIndex = index;
@@ -149,16 +155,18 @@ namespace OpenCV_Vision_Pro
                 }
             }
         }
+        
         private void timer1_Tick(object sender, EventArgs e)
         {
-            // When the Timer ticks, simulate a click on Button
-            this.Refresh();
-            Console.WriteLine("Reload");
-            if (!runContinue)
+            if (runContinue || nextImage)
             {
-                m_timer.Stop();
+                this.Refresh();
+                this.m_displayControl.m_bitmapList = m_toolBase.m_bitmapList?.CloneDictionaryCloningValues();
+                this.m_displayControl.m_display.Image?.Dispose();
+                this.m_displayControl.m_display.Image = m_toolBase.m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()].Clone();
+                m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
+                Form1.nextImage = false;
             }
         }
-
     }
 }

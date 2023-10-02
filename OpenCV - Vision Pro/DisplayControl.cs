@@ -27,14 +27,17 @@ namespace OpenCV_Vision_Pro
             {
                 if (m_cbImages.SelectedItem == null) return;
                 string m_strSelectedItem = m_cbImages.SelectedItem.ToString();
-                Mat selectedImage;
-                if (Form1.m_cntImageIndex <= 0)
-                    selectedImage = m_bitmapList[m_strSelectedItem];
-                else
-                    selectedImage = m_bitmapList[m_strSelectedItem];
-                m_display.Width = selectedImage.Width;
-                m_display.Height = selectedImage.Height;
+                Mat selectedImage = null;
+                if (m_bitmapList.ContainsKey(m_strSelectedItem))
+                {
+                    selectedImage?.Dispose();
+                    selectedImage = m_bitmapList[m_strSelectedItem].Clone();
+                    m_display.Width = selectedImage.Width;
+                    m_display.Height = selectedImage.Height;
+                }
+                
                 m_display.Image = selectedImage;
+
                 CenterPictureBox();
 
                 if (m_roi != null)
@@ -80,7 +83,6 @@ namespace OpenCV_Vision_Pro
             CvInvoke.Resize(image, destImage, new Size(width, height));
             return destImage;
         }*/
-
         private void resize(object sender, EventArgs e)
         {
             CenterPictureBox();

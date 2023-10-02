@@ -13,7 +13,7 @@ namespace OpenCV_Vision_Pro
         public Mat resultSelectedImage { get; set; } = new Mat();
         public CaliperParams CaliperParams { get; set;}
         public override DataGridView resultDataGrid { get; set; }
-        public override ROI m_roi { get { return CaliperParams.m_roi; } set {  } }
+        public override ROI m_roi { get { return CaliperParams.m_roi; } }
         public override IParams parameter { get; set; }
 
         public CaliperToolControl(IParams caliperParams)
@@ -35,7 +35,7 @@ namespace OpenCV_Vision_Pro
             tempPanel.Controls.Add(CaliperParams.m_roi);
             CaliperParams.m_roi.Dock = DockStyle.Fill;
             panel.Controls.Add(tempPanel);
-            this.Controls.Add(panel);
+            m_CaliperInput.Controls.Add(panel);
         }
 
         private void CaliperToolControl_Load(object sender, EventArgs e)

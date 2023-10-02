@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,7 +19,23 @@ namespace OpenCV_Vision_Pro
         public ROI m_roi { get; set; } = new ROI(); 
         public bool m_boolHasROI { get; set; } = false;
     }
-    
+    public class HistogramResult : IDisposable
+    {
+        public int Minimum { get; set; }
+        public int Maximum { get; set; }
+        public int Median { get; set; }
+        public int Mode { get; set; }
+        public double Mean { get; set; }
+        public double StandardDeviation { get; set; }
+        public double Variance { get; set; }
+        public long NumberOfSample { get; set; }
+        public Mat histogram { get; set; }
+
+        public void Dispose()
+        {
+            histogram?.Dispose();
+        }
+    }
     public class HistogramTool : IToolBase
     {
         private class HistogramData
@@ -34,23 +51,6 @@ namespace OpenCV_Vision_Pro
             public float Count { get; set; }
             public double Cumulative { get; set; }
         }
-        private class HistogramResult : IDisposable
-        {
-            public int Minimum { get; set; }
-            public int Maximum { get; set; }
-            public int Median { get; set; }
-            public int Mode { get; set; }
-            public double Mean { get; set; }
-            public double StandardDeviation { get; set; }
-            public double Variance { get; set; }
-            public long NumberOfSample { get; set; }
-            public Mat histogram { get; set; }
-
-            public void Dispose()
-            {
-                histogram?.Dispose();
-            }
-        }
         public HistogramTool(string toolName) { ToolName = toolName; }
 
         public override string ToolName { get; set; }
@@ -61,7 +61,7 @@ namespace OpenCV_Vision_Pro
         public override Rectangle m_rectROI { get; set; }
         public override IParams parameter { get; set; } = new HistorgramParams();
 
-        private HistogramResult m_histogramResult;
+        public HistogramResult m_histogramResult { get; set; }
         private BindingList<HistogramData> resultList;
 
         public override void getGUI()
@@ -134,7 +134,7 @@ namespace OpenCV_Vision_Pro
             }
             m_histogramResult.Mode = maxCount;
             m_histogramResult.NumberOfSample = (long)cummulative_list[histogramData.Length - 1];
-            m_histogramResult.Mean = calMean / m_histogramResult.NumberOfSample;
+            m_histogramResult.Mean = Math.Round(calMean / m_histogramResult.NumberOfSample,4);
             m_matHist.Dispose();
 
             double m_doubleHalf = m_histogramResult.NumberOfSample / 2;
@@ -158,8 +158,8 @@ namespace OpenCV_Vision_Pro
                 variance += temp;
             }
             variance /= m_histogramResult.NumberOfSample;
-            m_histogramResult.Variance = variance;
-            m_histogramResult.StandardDeviation = Math.Sqrt(variance);
+            m_histogramResult.Variance = Math.Round(variance,4);
+            m_histogramResult.StandardDeviation = Math.Round(Math.Sqrt(variance),4);
             //==============================================================================================================
 
             //================================================ Plot the Chart ==============================================
@@ -221,15 +221,17 @@ namespace OpenCV_Vision_Pro
 
         public override object showResult()
         {
+            ArrayList arrayList = new ArrayList();
             resultSource?.Dispose();
             resultSource = new BindingSource();
+            arrayList.Add(resultSource);
+            arrayList.Add(m_histogramResult);
             if (m_histogramResult == null)
-                return resultSource;
+                return arrayList;
             if (m_toolControl == null)
-                return resultSource;
-
+                return arrayList;
             resultSource.DataSource = resultList;
-            return resultSource;
+            return arrayList;
         }
 
         public override void showResultImages()
@@ -249,8 +251,8 @@ namespace OpenCV_Vision_Pro
 
             if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".Histogram"))
             {
-                    m_bitmapList["LastRun." + ToolName + ".Histogram"]?.Dispose();
-                    m_bitmapList["LastRun." + ToolName + ".Histogram"] = m_histogramResult.histogram.Clone();
+                m_bitmapList["LastRun." + ToolName + ".Histogram"]?.Dispose();
+                m_bitmapList["LastRun." + ToolName + ".Histogram"] = m_histogramResult.histogram.Clone();
             }
             else
             {
@@ -259,5 +261,6 @@ namespace OpenCV_Vision_Pro
                     m_DisplaySelection.Add("LastRun." + ToolName + ".Histogram");
             }
         }
+
     }
 }

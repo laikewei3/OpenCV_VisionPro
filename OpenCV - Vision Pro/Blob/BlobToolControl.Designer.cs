@@ -768,13 +768,12 @@ namespace OpenCV_Vision_Pro
             // 
             this.m_dgvBlobResults.AllowUserToAddRows = false;
             this.m_dgvBlobResults.AllowUserToDeleteRows = false;
-            this.m_dgvBlobResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
-            this.m_dgvBlobResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.m_dgvBlobResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_dgvBlobResults.Location = new System.Drawing.Point(3, 3);
             this.m_dgvBlobResults.MultiSelect = false;
             this.m_dgvBlobResults.Name = "m_dgvBlobResults";
             this.m_dgvBlobResults.ReadOnly = true;
+            this.m_dgvBlobResults.RowHeadersWidth = 60;
             this.m_dgvBlobResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.m_dgvBlobResults.Size = new System.Drawing.Size(339, 551);
             this.m_dgvBlobResults.TabIndex = 0;
