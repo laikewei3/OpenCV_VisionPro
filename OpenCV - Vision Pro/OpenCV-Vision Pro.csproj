@@ -217,5 +217,20 @@
       <Version>1.3.5</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blob.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\histogram.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\caliper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pause.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\play.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

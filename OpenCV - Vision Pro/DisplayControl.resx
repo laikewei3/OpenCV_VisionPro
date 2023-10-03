@@ -117,4 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_playPauseButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        EAAACxABrSO9dQAAAI1JREFUaEPtzzEOw0AMA0H//9NJM90VCgzZSLHTHSiAxytJkjd9fuT8IB45f46e
+        kfODeOT8OXrGj3oexLfzNXoaIm7IGj0NETdkjZ6GiBuyRk9DxA1Zo6ch4oas0dMQcUPW6GmIuCFr9DRE
+        3JA1ehoibsgaPQ0R/8+QifODeOT8OXpGzg/ikfMkSV5wXV+8+vs9tV0NBwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="m_toolTipTrackBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
 </root>

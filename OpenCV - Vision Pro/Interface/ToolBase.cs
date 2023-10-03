@@ -12,6 +12,7 @@ namespace OpenCV_Vision_Pro
 {
     public abstract class IToolBase : IDisposable
     {
+        public abstract Bitmap toolIcon { get; }
         public abstract string ToolName { get; set; }
         public abstract AutoDisposeDict<string, Mat> m_bitmapList {  get; set; }
         public abstract BindingList<string> m_DisplaySelection { get; set; }

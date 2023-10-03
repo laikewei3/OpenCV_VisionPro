@@ -1,10 +1,13 @@
 ﻿using Emgu.CV;
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
+    
+
     public partial class ToolWindow : Form
     {
         public DisplayControl m_displayControl { get; set; }
@@ -16,6 +19,8 @@ namespace OpenCV_Vision_Pro
         private bool m_boolHasROI = false;
         private BindingSource bindingSource;
 
+        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool DestroyIcon(IntPtr handle);
 
         public ToolWindow(IToolBase tool)
         {
@@ -46,6 +51,11 @@ namespace OpenCV_Vision_Pro
         private void ToolWindow_Load(object sender, EventArgs e)
         {
             m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
+            IntPtr iconHandle = m_toolBase.toolIcon.GetHicon();
+            Icon icon = Icon.FromHandle(iconHandle);
+            this.Icon = (Icon)icon.Clone();
+            icon.Dispose();
+            DestroyIcon(iconHandle);
 
             if (m_displayControl.m_bitmapList != null)
             {

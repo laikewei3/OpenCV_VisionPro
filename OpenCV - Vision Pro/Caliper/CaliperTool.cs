@@ -2,6 +2,7 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using OpenCV_Vision_Pro.Interface;
+using OpenCV_Vision_Pro.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -93,6 +94,7 @@ namespace OpenCV_Vision_Pro
             ToolName = toolName;
         }
 
+        public override Bitmap toolIcon { get; } = Resources.caliper;
         public override string ToolName { get; set; }
         public override UserControlBase m_toolControl { get; set; }
         public override AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
@@ -265,6 +267,7 @@ namespace OpenCV_Vision_Pro
             caliperResult?.Dispose();
             m_bitmapList?.Dispose();
             m_toolControl?.Dispose();
+            resultSource?.Dispose();
         }
 
         private double[] CalculateContrastScore(int i, Mat image, Point p1)

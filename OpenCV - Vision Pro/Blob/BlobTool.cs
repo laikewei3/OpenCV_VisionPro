@@ -5,6 +5,7 @@ using Emgu.CV.Util;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using OpenCV_Vision_Pro.Interface;
+using OpenCV_Vision_Pro.Properties;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -92,6 +93,7 @@ namespace OpenCV_Vision_Pro
         }
         public BlobTool(string toolName) { this.ToolName = toolName; }
 
+        public override Bitmap toolIcon { get; } = Resources.blob;
         public override string ToolName { get; set; }
         public override UserControlBase m_toolControl { get; set; }
         public override AutoDisposeDict<string, Mat> m_bitmapList { get; set; }

@@ -1,10 +1,13 @@
 ﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
+using OpenCV_Vision_Pro.Properties;
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace OpenCV_Vision_Pro
 {
@@ -19,11 +22,13 @@ namespace OpenCV_Vision_Pro
             InitializeComponent();
             panel2.MouseWheel += panel2_MouseWheel;
             CenterPictureBox();
+            m_playPauseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(50, 0, 0, 0);
+            m_playPauseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(30, 0, 0, 0);
         }
 
         private void m_cbImages_SelectedIndexChanged(object sender, EventArgs e)
-        {   
-            if(m_VideoCapture == null)
+        {
+            if (m_VideoCapture == null)
             {
                 if (m_cbImages.SelectedItem == null) return;
                 string m_strSelectedItem = m_cbImages.SelectedItem.ToString();
@@ -35,7 +40,7 @@ namespace OpenCV_Vision_Pro
                     m_display.Width = selectedImage.Width;
                     m_display.Height = selectedImage.Height;
                 }
-                
+
                 m_display.Image = selectedImage;
 
                 CenterPictureBox();
@@ -87,7 +92,7 @@ namespace OpenCV_Vision_Pro
         {
             CenterPictureBox();
         }
-        
+
         private void panel2_MouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta != 0 && m_display.Image != null)
@@ -122,7 +127,7 @@ namespace OpenCV_Vision_Pro
                 CenterPictureBox();
             }
         }
-        
+
         private void CenterPictureBox()
         {
             panel2.AutoScrollPosition = new Point((m_display.Parent.ClientSize.Width + m_display.Width / 2),
@@ -151,5 +156,68 @@ namespace OpenCV_Vision_Pro
                 return cp;
             }
         }
+
+        private bool m_boolPlay = true;
+        public bool playing
+        {
+            get { return m_boolPlay; }
+            set
+            {
+                m_boolPlay = value;
+                if (m_boolPlay)
+                    m_playPauseButton.Image = Resources.pause;
+                else
+                    m_playPauseButton.Image = Resources.play;
+            }
+        }
+
+        private void m_trackBarVideoDuration_Scroll(object sender, EventArgs e)
+        {
+            if (m_VideoCapture != null)
+            {
+                m_VideoCapture.Set(CapProp.PosFrames, m_trackBarVideoDuration.Value);
+
+                TimeSpan t = TimeSpan.FromSeconds(m_trackBarVideoDuration.Value / m_VideoCapture.Get(CapProp.Fps));
+
+                string answer = string.Format("{0:D2}h:{1:D2}m:{2:D2}s",
+                                t.Hours,
+                                t.Minutes,
+                                t.Seconds);
+
+                m_toolTipTrackBar.SetToolTip(m_trackBarVideoDuration, answer);
+            }
+        }
+
+        private void m_trackBarVideoDuration_ValueChanged(object sender, EventArgs e)
+        {
+            if (m_VideoCapture != null)
+            {
+                TimeSpan t = TimeSpan.FromSeconds(m_trackBarVideoDuration.Value / m_VideoCapture.Get(CapProp.Fps));
+
+                string answer = string.Format("{0:D2}:{1:D2}:{2:D2}",
+                                t.Hours,
+                                t.Minutes,
+                                t.Seconds);
+
+                m_labelCurrentTime.Text = answer;
+            }
+
+        }
+
+        private void panel1_VisibleChanged(object sender, EventArgs e)
+        {
+            if (m_VideoCapture != null)
+            {
+                TimeSpan t = TimeSpan.FromSeconds(m_VideoCapture.Get(CapProp.FrameCount) / m_VideoCapture.Get(CapProp.Fps));
+
+                string answer = string.Format("{0:D2}:{1:D2}:{2:D2}",
+                                t.Hours,
+                                t.Minutes,
+                                t.Seconds);
+
+                m_labelTotalTime.Text = " / "+answer;
+            }
+        }
+
     }
 }

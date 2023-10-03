@@ -10,6 +10,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using Emgu.CV;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
+using OpenCV_Vision_Pro.Properties;
 
 namespace OpenCV_Vision_Pro
 {
@@ -53,6 +54,7 @@ namespace OpenCV_Vision_Pro
         }
         public HistogramTool(string toolName) { ToolName = toolName; }
 
+        public override Bitmap toolIcon { get; } = Resources.histogram;
         public override string ToolName { get; set; }
         public override AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public override UserControlBase m_toolControl { get; set; }
@@ -217,6 +219,7 @@ namespace OpenCV_Vision_Pro
             m_bitmapList?.Dispose();
             m_toolControl?.Dispose();
             m_histogramResult.Dispose();
+            resultSource?.Dispose();
         }
 
         public override object showResult()
