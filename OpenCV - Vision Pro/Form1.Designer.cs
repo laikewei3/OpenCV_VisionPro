@@ -234,13 +234,13 @@
             this.openVideoFileToolStripMenuItem,
             this.openCameraToolStripMenuItem});
             this.m_GetInputImageMenu.Name = "m_GetInputImageMenu";
-            this.m_GetInputImageMenu.Size = new System.Drawing.Size(161, 70);
+            this.m_GetInputImageMenu.Size = new System.Drawing.Size(181, 92);
             // 
             // openImageFileToolStripMenuItem
             // 
             this.openImageFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openImageFileToolStripMenuItem.Image")));
             this.openImageFileToolStripMenuItem.Name = "openImageFileToolStripMenuItem";
-            this.openImageFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openImageFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openImageFileToolStripMenuItem.Text = "Open Image File";
             this.openImageFileToolStripMenuItem.Click += new System.EventHandler(this.openImageFileToolStripMenuItem_Click);
             // 
@@ -248,7 +248,7 @@
             // 
             this.openVideoFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openVideoFileToolStripMenuItem.Image")));
             this.openVideoFileToolStripMenuItem.Name = "openVideoFileToolStripMenuItem";
-            this.openVideoFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openVideoFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openVideoFileToolStripMenuItem.Text = "Open Video File";
             this.openVideoFileToolStripMenuItem.Click += new System.EventHandler(this.openVideoFileToolStripMenuItem_Click);
             // 
@@ -256,9 +256,8 @@
             // 
             this.openCameraToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openCameraToolStripMenuItem.Image")));
             this.openCameraToolStripMenuItem.Name = "openCameraToolStripMenuItem";
-            this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openCameraToolStripMenuItem.Text = "Open Camera";
-            this.openCameraToolStripMenuItem.Click += new System.EventHandler(this.openCameraToolStripMenuItem_Click);
             // 
             // Form1
             // 

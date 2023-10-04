@@ -11,7 +11,7 @@ namespace OpenCV_Vision_Pro
     public partial class ToolWindow : Form
     {
         public DisplayControl m_displayControl { get; set; }
-        private IToolBase m_toolBase;
+        public IToolBase m_toolBase;
         private Timer m_timer;
         public static bool runContinue { get; set; } = false;
         public static bool nextImage { get; set; } = false;
@@ -177,6 +177,8 @@ namespace OpenCV_Vision_Pro
                 m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
                 Form1.nextImage = false;
             }
+            if (!runContinue)
+                this.m_displayControl.m_bitmapList = m_toolBase.m_bitmapList;
         }
     }
 }

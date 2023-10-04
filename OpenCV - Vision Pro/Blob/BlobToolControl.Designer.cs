@@ -56,16 +56,11 @@ namespace OpenCV_Vision_Pro
             this.m_labelSeg2 = new System.Windows.Forms.Label();
             this.m_NumSegmentation2 = new System.Windows.Forms.NumericUpDown();
             this.m_labelSeg3 = new System.Windows.Forms.Label();
-            this.m_NumSegmentation5 = new System.Windows.Forms.NumericUpDown();
-            this.m_labelSeg5 = new System.Windows.Forms.Label();
-            this.m_NumSegmentation4 = new System.Windows.Forms.NumericUpDown();
-            this.m_labelSeg4 = new System.Windows.Forms.Label();
             this.m_NumSegmentation3 = new System.Windows.Forms.NumericUpDown();
             this.m_cbSegPolarity = new System.Windows.Forms.ComboBox();
             this.m_labelPolarity = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.m_cbSegMode = new System.Windows.Forms.ComboBox();
-            this.m_SegMap = new System.Windows.Forms.GroupBox();
             this.m_BlobMeasurement = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
@@ -94,8 +89,6 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation3)).BeginInit();
             this.m_BlobMeasurement.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
@@ -375,7 +368,6 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel2.Controls.Add(this.m_labelPolarity, 0, 3);
             this.tableLayoutPanel2.Controls.Add(this.label13, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.m_cbSegMode, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.m_SegMap, 0, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -400,12 +392,8 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel7.Controls.Add(this.m_labelSeg2, 0, 1);
             this.tableLayoutPanel7.Controls.Add(this.m_NumSegmentation2, 1, 1);
             this.tableLayoutPanel7.Controls.Add(this.m_labelSeg3, 0, 2);
-            this.tableLayoutPanel7.Controls.Add(this.m_NumSegmentation5, 1, 4);
-            this.tableLayoutPanel7.Controls.Add(this.m_labelSeg5, 0, 4);
-            this.tableLayoutPanel7.Controls.Add(this.m_NumSegmentation4, 1, 3);
-            this.tableLayoutPanel7.Controls.Add(this.m_labelSeg4, 0, 3);
             this.tableLayoutPanel7.Controls.Add(this.m_NumSegmentation3, 1, 2);
-            this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 199);
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 93);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 5;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -413,7 +401,7 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(143, 130);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(149, 78);
             this.tableLayoutPanel7.TabIndex = 0;
             // 
             // m_labelSeg1
@@ -425,10 +413,11 @@ namespace OpenCV_Vision_Pro
             this.m_labelSeg1.Size = new System.Drawing.Size(57, 13);
             this.m_labelSeg1.TabIndex = 5;
             this.m_labelSeg1.Text = "Threshold:";
+            this.m_labelSeg1.Visible = false;
             // 
             // m_NumSegmentation1
             // 
-            this.m_NumSegmentation1.Location = new System.Drawing.Point(70, 3);
+            this.m_NumSegmentation1.Location = new System.Drawing.Point(76, 3);
             this.m_NumSegmentation1.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -437,6 +426,7 @@ namespace OpenCV_Vision_Pro
             this.m_NumSegmentation1.Name = "m_NumSegmentation1";
             this.m_NumSegmentation1.Size = new System.Drawing.Size(70, 20);
             this.m_NumSegmentation1.TabIndex = 6;
+            this.m_NumSegmentation1.Visible = false;
             this.m_NumSegmentation1.ValueChanged += new System.EventHandler(this.m_NumSegmentation1_ValueChanged);
             // 
             // m_labelSeg2
@@ -445,16 +435,26 @@ namespace OpenCV_Vision_Pro
             this.m_labelSeg2.Location = new System.Drawing.Point(5, 31);
             this.m_labelSeg2.Margin = new System.Windows.Forms.Padding(5);
             this.m_labelSeg2.Name = "m_labelSeg2";
-            this.m_labelSeg2.Size = new System.Drawing.Size(57, 13);
+            this.m_labelSeg2.Size = new System.Drawing.Size(63, 13);
             this.m_labelSeg2.TabIndex = 7;
-            this.m_labelSeg2.Text = "Threshold:";
+            this.m_labelSeg2.Text = "Block Size: ";
             this.m_labelSeg2.Visible = false;
             // 
             // m_NumSegmentation2
             // 
-            this.m_NumSegmentation2.Location = new System.Drawing.Point(70, 29);
+            this.m_NumSegmentation2.Increment = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.m_NumSegmentation2.Location = new System.Drawing.Point(76, 29);
             this.m_NumSegmentation2.Maximum = new decimal(new int[] {
             65535,
+            0,
+            0,
+            0});
+            this.m_NumSegmentation2.Minimum = new decimal(new int[] {
+            3,
             0,
             0,
             0});
@@ -462,11 +462,12 @@ namespace OpenCV_Vision_Pro
             this.m_NumSegmentation2.Size = new System.Drawing.Size(70, 20);
             this.m_NumSegmentation2.TabIndex = 8;
             this.m_NumSegmentation2.Value = new decimal(new int[] {
-            128,
+            17,
             0,
             0,
             0});
             this.m_NumSegmentation2.Visible = false;
+            this.m_NumSegmentation2.ValueChanged += new System.EventHandler(this.m_NumSegmentation2_ValueChanged);
             // 
             // m_labelSeg3
             // 
@@ -474,72 +475,14 @@ namespace OpenCV_Vision_Pro
             this.m_labelSeg3.Location = new System.Drawing.Point(5, 57);
             this.m_labelSeg3.Margin = new System.Windows.Forms.Padding(5);
             this.m_labelSeg3.Name = "m_labelSeg3";
-            this.m_labelSeg3.Size = new System.Drawing.Size(57, 13);
+            this.m_labelSeg3.Size = new System.Drawing.Size(49, 13);
             this.m_labelSeg3.TabIndex = 9;
-            this.m_labelSeg3.Text = "Threshold:";
+            this.m_labelSeg3.Text = "Param1: ";
             this.m_labelSeg3.Visible = false;
-            // 
-            // m_NumSegmentation5
-            // 
-            this.m_NumSegmentation5.Location = new System.Drawing.Point(70, 107);
-            this.m_NumSegmentation5.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.m_NumSegmentation5.Name = "m_NumSegmentation5";
-            this.m_NumSegmentation5.Size = new System.Drawing.Size(70, 20);
-            this.m_NumSegmentation5.TabIndex = 14;
-            this.m_NumSegmentation5.Value = new decimal(new int[] {
-            128,
-            0,
-            0,
-            0});
-            this.m_NumSegmentation5.Visible = false;
-            // 
-            // m_labelSeg5
-            // 
-            this.m_labelSeg5.AutoSize = true;
-            this.m_labelSeg5.Location = new System.Drawing.Point(5, 109);
-            this.m_labelSeg5.Margin = new System.Windows.Forms.Padding(5);
-            this.m_labelSeg5.Name = "m_labelSeg5";
-            this.m_labelSeg5.Size = new System.Drawing.Size(57, 13);
-            this.m_labelSeg5.TabIndex = 13;
-            this.m_labelSeg5.Text = "Threshold:";
-            this.m_labelSeg5.Visible = false;
-            // 
-            // m_NumSegmentation4
-            // 
-            this.m_NumSegmentation4.Location = new System.Drawing.Point(70, 81);
-            this.m_NumSegmentation4.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.m_NumSegmentation4.Name = "m_NumSegmentation4";
-            this.m_NumSegmentation4.Size = new System.Drawing.Size(70, 20);
-            this.m_NumSegmentation4.TabIndex = 12;
-            this.m_NumSegmentation4.Value = new decimal(new int[] {
-            128,
-            0,
-            0,
-            0});
-            this.m_NumSegmentation4.Visible = false;
-            // 
-            // m_labelSeg4
-            // 
-            this.m_labelSeg4.AutoSize = true;
-            this.m_labelSeg4.Location = new System.Drawing.Point(5, 83);
-            this.m_labelSeg4.Margin = new System.Windows.Forms.Padding(5);
-            this.m_labelSeg4.Name = "m_labelSeg4";
-            this.m_labelSeg4.Size = new System.Drawing.Size(57, 13);
-            this.m_labelSeg4.TabIndex = 11;
-            this.m_labelSeg4.Text = "Threshold:";
-            this.m_labelSeg4.Visible = false;
             // 
             // m_NumSegmentation3
             // 
-            this.m_NumSegmentation3.Location = new System.Drawing.Point(70, 55);
+            this.m_NumSegmentation3.Location = new System.Drawing.Point(76, 55);
             this.m_NumSegmentation3.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -549,11 +492,12 @@ namespace OpenCV_Vision_Pro
             this.m_NumSegmentation3.Size = new System.Drawing.Size(70, 20);
             this.m_NumSegmentation3.TabIndex = 10;
             this.m_NumSegmentation3.Value = new decimal(new int[] {
-            128,
+            10,
             0,
             0,
             0});
             this.m_NumSegmentation3.Visible = false;
+            this.m_NumSegmentation3.ValueChanged += new System.EventHandler(this.m_NumSegmentation3_ValueChanged);
             // 
             // m_cbSegPolarity
             // 
@@ -563,7 +507,7 @@ namespace OpenCV_Vision_Pro
             this.m_cbSegPolarity.Items.AddRange(new object[] {
             "Dark blobs, Light background",
             "Light blobs, Dark background"});
-            this.m_cbSegPolarity.Location = new System.Drawing.Point(3, 172);
+            this.m_cbSegPolarity.Location = new System.Drawing.Point(3, 66);
             this.m_cbSegPolarity.Name = "m_cbSegPolarity";
             this.m_cbSegPolarity.Size = new System.Drawing.Size(157, 21);
             this.m_cbSegPolarity.TabIndex = 3;
@@ -572,7 +516,7 @@ namespace OpenCV_Vision_Pro
             // m_labelPolarity
             // 
             this.m_labelPolarity.AutoSize = true;
-            this.m_labelPolarity.Location = new System.Drawing.Point(5, 156);
+            this.m_labelPolarity.Location = new System.Drawing.Point(5, 50);
             this.m_labelPolarity.Margin = new System.Windows.Forms.Padding(5, 5, 5, 0);
             this.m_labelPolarity.Name = "m_labelPolarity";
             this.m_labelPolarity.Size = new System.Drawing.Size(44, 13);
@@ -595,28 +539,16 @@ namespace OpenCV_Vision_Pro
             this.m_cbSegMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.m_cbSegMode.FormattingEnabled = true;
             this.m_cbSegMode.Items.AddRange(new object[] {
-            "None",
-            "Map",
-            "Hard Threshold (Fixed)",
-            "Hard Threshold (Relative)",
-            "Hard Threshold (Dynamic)",
-            "Soft Threshold (Fixed)",
-            "Soft Threshold (Relative)",
-            "Subtraction Image"});
+            "Global (Manual)",
+            "Global (Otsu)",
+            "Global (Triangle)",
+            "Local (MeanC)",
+            "Local (GaussianC)"});
             this.m_cbSegMode.Location = new System.Drawing.Point(3, 21);
             this.m_cbSegMode.Name = "m_cbSegMode";
             this.m_cbSegMode.Size = new System.Drawing.Size(157, 21);
             this.m_cbSegMode.TabIndex = 1;
-            // 
-            // m_SegMap
-            // 
-            this.m_SegMap.Location = new System.Drawing.Point(3, 48);
-            this.m_SegMap.Name = "m_SegMap";
-            this.m_SegMap.Size = new System.Drawing.Size(157, 100);
-            this.m_SegMap.TabIndex = 16;
-            this.m_SegMap.TabStop = false;
-            this.m_SegMap.Text = "Map";
-            this.m_SegMap.Visible = false;
+            this.m_cbSegMode.SelectedIndexChanged += new System.EventHandler(this.m_cbSegMode_SelectedIndexChanged);
             // 
             // m_BlobMeasurement
             // 
@@ -810,8 +742,6 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.m_NumSegmentation3)).EndInit();
             this.m_BlobMeasurement.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
@@ -845,7 +775,6 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox m_cbSegMode;
-        private System.Windows.Forms.GroupBox m_SegMap;
         private System.Windows.Forms.Label m_labelPolarity;
         private System.Windows.Forms.ComboBox m_cbSegPolarity;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
@@ -854,10 +783,6 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.Label m_labelSeg2;
         private System.Windows.Forms.NumericUpDown m_NumSegmentation2;
         private System.Windows.Forms.Label m_labelSeg3;
-        private System.Windows.Forms.NumericUpDown m_NumSegmentation5;
-        private System.Windows.Forms.Label m_labelSeg5;
-        private System.Windows.Forms.NumericUpDown m_NumSegmentation4;
-        private System.Windows.Forms.Label m_labelSeg4;
         private System.Windows.Forms.NumericUpDown m_NumSegmentation3;
         private System.Windows.Forms.TabPage m_BlobMeasurement;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;

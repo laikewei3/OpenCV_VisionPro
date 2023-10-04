@@ -11,6 +11,7 @@ using Emgu.CV;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
+using Shared.ComponentModel.SortableBindingList;
 
 namespace OpenCV_Vision_Pro
 {
@@ -64,7 +65,7 @@ namespace OpenCV_Vision_Pro
         public override IParams parameter { get; set; } = new HistorgramParams();
 
         public HistogramResult m_histogramResult { get; set; }
-        private BindingList<HistogramData> resultList;
+        private SortableBindingList<HistogramData> resultList;
 
         public override void getGUI()
         {
@@ -151,7 +152,7 @@ namespace OpenCV_Vision_Pro
             
             double m_doubleCumulativePercent = 0;
             double variance = 0;
-            resultList = new BindingList<HistogramData>();
+            resultList = new SortableBindingList<HistogramData>();
             for (int i = 0; i < histogramData.Length; i++)
             {
                 m_doubleCumulativePercent += (histogramData[i] * 100.0) / m_histogramResult.NumberOfSample;

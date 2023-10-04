@@ -12,6 +12,8 @@ using Emgu.CV.Reg;
 using System.Data;
 using Emgu.CV.Util;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Management;
 
 namespace OpenCV_Vision_Pro
 {
@@ -23,7 +25,6 @@ namespace OpenCV_Vision_Pro
 
         public static AutoDisposeList<Mat> m_inputImagesList;
         private AutoDisposeList<IToolBase> m_toolsList;
-        //private bool getNewInput = false;
         private static int m_cntImageIndex = 0;
         private int m_intCntBlob = 0;
         private int m_intCntCaliper = 0;
@@ -56,6 +57,19 @@ namespace OpenCV_Vision_Pro
             }
         }
 
+        private void GetAllConnectedCameras()
+        {
+            var cameraNames = new List<string>();
+            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera')"))
+            {
+                foreach (var device in searcher.Get())
+                {
+                    var item = openCameraToolStripMenuItem.DropDownItems.Add((device["Caption"].ToString()));
+                    item.Click += openCamera_Click;
+                }
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -70,6 +84,7 @@ namespace OpenCV_Vision_Pro
             m_bindingSource.DataSource = m_form1DisplaySelection;
             m_displayControl.m_cbImages.DataSource = m_bindingSource;
             m_toolsList = new AutoDisposeList<IToolBase>();
+            GetAllConnectedCameras();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -139,7 +154,6 @@ namespace OpenCV_Vision_Pro
                                 m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[m_cntImageIndex].Clone() } };
                                 m_displayControl.m_display.Image = m_bitmapList["LastRun.OutputImage"];
                                 m_form1DisplaySelection.Add("LastRun.OutputImage");
-                                //getNewInput = true;
                             }
                         }
                     }
@@ -208,7 +222,7 @@ namespace OpenCV_Vision_Pro
             }
         }
 
-        private void openCameraToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openCamera_Click(object sender, EventArgs e)
         {
             m_bitmapList?.Dispose();
             m_inputImagesList?.Dispose();
@@ -238,6 +252,8 @@ namespace OpenCV_Vision_Pro
                     openFileDialog.Filter = "Video File (*.mp4) | *.mp4";
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
+                        m_displayControl.m_playPauseButton.Parent.Visible = false;
+                        m_displayControl.m_playPauseButton.Click -= PlayPauseClick;
                         m_bitmapList?.Dispose();
                         m_inputImagesList?.Dispose();
 
@@ -255,9 +271,9 @@ namespace OpenCV_Vision_Pro
                         m_displayControl.m_trackBarVideoDuration.Maximum = (int)totalFrame;
 
                         Application.Idle += ProcessFrame;
-                        //getNewInput = true;
                         m_displayControl.m_playPauseButton.Parent.Visible = true;
                         m_displayControl.m_playPauseButton.Click += PlayPauseClick;
+                        m_displayControl.m_trackBarVideoDuration.Value = 0;
                     }
                 }
             }

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Reflection.Metadata;
 using OpenCV_Vision_Pro.Interface;
+using Emgu.CV.CvEnum;
 
 namespace OpenCV_Vision_Pro
 {
@@ -62,7 +63,7 @@ namespace OpenCV_Vision_Pro
 
             if (BlobParams.MeasurementProperties.Count <= 0)
             {
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     m_cbBlobProperties.SelectedIndex = 0;
                     m_cbBlobProperties.SelectedIndex = -1;
@@ -85,7 +86,7 @@ namespace OpenCV_Vision_Pro
                 }
             }
 
-            m_cbSegMode.SelectedIndex = 2;
+            m_cbSegMode.SelectedItem = BlobParams.thresholdMode;
             m_cbSegPolarity.SelectedItem = BlobParams.polarity;
             m_cbConnectMode.SelectedIndex = 0;
             m_cbConnectClean.SelectedIndex = 2;
@@ -95,7 +96,6 @@ namespace OpenCV_Vision_Pro
 
         private void m_dgvBlobResults_SelectionChanged(object sender, EventArgs e)
         {
-            /*
             if (m_dgvBlobResults.Rows.Count == 0) { return; }
             if (m_dgvBlobResults.SelectedRows.Count == 0) { return; }
             ToolWindow m_toolWindow = (ToolWindow)this.ParentForm;
@@ -104,16 +104,20 @@ namespace OpenCV_Vision_Pro
             try
             {
                 int N = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
-                //Mat tempMat = m_toolWindow.m_displayControl.m_bitmapList["LastRun.BlobTool1.BlobImage"];
-                //CvInvoke.Polylines(tempMat, blobTool.contourByRow[N], true, new MCvScalar(100, 150), 2);
-                //resultSelectedImage = tempMat.Clone();
-                //tempMat.Clone();
-                CvInvoke.Imshow("", m_toolWindow.m_displayControl.m_bitmapList["LastRun.BlobTool1.BlobImage"]);
+                Bitmap tempBitamp = m_toolWindow.m_displayControl.m_bitmapList["LastRun."+m_toolWindow.m_toolBase.ToolName+".BlobImage"].ToBitmap();
+                using(Pen pen = new Pen(Color.DeepSkyBlue,2))
+                using (Graphics graphics = Graphics.FromImage(tempBitamp))
+                {
+                    graphics.DrawPolygon(pen, ((BlobTool)m_toolWindow.m_toolBase).contourByRow[N]);
+                }
+                resultSelectedImage = tempBitamp.ToMat();
+                m_toolWindow.m_displayControl.m_display.Image = resultSelectedImage;
+                tempBitamp?.Dispose();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
-            }*/
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         private void m_cbBlobProperties_SelectedIndexChanged(object sender, EventArgs e)
@@ -234,7 +238,7 @@ namespace OpenCV_Vision_Pro
                     m_dgvRow.Cells[4].ReadOnly = false;
                     BlobParams.MeasurementProperties.Add(m_strName, new ArrayList()
                     {
-                        "Exclude",0,0
+                        "Exclude","0","0"
                     });
                 }
                 return;
@@ -327,6 +331,66 @@ namespace OpenCV_Vision_Pro
                 | DataGridViewPaintParts.SelectionBackground
                 | DataGridViewPaintParts.ContentForeground);
             e.Handled = true;
+        }
+
+        private void m_cbSegMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BlobParams.thresholdMode = m_cbSegMode.SelectedItem.ToString();
+            switch (((BlobParams)parameter).thresholdMode)
+            {
+                case "Global (Triangle)":
+                    m_labelSeg1.Visible = false;
+                    m_NumSegmentation1.Visible = false;
+                    m_labelSeg2.Visible = false;
+                    m_NumSegmentation2.Visible = false; 
+                    m_labelSeg3.Visible = false;
+                    m_NumSegmentation3.Visible = false;
+                    break;
+                case "Global (Manual)":
+                    m_labelSeg1.Visible = true;
+                    m_NumSegmentation1.Visible = true;
+                    m_labelSeg2.Visible = false;
+                    m_NumSegmentation2.Visible = false;
+                    m_labelSeg3.Visible = false;
+                    m_NumSegmentation3.Visible = false;
+                    break;
+                case "Global (Otsu)":
+                    m_labelSeg1.Visible = false;
+                    m_NumSegmentation1.Visible = false;
+                    m_labelSeg2.Visible = false;
+                    m_NumSegmentation2.Visible = false;
+                    m_labelSeg3.Visible = false;
+                    m_NumSegmentation3.Visible = false;
+                    break;
+                case "Local (MeanC)":
+                    m_labelSeg1.Visible = false;
+                    m_NumSegmentation1.Visible = false;
+                    m_labelSeg2.Visible = true;
+                    m_NumSegmentation2.Visible = true;
+                    m_labelSeg3.Visible = true;
+                    m_NumSegmentation3.Visible = true;
+                    break;
+                case "Local (GaussianC)":
+                    m_labelSeg1.Visible = false;
+                    m_NumSegmentation1.Visible = false; 
+                    m_labelSeg2.Visible = true;
+                    m_NumSegmentation2.Visible = true;
+                    m_labelSeg3.Visible = true;
+                    m_NumSegmentation3.Visible = true;
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        private void m_NumSegmentation2_ValueChanged(object sender, EventArgs e)
+        {
+            BlobParams.blockSize = (int)m_NumSegmentation2.Value;
+        }
+
+        private void m_NumSegmentation3_ValueChanged(object sender, EventArgs e)
+        {
+            BlobParams.param1 = (int)m_NumSegmentation3.Value;
         }
     }
 }

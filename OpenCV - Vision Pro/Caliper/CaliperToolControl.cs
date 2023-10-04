@@ -69,42 +69,51 @@ namespace OpenCV_Vision_Pro
         }
 
         private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
-        {/*
+        {
             if (m_CaliperRes.Rows.Count == 0) { return; } // 什么row都没有
             if (m_CaliperRes.SelectedRows.Count == 0) { return; } // 目前没有row被selected
+            ToolWindow m_toolWindow = (ToolWindow)this.ParentForm;
+            if (m_toolWindow.m_displayControl.m_bitmapList == null) { return; }
+            if (!m_toolWindow.m_displayControl.m_cbImages.SelectedItem.ToString().EndsWith("CaliperImage")) { return; }
             try
             {
-                Mat tempMat = caliperTool.caliperImage; // for future reference
-
-                int edge0 = int.Parse(m_CaliperRes.SelectedRows[0].Cells[2].Value.ToString());
-                List<int> points = caliperTool.caliperPoints[edge0]; // 提取edge0资料
-
-                int edge1 = 0;
-                List<int> points1 = new List<int>();
-                if (caliperTool.caliperParams.EdgeMode == "Edge Pair") // 提取edge1资料（如果有）
+                Bitmap tempBitmap = m_toolWindow.m_displayControl.m_bitmapList["LastRun." + m_toolWindow.m_toolBase.ToolName + ".CaliperImage"].ToBitmap();
+                using (Pen pen = new Pen(Color.DeepSkyBlue, 2))
+                using (Graphics graphics = Graphics.FromImage(tempBitmap))
                 {
-                    edge1 = int.Parse(m_CaliperRes.SelectedRows[0].Cells[3].Value.ToString());
-                    points1 = caliperTool.caliperPoints[edge1];
-                }
+                    int edge0 = int.Parse(m_CaliperRes.SelectedRows[0].Cells[1].Value.ToString());
+                    List<int> points = ((CaliperTool)m_toolWindow.m_toolBase).caliperPoints[edge0]; // 提取edge0资料
 
-                if (!caliperTool.caliperParams.ROIBool) // 如果没有ROI
-                {
-                    if (caliperTool.caliperParams.EdgeMode == "Edge Pair") // 如果有edge1才画
-                        CvInvoke.Line(tempMat, new Point(points1[0], points1[1]), new Point(points1[2], points1[3]), new MCvScalar(150), 1);
-                    CvInvoke.Line(tempMat, new Point(points[0], points[1]), new Point(points[2], points[3]), new MCvScalar(150), 1);
+                    int edge1 = 0;
+                    List<int> points1 = new List<int>();
+                    if (CaliperParams.EdgeMode == "Edge Pair") // 提取edge1资料（如果有）
+                    {
+                        edge1 = int.Parse(m_CaliperRes.SelectedRows[0].Cells[2].Value.ToString());
+                        points1 = ((CaliperTool)m_toolWindow.m_toolBase).caliperPoints[edge1];
+                    }
+
+                    if (!CaliperParams.ROIBool) // 如果没有ROI
+                    {
+                        if (CaliperParams.EdgeMode == "Edge Pair") // 如果有edge1才画
+                            graphics.DrawLine(pen, new Point(points1[0], points1[1]), new Point(points1[2], points1[3]));
+                        graphics.DrawLine(pen, new Point(points[0], points[1]), new Point(points[2], points[3]));
+                    }
+                    else // 如果有ROI
+                    {
+                        if (CaliperParams.EdgeMode == "Edge Pair") // 如果有edge1才画
+                            graphics.DrawLine(pen, new Point(points1[0] + m_roi.X, m_roi.Y), new Point(points1[2] + m_roi.X, m_roi.Y + m_roi.ROI_Height));
+                        graphics.DrawLine(pen, new Point(points[0] + m_roi.X, m_roi.Y), new Point(points[2] + m_roi.X, m_roi.Y + m_roi.ROI_Height));
+                    }
+                    resultSelectedImage = tempBitmap.ToMat();
+                    m_toolWindow.m_displayControl.m_display.Image = resultSelectedImage;
+                    tempBitmap?.Dispose();
                 }
-                else // 如果有ROI
-                {
-                    if (caliperTool.caliperParams.EdgeMode == "Edge Pair") // 如果有edge1才画
-                        CvInvoke.Line(tempMat, new Point(points1[0] + m_roi.X, m_roi.Y), new Point(points1[2] + m_roi.X, m_roi.Y + m_roi.ROI_Height), new MCvScalar(150), 1);
-                    CvInvoke.Line(tempMat, new Point(points[0] + m_roi.X, m_roi.Y), new Point(points[2] + m_roi.X, m_roi.Y + m_roi.ROI_Height), new MCvScalar(150), 1);
-                }
-                resultSelectedImage = tempMat;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
-            }*/
+                Console.WriteLine(ex.ToString());
+            }
+
         }
         
         private void m_radioPair_CheckedChanged(object sender, EventArgs e)

@@ -3,6 +3,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
+using Shared.ComponentModel.SortableBindingList;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,7 +32,7 @@ namespace OpenCV_Vision_Pro
     {
         private class CaliperResult : IDisposable
         {
-            public BindingList<Edges> caliperEdges { get; set; } = new BindingList<Edges>();
+            public SortableBindingList<Edges> caliperEdges { get; set; } = new SortableBindingList<Edges>();
             public Mat caliperImage { get; set; }
 
             public void Dispose()
@@ -106,7 +107,7 @@ namespace OpenCV_Vision_Pro
         private CaliperResult caliperResult { get; set; }
         public Dictionary<int, List<int>> caliperPoints { get; set; }
 
-        private BindingList<EdgesPair> caliperEdgesPair;
+        private SortableBindingList<EdgesPair> caliperEdgesPair;
         
         public override void getGUI()
         {
@@ -161,7 +162,6 @@ namespace OpenCV_Vision_Pro
 
             //============================================== Calculate Edges Data =================================================
             List<int[]> sortEdge = new List<int[]>();
-            List<Edges> tempEdge = new List<Edges>();
 
             for (int i = 0; i < line.Rows; i++)
             {
@@ -192,7 +192,6 @@ namespace OpenCV_Vision_Pro
                 }
 
                 sortEdge.Add(new int[] { i, x1, y1, x2, y2 });
-
                 edges.Score = contrast[0];
                 edges.ScoringFunction0 = contrast[0];
                 edges.Contrast_E0 = contrast[1];
@@ -200,19 +199,18 @@ namespace OpenCV_Vision_Pro
                 edges.X = x1;
                 edges.Y = imageClone.Height;
 
-                tempEdge.Add(edges);
+                caliperResult.caliperEdges.Add(edges);
             }
             
             sortEdge = sortEdge.OrderBy(l => l[1]).ToList();
             for (int i = 0; i < sortEdge.Count; i++)
             {
                 int[] temp = sortEdge[i];
-                tempEdge[temp[0]].Edge0 = i;
-                caliperResult.caliperEdges.Add(tempEdge[temp[0]]);
+                caliperResult.caliperEdges[temp[0]].Edge0 = i;
                 caliperPoints.Add(i, new List<int> { temp[1], temp[2], temp[3], temp[4] });
             }
             //=====================================================================================================================
-
+            
             if (((CaliperParams)parameter).EdgeMode == "Edge Pair")
                 PairResult(imageClone, region);
             else
@@ -361,7 +359,7 @@ namespace OpenCV_Vision_Pro
             {
                 graphics.DrawImage(imageClone.ToBitmap(), 0, 0);
                 bool[] draw = new bool[caliperResult.caliperEdges.Count];
-                caliperEdgesPair = new BindingList<EdgesPair>();
+                caliperEdgesPair = new SortableBindingList<EdgesPair>();
 
                 for (int i = 0, k = 0; i < caliperResult.caliperEdges.Count - 1; i++)
                 {
