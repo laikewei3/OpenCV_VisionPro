@@ -97,22 +97,18 @@ namespace OpenCV_Vision_Pro
             else if(((HistogramToolControl)m_toolControl).m_roi.polygonPoint == null)
                 gray = new Mat(img, region);
             else
-            {
-                var mask = new Image<Gray, byte>(img.Size);
-                //Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((HistogramToolControl)m_toolControl).m_roi.polygonPoint), new MCvScalar(255, 255, 255, 255));
-                
+            {  
+                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
+                CvInvoke.FillPoly(mask, new VectorOfPoint(((HistogramToolControl)m_toolControl).m_roi.polygonPoint), new MCvScalar(255, 255, 255));
                 Mat bitImage = new Mat();
-                CvInvoke.BitwiseAnd(img, mask.Mat, bitImage);
-                bitImage.SetTo(new MCvScalar(255, 255, 255, 0), mask);
-                //CvInvoke.Imshow("sssss", bitImage);
-
+                CvInvoke.BitwiseAnd(img, mask, bitImage);
+                CvInvoke.BitwiseNot(mask,mask);
+                CvInvoke.CvtColor(bitImage, bitImage, Emgu.CV.CvEnum.ColorConversion.Gray2Bgra);
+                bitImage.SetTo(new MCvScalar(0,255,0,0), mask);
                 gray = new Mat(bitImage, region);
                 bitImage?.Dispose();
                 mask?.Dispose();
             }
-
 
             m_histogramResult = new HistogramResult();
             //=============================================== Declare Variable =============================================

@@ -8,10 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Emgu.CV.CvEnum;
 using System.ComponentModel;
-using Emgu.CV.Reg;
-using System.Data;
-using Emgu.CV.Util;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Management;
 
@@ -173,48 +169,57 @@ namespace OpenCV_Vision_Pro
             try
             {
                 Mat frame = new Mat();
-                videoCapture?.Read(frame);
-                if (videoCapture != null && !frame.IsEmpty)
+                bool? ret = videoCapture?.Read(frame);
+                if (ret != null)
                 {
-                    if (!resizedOnce)
+                    if (videoCapture != null && !frame.IsEmpty)
                     {
-                        double widthScale = (double)m_displayControl.m_display.Width / frame.Width;
-                        double heightScale = (double)m_displayControl.m_display.Height / frame.Height;
-                        double minScale = Math.Min(widthScale, heightScale);
-
-                        Size newSize = new Size((int)(frame.Width * minScale), (int)(frame.Height * minScale));
-                        CvInvoke.Resize(frame, frame, newSize);
-                        m_displayControl.m_display.Size = newSize;
-                    }
-
-                    CvInvoke.CvtColor(frame, frame, ColorConversion.Bgr2Gray);
-                    
-                    m_bitmapList?.Dispose();
-                    await Task.Run(() =>
-                    {
-                        if (m_displayControl.m_display.Image != null)
-                            m_displayControl.m_display.Image.Dispose();
-
-                        if (m_inputImagesList != null)
+                        if (!resizedOnce)
                         {
-                            m_inputImagesList[0]?.Dispose();
-                            m_inputImagesList[0] = frame.Clone();
+                            double widthScale = (double)m_displayControl.m_display.Width / frame.Width;
+                            double heightScale = (double)m_displayControl.m_display.Height / frame.Height;
+                            double minScale = Math.Min(widthScale, heightScale);
+
+                            Size newSize = new Size((int)(frame.Width * minScale), (int)(frame.Height * minScale));
+                            CvInvoke.Resize(frame, frame, newSize);
+                            m_displayControl.m_display.Size = newSize;
                         }
-                        else
-                            m_inputImagesList = new AutoDisposeList<Mat> { frame.Clone() };
-                        m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[0].Clone() } };
-                     });
-                    
-                    if (!runContinue)
-                        m_displayControl.m_display.Image = null;
-                    if (String.Compare(m_displayControl.m_cbImages.SelectedItem.ToString(), "LastRun.OutputImage") == 0)
-                        m_displayControl.m_display.Image = m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()];//.Clone();
-                    if(m_displayControl.m_playPauseButton.Visible)
-                        m_displayControl.m_trackBarVideoDuration.Value++;
-                    
-                    frame.Dispose(); 
-                    System.Threading.Thread.Sleep((int)(1 / fps * 1000));
+
+                        CvInvoke.CvtColor(frame, frame, ColorConversion.Bgr2Gray);
+
+                        m_bitmapList?.Dispose();
+                        await Task.Run(() =>
+                        {
+                            if (m_displayControl.m_display.Image != null)
+                                m_displayControl.m_display.Image.Dispose();
+
+                            if (m_inputImagesList != null)
+                            {
+                                m_inputImagesList[0]?.Dispose();
+                                m_inputImagesList[0] = frame.Clone();
+                            }
+                            else
+                                m_inputImagesList = new AutoDisposeList<Mat> { frame.Clone() };
+                            m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", m_inputImagesList[0].Clone() } };
+                        });
+
+                        if (!runContinue)
+                            m_displayControl.m_display.Image = null;
+                        if (String.Compare(m_displayControl.m_cbImages.SelectedItem.ToString(), "LastRun.OutputImage") == 0)
+                            m_displayControl.m_display.Image = m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()];
+                        if (m_displayControl.m_playPauseButton.Visible)
+                            m_displayControl.m_trackBarVideoDuration.Value++;
+
+                        frame.Dispose();
+                        System.Threading.Thread.Sleep((int)(1 / fps * 1000));
+                    }
+                    else if(videoCapture != null && frame.IsEmpty)
+                    {
+                        videoCapture.Set(CapProp.PosFrames, 0); 
+                        m_displayControl.m_trackBarVideoDuration.Value = 0;
+                    }
                 }
+                
             }
             finally
             {
@@ -230,7 +235,8 @@ namespace OpenCV_Vision_Pro
             videoCapture?.Stop();
             videoCapture?.Dispose();
 
-            videoCapture = new VideoCapture(0);
+            ToolStripMenuItem itemSelection = (ToolStripMenuItem)sender;
+            videoCapture = new VideoCapture(openCameraToolStripMenuItem.DropDownItems.IndexOf(itemSelection));
             fps = videoCapture.Get(CapProp.Fps);
 
             resizedOnce = false;
@@ -240,7 +246,6 @@ namespace OpenCV_Vision_Pro
             Application.Idle += ProcessFrame;
             m_displayControl.m_playPauseButton.Parent.Visible = false;
             m_displayControl.m_playPauseButton.Click -= PlayPauseClick;
-            //getNewInput = true;
         }
 
         private void openVideoFileToolStripMenuItem_Click(object sender, EventArgs e)

@@ -202,9 +202,9 @@ namespace OpenCV_Vision_Pro
             {
                 
                 graphics.FillRectangle(grayBrush, new Rectangle(0, 0, image.Width, image.Height));
-
-                bool[] calcDrawDone = new bool[contours.Length];
-                BlobRecursiveRun(hierarchy, contours, calcDrawDone, 0, true, combinedImage);
+                Stack<int> stack = new Stack<int>();
+                stack.Push(0);
+                BlobRecursiveRun(hierarchy, contours,true, combinedImage,stack);
                 blobResults.BlobImage = combinedImage.ToMat();
 
                 combinedImage.Dispose();
@@ -306,158 +306,158 @@ namespace OpenCV_Vision_Pro
             return image;
         }
 
-        private void BlobRecursiveRun(Mat hierarchy, VectorOfVectorOfPoint contours, bool[] calcDrawDone, int index, bool isBlob, Bitmap combinedImage)
+        private void BlobRecursiveRun(Mat hierarchy, VectorOfVectorOfPoint contours, bool isBlob, Bitmap combinedImage, Stack<int> stack)
         {
-            try
+            while (stack.Count > 0)
             {
-                if (index == -1)
-                    return;
-                if (index >= calcDrawDone.Length)
-                    return;
-                if (calcDrawDone[index])
-                    return;
-                calcDrawDone[index] = true;
-
-                Moments m_moments = CvInvoke.Moments(contours[index]);
-                bool m_boolPass = true;
-                if (m_moments.M00 > ((BlobParams)parameter).minArea)
+                Stack<int> childStack = new Stack<int>();
+                int index = stack.Pop();
+                try
                 {
-                    Blob m_blob = new Blob();
-                    double CenterMassX = Math.Round(m_moments.M10 / m_moments.M00, 4);
-                    double CenterMassY = Math.Round(m_moments.M01 / m_moments.M00, 4);
-
-                    m_blob.ID = index;
-                    m_blob.Area = m_moments.M00;
-                    m_blob.CenterMassX = CenterMassX;
-                    m_blob.CenterMassY = CenterMassY;
-                    m_blob.Perimeter = CvInvoke.ArcLength(contours[index], true);
-                    m_blob.Acircularity = Math.Pow(m_blob.Perimeter, 2) / (4 * Math.PI * m_moments.M00);
-                    m_blob.InertiaX = Math.Round(m_moments.Mu20, 4);
-                    m_blob.InertiaY = Math.Round(m_moments.Mu02, 4);
-
-                    if (isBlob)
-                        m_blob.ConnectivityLabel = "1:Blob";
-                    else
-                        m_blob.ConnectivityLabel = "0:Hole";
-
-                    Rectangle boundingbox = CvInvoke.BoundingRectangle(contours[index]);
-                    m_blob.BoundHeight = boundingbox.Height;
-                    m_blob.BoundWidth = boundingbox.Width;
-                    m_blob.BoundMinX = boundingbox.X - CenterMassX;
-                    m_blob.BoundMinY = boundingbox.Y - CenterMassY;
-                    m_blob.BoundMaxX = boundingbox.X + boundingbox.Width - CenterMassX;
-                    m_blob.BoundMaxY = boundingbox.Y + boundingbox.Height - CenterMassY;
-                    m_blob.BoundAspect = boundingbox.Height / boundingbox.Width;
-
-                    RotatedRect boundPrincipal = CvInvoke.MinAreaRect(contours[index]);
-                    m_blob.BoundPrincipalHeight = boundPrincipal.MinAreaRect().Height;
-                    m_blob.BoundPrincipalWidth = boundPrincipal.MinAreaRect().Width;
-                    m_blob.BoundPrincipalAspect = boundingbox.Width / boundingbox.Height;
-
-                    // https://stackoverflow.com/questions/14854592/retrieve-elongation-feature-in-python-opencv-what-kind-of-moment-it-supposed-to
-                    m_blob.Elongation = ((m_moments.Mu20 + m_moments.Mu02) + Math.Sqrt(4 * Math.Pow(m_moments.Mu11, 2) + Math.Pow(m_moments.Mu20 - m_moments.Mu02, 2))) / ((m_moments.Mu20 + m_moments.Mu02) - Math.Sqrt(4 * Math.Pow(m_moments.Mu11, 2) + Math.Pow(m_moments.Mu20 - m_moments.Mu02, 2)));
-
-                    m_moments?.Dispose();
-                    foreach (KeyValuePair<string, ArrayList> kvp in ((BlobParams)parameter).MeasurementProperties)
+                    Moments m_moments = CvInvoke.Moments(contours[index]);
+                    bool m_boolPass = true;
+                    if (m_moments.M00 > ((BlobParams)parameter).minArea)
                     {
-                        string key = kvp.Key;
-                        ArrayList value = kvp.Value;
-                        PropertyInfo propInfo = typeof(Blob).GetProperty(key);
-                        double lowValue = double.Parse((String)value[1]);
-                        double highValue = double.Parse((String)value[2]);
-                        if (propInfo != null)
+                        Blob m_blob = new Blob();
+                        double CenterMassX = Math.Round(m_moments.M10 / m_moments.M00, 4);
+                        double CenterMassY = Math.Round(m_moments.M01 / m_moments.M00, 4);
+
+                        m_blob.ID = index;
+                        m_blob.Area = m_moments.M00;
+                        m_blob.CenterMassX = CenterMassX;
+                        m_blob.CenterMassY = CenterMassY;
+                        m_blob.Perimeter = CvInvoke.ArcLength(contours[index], true);
+                        m_blob.Acircularity = Math.Pow(m_blob.Perimeter, 2) / (4 * Math.PI * m_moments.M00);
+                        m_blob.InertiaX = Math.Round(m_moments.Mu20, 4);
+                        m_blob.InertiaY = Math.Round(m_moments.Mu02, 4);
+
+                        if (isBlob)
+                            m_blob.ConnectivityLabel = "1:Blob";
+                        else
+                            m_blob.ConnectivityLabel = "0:Hole";
+
+                        Rectangle boundingbox = CvInvoke.BoundingRectangle(contours[index]);
+                        m_blob.BoundHeight = boundingbox.Height;
+                        m_blob.BoundWidth = boundingbox.Width;
+                        m_blob.BoundMinX = boundingbox.X - CenterMassX;
+                        m_blob.BoundMinY = boundingbox.Y - CenterMassY;
+                        m_blob.BoundMaxX = boundingbox.X + boundingbox.Width - CenterMassX;
+                        m_blob.BoundMaxY = boundingbox.Y + boundingbox.Height - CenterMassY;
+                        m_blob.BoundAspect = boundingbox.Height / boundingbox.Width;
+
+                        RotatedRect boundPrincipal = CvInvoke.MinAreaRect(contours[index]);
+                        m_blob.BoundPrincipalHeight = boundPrincipal.MinAreaRect().Height;
+                        m_blob.BoundPrincipalWidth = boundPrincipal.MinAreaRect().Width;
+                        m_blob.BoundPrincipalAspect = boundingbox.Width / boundingbox.Height;
+
+                        // https://stackoverflow.com/questions/14854592/retrieve-elongation-feature-in-python-opencv-what-kind-of-moment-it-supposed-to
+                        m_blob.Elongation = ((m_moments.Mu20 + m_moments.Mu02) + Math.Sqrt(4 * Math.Pow(m_moments.Mu11, 2) + Math.Pow(m_moments.Mu20 - m_moments.Mu02, 2))) / ((m_moments.Mu20 + m_moments.Mu02) - Math.Sqrt(4 * Math.Pow(m_moments.Mu11, 2) + Math.Pow(m_moments.Mu20 - m_moments.Mu02, 2)));
+
+                        m_moments?.Dispose();
+                        foreach (KeyValuePair<string, ArrayList> kvp in ((BlobParams)parameter).MeasurementProperties)
                         {
-                            object result = propInfo.GetValue(m_blob);
-                            double m_doubleResult;
-                            if (key == "ConnectivityLabel")
+                            string key = kvp.Key;
+                            ArrayList value = kvp.Value;
+                            PropertyInfo propInfo = typeof(Blob).GetProperty(key);
+                            double lowValue = double.Parse((string)value[1]);
+                            double highValue = double.Parse((string)value[2]);
+                            if (propInfo != null)
                             {
-                                if (result.ToString() == "1:Blob")
-                                    m_doubleResult = 1;
+                                object result = propInfo.GetValue(m_blob);
+                                double m_doubleResult;
+                                if (key == "ConnectivityLabel")
+                                {
+                                    if (result.ToString() == "1:Blob")
+                                        m_doubleResult = 1;
+                                    else
+                                        m_doubleResult = 0;
+                                }
                                 else
-                                    m_doubleResult = 0;
-                            }
-                            else
-                                m_doubleResult = (double)result;
+                                    m_doubleResult = (double)result;
 
-                            if ((String)value[0] == "Include")
-                            {
-                                if (m_doubleResult < lowValue && m_doubleResult > highValue) //要跳过
+                                if ((String)value[0] == "Include")
                                 {
-                                    m_boolPass = false;
-                                    break;
+                                    if (m_doubleResult < lowValue && m_doubleResult > highValue) //要跳过
+                                    {
+                                        m_boolPass = false;
+                                        break;
+                                    }
+
                                 }
-
-                            }
-                            else if ((String)value[0] == "Exclude")
-                            {
-                                if (m_doubleResult >= lowValue && m_doubleResult <= highValue) //要跳过
+                                else if ((String)value[0] == "Exclude")
                                 {
-                                    m_boolPass = false;
-                                    break;
+                                    if (m_doubleResult >= lowValue && m_doubleResult <= highValue) //要跳过
+                                    {
+                                        m_boolPass = false;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if (m_boolPass)
-                    {
-                        blobResults.blobs.Add(m_blob);
-
-                        using (Graphics contourGraphics = Graphics.FromImage(combinedImage))
+                        if (m_boolPass)
                         {
-                            Point[] points = contours[index].ToArray();
+                            blobResults.blobs.Add(m_blob);
 
-                            try
+                            using (Graphics contourGraphics = Graphics.FromImage(combinedImage))
                             {
-                                using (Pen pen = new Pen(Color.SpringGreen, 2))
+                                Point[] points = contours[index].ToArray();
+
+                                try
                                 {
-                                    contourByRow.Add(index, points);
-                                    contourGraphics.DrawPolygon(pen, points);
+                                    using (Pen pen = new Pen(Color.SpringGreen, 2))
+                                    {
+                                        contourByRow.Add(index, points);
+                                        contourGraphics.DrawPolygon(pen, points);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.ToString());
+                                }
+
+                                if (isBlob)
+                                {
+                                    using (Brush blob = new SolidBrush(Color.White))
+                                    {
+                                        contourGraphics.FillPolygon(blob, points);
+                                    }
+                                }
+
+                                else if (!isBlob)
+                                {
+                                    using (Brush hole = new SolidBrush(Color.Black))
+                                    {
+                                        contourGraphics.FillPolygon(hole, points);
+                                    }
                                 }
                             }
-                            catch (Exception ex)
+                        }
+                        else
+                        {
+                            using (Graphics contourGraphics = Graphics.FromImage(combinedImage))
                             {
-                                Console.WriteLine(ex.ToString());
-                            }
-
-                            if (isBlob)
-                            {
-                                using (Brush blob = new SolidBrush(Color.White))
+                                using (Brush hole = new SolidBrush(Color.Gray))
                                 {
-                                    contourGraphics.FillPolygon(blob, points);
-                                }
-                            }
-
-                            else if (!isBlob)
-                            {
-                                using (Brush hole = new SolidBrush(Color.Black))
-                                {
-                                    contourGraphics.FillPolygon(hole, points);
+                                    contourGraphics.FillPolygon(hole, contours[index].ToArray());
                                 }
                             }
                         }
                     }
+
+                    if ((int)hierarchy.GetData().GetValue(0, index, 2) != -1)
+                        childStack.Push((int)hierarchy.GetData().GetValue(0, index, 2));
+
+                    if ((int)hierarchy.GetData().GetValue(0, index, 0) != -1)
+                        stack.Push((int)hierarchy.GetData().GetValue(0, index, 0));
                     else
-                    {
-                        using (Graphics contourGraphics = Graphics.FromImage(combinedImage))
-                        {
-                            using (Brush hole = new SolidBrush(Color.Gray))
-                            {
-                                contourGraphics.FillPolygon(hole, contours[index].ToArray());
-                            }
-                        }
-                    }
-                }
+                        BlobRecursiveRun(hierarchy, contours, !isBlob, combinedImage, childStack);
 
-                // hierarchy : [Next, Previous, First_Child, Parent]
-                if ((int)hierarchy.GetData().GetValue(0, index, 0) != -1)
-                    BlobRecursiveRun(hierarchy, contours, calcDrawDone, (int)hierarchy.GetData().GetValue(0, index, 0), isBlob, combinedImage);
-                if ((int)hierarchy.GetData().GetValue(0, index, 2) != -1)
-                    BlobRecursiveRun(hierarchy, contours, calcDrawDone, (int)hierarchy.GetData().GetValue(0, index, 2), !isBlob, combinedImage);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
             }
         }
 

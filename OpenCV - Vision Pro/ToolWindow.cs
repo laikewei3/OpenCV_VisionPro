@@ -6,8 +6,6 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    
-
     public partial class ToolWindow : Form
     {
         public DisplayControl m_displayControl { get; set; }
