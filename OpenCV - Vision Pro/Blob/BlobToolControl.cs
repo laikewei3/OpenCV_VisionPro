@@ -13,7 +13,7 @@ using Emgu.CV.CvEnum;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class BlobToolControl : UserControlBase
+    public partial class BlobToolControl : UserControl, UserControlBase
     {
         public Mat resultSelectedImage { get; set; }
         public BlobParams BlobParams { get; private set; }
@@ -25,9 +25,9 @@ namespace OpenCV_Vision_Pro
             "BoundMinX","BoundMaxX","BoundMinY","BoundMaxY","BoundWidth","BoundHeight","BoundAspect","BoundPrincipalMinX","BoundPrincipalMaxX","BoundPrincipalMinY",
             "BoundPrincipalMaxY","BoundPrincipalWidth","BoundPrincipalHeight","BoundPrincipalAspect","NotClipped","<ADD ALL>"
         };
-        public override DataGridView resultDataGrid { get; set; }
-        public override ROI m_roi { get { return BlobParams.m_roi; } }
-        public override IParams parameter { get; set; }
+        public DataGridView resultDataGrid { get; set; }
+        public ROI m_roi { get { return BlobParams.m_roi; } }
+        public IParams parameter { get; set; }
 
         public BlobToolControl(IParams blobParams)
         {
@@ -391,6 +391,14 @@ namespace OpenCV_Vision_Pro
         private void m_NumSegmentation3_ValueChanged(object sender, EventArgs e)
         {
             BlobParams.param1 = (int)m_NumSegmentation3.Value;
+        }
+
+        public void SetDataSource(object bs)
+        {
+            resultDataGrid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing;
+            resultDataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            resultDataGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            resultDataGrid.DataSource = bs;
         }
     }
 }

@@ -415,7 +415,8 @@ namespace OpenCV_Vision_Pro
                 TreeView m_treeView = (TreeView)sender;
                 if (m_treeView == null)
                     return;
-                
+                if (m_treeView.SelectedNode == null)
+                    return;
                 IToolBase tool = m_toolsList[m_treeView.SelectedNode.Index];
 
                 if (m_bitmapList != null)

@@ -37,11 +37,9 @@ namespace OpenCV_Vision_Pro
 
             splitContainer1.Panel2.Controls.Add(m_displayControl);
             m_toolBase.getGUI();
-            tableLayoutPanel1.Controls.Add(m_toolBase.m_toolControl);
-            tableLayoutPanel1.SetRow(m_toolBase.m_toolControl, 1);
-
-            m_toolBase.m_toolControl.m_roi.FrameControl.m_displayControlSize = m_displayControl.m_display.Size;
-            m_toolBase.m_toolControl.m_roi.m_comboBoxROI.SelectedIndexChanged += m_comboBoxROI_SelectedIndexChanged;
+            tableLayoutPanel1.Controls.Add((Control)m_toolBase.m_toolControl);
+            tableLayoutPanel1.SetRow((Control)m_toolBase.m_toolControl, 1);
+            m_displayControl.m_roi = m_toolBase.m_toolControl.m_roi;
 
             m_timer = new Timer();
             m_timer.Start();
@@ -68,11 +66,7 @@ namespace OpenCV_Vision_Pro
                     image?.Dispose();
                 }
             }
-
-            m_displayControl.m_roi = m_toolBase.m_toolControl.m_roi;
-            
-            if (m_toolBase.m_toolControl.m_roi.m_comboBoxROI.SelectedIndex != 0)
-                m_toolBase.m_toolControl.m_roi.FrameControl.Visible = true;
+            m_toolBase.m_toolControl.m_roi.m_comboBoxROI.SelectedIndexChanged += m_comboBoxROI_SelectedIndexChanged;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -81,7 +75,7 @@ namespace OpenCV_Vision_Pro
                 m_toolBase.m_bitmapList = m_displayControl.m_bitmapList?.CloneDictionaryCloningValues();
             m_displayControl.m_bitmapList?.Dispose();
             m_toolBase.parameter = m_toolBase.m_toolControl.parameter;
-            m_toolBase.m_rectROI = m_displayControl.m_roi.FrameControl.getRegionRect();
+            m_toolBase.m_rectROI = m_displayControl.m_roi.ROIRectangle;
             m_toolBase.parameter.m_roi = m_displayControl.m_roi.Clone();
             m_displayControl.m_roi = null;
             m_toolBase.parameter.m_boolHasROI = m_boolHasROI;
@@ -103,7 +97,7 @@ namespace OpenCV_Vision_Pro
             if (m_displayControl.m_roi.m_comboBoxROI.SelectedIndex == 0)
                 m_rectangle = new Rectangle();
             else
-                m_rectangle = m_toolBase.m_toolControl.m_roi.FrameControl.getRegionRect();
+               m_rectangle = m_toolBase.m_toolControl.m_roi.ROIRectangle;
             
             Mat m_imageProcess = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
             m_toolBase.Run(m_imageProcess, m_rectangle);
@@ -114,58 +108,24 @@ namespace OpenCV_Vision_Pro
             m_displayControl.m_cbImages.SelectedIndex = 0;
             m_displayControl.m_cbImages.SelectedIndex = index;
         }
-        /*
-        
-        private void m_dgvBlobResults_SelectionChanged(object sender, EventArgs e)
-        {
-            if (m_displayControl.m_cbImages.SelectedItem.ToString() != "LastRun." + this.Text + ".BlobImage") { return; }
-            try
-            {
-                m_displayControl.m_display.Image = blobToolControl.resultSelectedImage;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
 
-
-        private void m_CaliperRes_SelectionChanged(object sender, EventArgs e)
-        {
-            if (m_displayControl.m_cbImages.SelectedItem.ToString() != "LastRun." + this.Text + ".Caliper") { return; }
-            try
-            {
-                m_displayControl.m_display.Image = caliperToolControl.resultSelectedImage;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }*/
         private void m_comboBoxROI_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox m_cbROI = (ComboBox)sender;
             m_boolHasROI = true;
+            
             if (m_displayControl != null)
             {
-                m_toolBase.m_toolControl.m_roi.FrameControl.Visible = false;
+                m_displayControl.m_display.Invalidate();
                 if (m_cbROI.SelectedIndex == 0)
                 {
-                    m_displayControl.m_display.Controls.Clear();
+                    m_displayControl.Cursor = Cursors.Default;
                     m_boolHasROI = false;
                     return;
                 }
-                m_displayControl.m_display.Controls.Add(m_toolBase.m_toolControl.m_roi.FrameControl);
-                if (m_displayControl.m_cbImages.SelectedItem != null)
-                {
-                    if (m_displayControl.m_cbImages.SelectedItem.ToString() == "Current.InputImage")
-                        m_toolBase.m_toolControl.m_roi.FrameControl.Visible = true;
-                    else
-                        m_toolBase.m_toolControl.m_roi.FrameControl.Visible = false;
-                }
             }
         }
-        
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (runContinue || nextImage)

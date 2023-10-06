@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
-{
+{/*
     public abstract class UserControlBase : UserControl
     {
         public abstract DataGridView resultDataGrid { get; set; }
@@ -20,18 +20,14 @@ namespace OpenCV_Vision_Pro
             resultDataGrid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing;
             resultDataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             resultDataGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-            //resultDataGrid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            //or even better .DisableResizing. 
-            //Most time consumption enum is DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
-            //resultDataGrid.RowHeadersVisible = false; // set it to false if not needed
 
             if (String.Compare(this.GetType().Name, "HistogramToolControl") == 0)
             {
-                HistogramToolControl m_histToolControl = (HistogramToolControl) this;
+                HistogramToolControl m_histToolControl = (HistogramToolControl)this;
                 resultDataGrid.DataSource = ((ArrayList)bs)[0];
 
                 HistogramResult m_histogramResult = (HistogramResult)((ArrayList)bs)[1];
-                if(m_histogramResult != null)
+                if (m_histogramResult != null)
                 {
                     m_histToolControl.m_tbMin.Text = m_histogramResult.Minimum.ToString();
                     m_histToolControl.m_tbMax.Text = m_histogramResult.Maximum.ToString();
@@ -42,8 +38,18 @@ namespace OpenCV_Vision_Pro
                     m_histToolControl.m_tbSD.Text = m_histogramResult.StandardDeviation.ToString();
                     m_histToolControl.m_tbVariance.Text = m_histogramResult.Variance.ToString();
                 }
-            }else
+            }
+            else
                 resultDataGrid.DataSource = bs;
         }
+    }
+    */
+    public interface UserControlBase : IDisposable
+    {
+        DataGridView resultDataGrid { get; set; }
+        ROI m_roi { get; }
+        IParams parameter { get; set; }
+        void SetDataSource(object bs);
+        
     }
 }

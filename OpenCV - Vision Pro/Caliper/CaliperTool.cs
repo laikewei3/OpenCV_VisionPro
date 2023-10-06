@@ -28,7 +28,9 @@ namespace OpenCV_Vision_Pro
         public ROI m_roi { get; set; } = new ROI();
         public bool m_boolHasROI { get; set; } = false;
     }
-    public class CaliperTool : IToolBase
+
+    // Declare Variable
+    public partial class CaliperTool : IToolBase
     {
         private class CaliperResult : IDisposable
         {
@@ -89,11 +91,6 @@ namespace OpenCV_Vision_Pro
             public double X1 { get; set; }
             public double Y1 { get; set; }
         }
-        public CaliperTool(string toolName)
-        {
-            caliperPoints = new Dictionary<int, List<int>>();
-            ToolName = toolName;
-        }
 
         public override Bitmap toolIcon { get; } = Resources.caliper;
         public override string ToolName { get; set; }
@@ -102,13 +99,23 @@ namespace OpenCV_Vision_Pro
         public override BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
         public override BindingSource resultSource { get; set; }
         public override Rectangle m_rectROI { get; set; }
-        
+
         public override IParams parameter { get; set; } = new CaliperParams();
         private CaliperResult caliperResult { get; set; }
         public Dictionary<int, List<int>> caliperPoints { get; set; }
 
         private SortableBindingList<EdgesPair> caliperEdgesPair;
-        
+    }
+
+    // Methods
+    public partial class CaliperTool : IToolBase
+    {
+        public CaliperTool(string toolName)
+        {
+            caliperPoints = new Dictionary<int, List<int>>();
+            ToolName = toolName;
+        }
+
         public override void getGUI()
         {
             if (m_rectROI != null && !m_rectROI.IsEmpty)

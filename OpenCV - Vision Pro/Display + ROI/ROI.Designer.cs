@@ -42,7 +42,7 @@
             this.m_comboBoxROI.Items.AddRange(new object[] {
             "<None - Use Entire Image>",
             "CogRectangle",
-            "CogRectangleAffine"});
+            "CogPolygon"});
             this.m_comboBoxROI.Location = new System.Drawing.Point(3, 16);
             this.m_comboBoxROI.Margin = new System.Windows.Forms.Padding(10);
             this.m_comboBoxROI.Name = "m_comboBoxROI";

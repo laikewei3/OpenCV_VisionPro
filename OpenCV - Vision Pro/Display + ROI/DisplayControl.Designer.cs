@@ -40,18 +40,18 @@ namespace OpenCV_Vision_Pro
             this.m_cbImages = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.m_display = new Emgu.CV.UI.ImageBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.m_labelTotalTime = new System.Windows.Forms.Label();
             this.m_labelCurrentTime = new System.Windows.Forms.Label();
+            this.m_playPauseButton = new System.Windows.Forms.Button();
             this.m_trackBarVideoDuration = new System.Windows.Forms.TrackBar();
             this.m_toolTipTrackBar = new System.Windows.Forms.ToolTip(this.components);
-            this.m_playPauseButton = new System.Windows.Forms.Button();
-            this.m_display = new Emgu.CV.UI.ImageBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_display)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_trackBarVideoDuration)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.m_display)).BeginInit();
             this.SuspendLayout();
             // 
             // m_cbImages
@@ -94,6 +94,22 @@ namespace OpenCV_Vision_Pro
             this.panel2.Size = new System.Drawing.Size(519, 477);
             this.panel2.TabIndex = 8;
             // 
+            // m_display
+            // 
+            this.m_display.BackColor = System.Drawing.Color.Transparent;
+            this.m_display.FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.Minimum;
+            this.m_display.Location = new System.Drawing.Point(0, 0);
+            this.m_display.Margin = new System.Windows.Forms.Padding(0);
+            this.m_display.Name = "m_display";
+            this.m_display.Size = new System.Drawing.Size(489, 425);
+            this.m_display.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.m_display.TabIndex = 8;
+            this.m_display.TabStop = false;
+            this.m_display.Paint += new System.Windows.Forms.PaintEventHandler(this.m_display_Paint);
+            this.m_display.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_display_MouseDown);
+            this.m_display.MouseMove += new System.Windows.Forms.MouseEventHandler(this.m_display_MouseMove);
+            this.m_display.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_display_MouseUp);
+            // 
             // panel1
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -134,21 +150,6 @@ namespace OpenCV_Vision_Pro
             this.m_labelCurrentTime.TabIndex = 10;
             this.m_labelCurrentTime.Text = "00:00:00";
             // 
-            // m_trackBarVideoDuration
-            // 
-            this.m_trackBarVideoDuration.BackColor = System.Drawing.Color.Blue;
-            this.m_trackBarVideoDuration.Dock = System.Windows.Forms.DockStyle.Top;
-            this.m_trackBarVideoDuration.Location = new System.Drawing.Point(0, 0);
-            this.m_trackBarVideoDuration.Margin = new System.Windows.Forms.Padding(0);
-            this.m_trackBarVideoDuration.Maximum = 2147483647;
-            this.m_trackBarVideoDuration.Name = "m_trackBarVideoDuration";
-            this.m_trackBarVideoDuration.Size = new System.Drawing.Size(419, 45);
-            this.m_trackBarVideoDuration.TabIndex = 9;
-            this.m_trackBarVideoDuration.TickFrequency = 0;
-            this.m_trackBarVideoDuration.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.m_trackBarVideoDuration.Scroll += new System.EventHandler(this.m_trackBarVideoDuration_Scroll);
-            this.m_trackBarVideoDuration.ValueChanged += new System.EventHandler(this.m_trackBarVideoDuration_ValueChanged);
-            // 
             // m_playPauseButton
             // 
             this.m_playPauseButton.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -164,17 +165,20 @@ namespace OpenCV_Vision_Pro
             this.m_playPauseButton.TabIndex = 0;
             this.m_playPauseButton.UseVisualStyleBackColor = false;
             // 
-            // m_display
+            // m_trackBarVideoDuration
             // 
-            this.m_display.BackColor = System.Drawing.Color.Transparent;
-            this.m_display.FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.Minimum;
-            this.m_display.Location = new System.Drawing.Point(0, 0);
-            this.m_display.Margin = new System.Windows.Forms.Padding(0);
-            this.m_display.Name = "m_display";
-            this.m_display.Size = new System.Drawing.Size(489, 425);
-            this.m_display.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.m_display.TabIndex = 8;
-            this.m_display.TabStop = false;
+            this.m_trackBarVideoDuration.BackColor = System.Drawing.Color.Blue;
+            this.m_trackBarVideoDuration.Dock = System.Windows.Forms.DockStyle.Top;
+            this.m_trackBarVideoDuration.Location = new System.Drawing.Point(0, 0);
+            this.m_trackBarVideoDuration.Margin = new System.Windows.Forms.Padding(0);
+            this.m_trackBarVideoDuration.Maximum = 2147483647;
+            this.m_trackBarVideoDuration.Name = "m_trackBarVideoDuration";
+            this.m_trackBarVideoDuration.Size = new System.Drawing.Size(419, 45);
+            this.m_trackBarVideoDuration.TabIndex = 9;
+            this.m_trackBarVideoDuration.TickFrequency = 0;
+            this.m_trackBarVideoDuration.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.m_trackBarVideoDuration.Scroll += new System.EventHandler(this.m_trackBarVideoDuration_Scroll);
+            this.m_trackBarVideoDuration.ValueChanged += new System.EventHandler(this.m_trackBarVideoDuration_ValueChanged);
             // 
             // DisplayControl
             // 
@@ -188,10 +192,10 @@ namespace OpenCV_Vision_Pro
             this.Resize += new System.EventHandler(this.resize);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.m_display)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_trackBarVideoDuration)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.m_display)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

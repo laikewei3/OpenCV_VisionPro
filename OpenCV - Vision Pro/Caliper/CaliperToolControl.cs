@@ -5,16 +5,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using OpenCV_Vision_Pro.Interface;
+using System.Collections;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class CaliperToolControl : UserControlBase
+    public partial class CaliperToolControl : UserControl, UserControlBase
     {
         public Mat resultSelectedImage { get; set; } = new Mat();
         public CaliperParams CaliperParams { get; set;}
-        public override DataGridView resultDataGrid { get; set; }
-        public override ROI m_roi { get { return CaliperParams.m_roi; } }
-        public override IParams parameter { get; set; }
+        public DataGridView resultDataGrid { get; set; }
+        public ROI m_roi { get { return CaliperParams.m_roi; } }
+        public IParams parameter { get; set; }
 
         public CaliperToolControl(IParams caliperParams)
         {
@@ -159,5 +160,12 @@ namespace OpenCV_Vision_Pro
             CaliperParams.maxResult = (int)m_NumResult.Value;
         }
 
+        public void SetDataSource(object bs)
+        {
+            resultDataGrid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing;
+            resultDataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            resultDataGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            resultDataGrid.DataSource = bs;
+        }
     }
 }

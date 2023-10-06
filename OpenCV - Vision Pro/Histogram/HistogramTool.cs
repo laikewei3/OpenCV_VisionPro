@@ -8,6 +8,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Emgu.CV;
+using Emgu.CV.Reg;
+using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
@@ -21,6 +23,7 @@ namespace OpenCV_Vision_Pro
         public ROI m_roi { get; set; } = new ROI(); 
         public bool m_boolHasROI { get; set; } = false;
     }
+
     public class HistogramResult : IDisposable
     {
         public int Minimum { get; set; }
@@ -38,7 +41,9 @@ namespace OpenCV_Vision_Pro
             histogram?.Dispose();
         }
     }
-    public class HistogramTool : IToolBase
+
+    // Declare Variable
+    public partial class HistogramTool : IToolBase
     {
         private class HistogramData
         {
@@ -53,7 +58,6 @@ namespace OpenCV_Vision_Pro
             public float Count { get; set; }
             public double Cumulative { get; set; }
         }
-        public HistogramTool(string toolName) { ToolName = toolName; }
 
         public override Bitmap toolIcon { get; } = Resources.histogram;
         public override string ToolName { get; set; }
@@ -65,7 +69,14 @@ namespace OpenCV_Vision_Pro
         public override IParams parameter { get; set; } = new HistorgramParams();
 
         public HistogramResult m_histogramResult { get; set; }
+
         private SortableBindingList<HistogramData> resultList;
+    }
+
+    // Methods
+    public partial class HistogramTool : IToolBase
+    {
+        public HistogramTool(string toolName) { ToolName = toolName; }
 
         public override void getGUI()
         {
@@ -80,9 +91,29 @@ namespace OpenCV_Vision_Pro
 
         public override void Run(Mat img, Rectangle region)
         {
-            Mat gray = img.Clone();
-            if (!region.IsEmpty)
-                gray = new Mat(gray, region);
+            Mat gray;
+            if (region.IsEmpty)
+                gray = img.Clone();
+            else if(((HistogramToolControl)m_toolControl).m_roi.polygonPoint == null)
+                gray = new Mat(img, region);
+            else
+            {
+                var mask = new Image<Gray, byte>(img.Size);
+                //Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
+                
+                CvInvoke.FillPoly(mask, new VectorOfPoint(((HistogramToolControl)m_toolControl).m_roi.polygonPoint), new MCvScalar(255, 255, 255, 255));
+                
+                Mat bitImage = new Mat();
+                CvInvoke.BitwiseAnd(img, mask.Mat, bitImage);
+                bitImage.SetTo(new MCvScalar(255, 255, 255, 0), mask);
+                //CvInvoke.Imshow("sssss", bitImage);
+
+                gray = new Mat(bitImage, region);
+                bitImage?.Dispose();
+                mask?.Dispose();
+            }
+
+
             m_histogramResult = new HistogramResult();
             //=============================================== Declare Variable =============================================
             List<float> cummulative_list = new List<float>();
@@ -90,7 +121,6 @@ namespace OpenCV_Vision_Pro
             int maxCount = 0;
             Mat m_matHist = new Mat();
             VectorOfMat m_vomat = new VectorOfMat();
-           
             //==============================================================================================================
 
             //=============================================== Calculate Result =============================================
@@ -265,6 +295,5 @@ namespace OpenCV_Vision_Pro
                     m_DisplaySelection.Add("LastRun." + ToolName + ".Histogram");
             }
         }
-
     }
 }

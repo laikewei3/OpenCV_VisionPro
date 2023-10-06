@@ -1,10 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.ML;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
 using Shared.ComponentModel.SortableBindingList;
@@ -15,7 +12,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace OpenCV_Vision_Pro
 {
@@ -32,8 +28,24 @@ namespace OpenCV_Vision_Pro
      * https://stackoverflow.com/questions/60095520/understanding-contour-hierarchies-how-to-distinguish-filled-circle-contour-and
      * [next, previous, first child, parent]
      */
-    public class BlobTool:IToolBase
-    { 
+
+    public class BlobParams : IParams
+    {
+        public Dictionary<string, ArrayList> MeasurementProperties { get; set; } = new Dictionary<string, ArrayList>();
+        public List<string> morphologyOperation { get; set; } = new List<string>();
+        public double threshold { get; set; } = 128;
+        public int minArea { get; set; } = 10;
+        public string polarity { get; set; } = "Dark blobs, Light background";
+        public ROI m_roi { get; set; } = new ROI();
+        public bool m_boolHasROI { get; set; } = false;
+        public string thresholdMode { get; set; } = "Global (Otsu)";
+        public int blockSize { get; set; } = 17;
+        public int param1 { get; set; } = 10;
+    }
+
+    // Declare Variable
+    public partial class BlobTool : IToolBase
+    {
         // One Results
         private class Blob
         {
@@ -82,6 +94,7 @@ namespace OpenCV_Vision_Pro
             public double BoundPrincipalAspect { get; set; }
             public double NotClipped { get; set; }
         }
+
         // List of Blob and BlobImage
         private class BlobResults : IDisposable
         {
@@ -93,7 +106,6 @@ namespace OpenCV_Vision_Pro
                 BlobImage?.Dispose();
             }
         }
-        public BlobTool(string toolName) { this.ToolName = toolName; }
 
         public override Bitmap toolIcon { get; } = Resources.blob;
         public override string ToolName { get; set; }
@@ -106,6 +118,12 @@ namespace OpenCV_Vision_Pro
 
         private BlobResults blobResults;
         public Dictionary<int, Point[]> contourByRow { get; set; } = new Dictionary<int, Point[]>();
+    }
+
+    // Tool Method
+    public partial class BlobTool:IToolBase
+    {
+        public BlobTool(string toolName) { this.ToolName = toolName; }
 
         public override void getGUI()
         {
@@ -123,8 +141,26 @@ namespace OpenCV_Vision_Pro
             Mat image;
             if (region.IsEmpty)
                 image = img.Clone();
-            else
+            else if(((BlobToolControl)m_toolControl).m_roi.polygonPoint == null)
                 image = new Mat(img,region);
+            else
+            {
+                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
+                CvInvoke.FillPoly(mask, new VectorOfPoint(((BlobToolControl)m_toolControl).m_roi.polygonPoint), new MCvScalar(255, 255, 255));
+
+                Mat bitImage = new Mat();
+                CvInvoke.BitwiseAnd(img, mask, bitImage);
+
+                if(((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                {
+                    CvInvoke.BitwiseNot(mask, mask);
+                    CvInvoke.BitwiseOr(mask, bitImage, bitImage);
+                }
+
+                image = new Mat(bitImage, region);
+                bitImage?.Dispose();
+                mask?.Dispose();
+            }
 
             blobResults?.Dispose();
             blobResults = new BlobResults();
@@ -133,7 +169,6 @@ namespace OpenCV_Vision_Pro
                 parameter = ((BlobToolControl)m_toolControl).BlobParams;
             else
                 parameter = new BlobParams();
-
 
             Mat imageClone = new Mat();
             contourByRow.Clear();
@@ -144,7 +179,7 @@ namespace OpenCV_Vision_Pro
 
             imageClone = GetThresholdImage(filter_image, imageClone);
             filter_image.Dispose();
-            
+
             // If have morphology operation selected
             if (((BlobParams)parameter).morphologyOperation.Count > 0)
             {
@@ -162,11 +197,11 @@ namespace OpenCV_Vision_Pro
 
             //====================================== Draw Blobs + Calculation =============================================
             Bitmap combinedImage = new Bitmap(image.Width, image.Height);
+            using (Brush grayBrush = new SolidBrush(Color.Gray))
             using (Graphics graphics = Graphics.FromImage(combinedImage))
             {
-                Brush grayBrush = new SolidBrush(Color.Gray);
+                
                 graphics.FillRectangle(grayBrush, new Rectangle(0, 0, image.Width, image.Height));
-                grayBrush.Dispose();
 
                 bool[] calcDrawDone = new bool[contours.Length];
                 BlobRecursiveRun(hierarchy, contours, calcDrawDone, 0, true, combinedImage);
@@ -192,50 +227,6 @@ namespace OpenCV_Vision_Pro
             //=============================================================================================================
             */
             image.Dispose();
-        }
-
-        private Mat GetThresholdImage(Mat filter_image, Mat imageClone)
-        {
-            double bestThreshold;
-            switch (((BlobParams)parameter).thresholdMode)
-            {
-                case "Global (Triangle)":
-                    bestThreshold = CvInvoke.Threshold(filter_image, imageClone, 0, 255, ThresholdType.Triangle);
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
-                    break;
-                case "Global (Manual)":
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.BinaryInv);
-                    else
-                        CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.Binary);
-                    break;
-                case "Global (Otsu)":
-                    bestThreshold = CvInvoke.Threshold(filter_image, imageClone,0, 255, ThresholdType.Otsu);
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
-                    break;
-                case "Local (MeanC)":
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    else
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    break;
-                case "Local (GaussianC)":
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    else
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    break;
-                default:
-                    return filter_image.Clone();
-            }
-            return imageClone;
-            /*
-            CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.Mask);
-            CvInvoke.Imshow("Mask", imageClone);
-            */
-            
         }
 
         public override object showResult()
@@ -469,7 +460,50 @@ namespace OpenCV_Vision_Pro
                 Console.WriteLine(e.ToString());
             }
         }
-        
+
+        private Mat GetThresholdImage(Mat filter_image, Mat imageClone)
+        {
+            double bestThreshold;
+            switch (((BlobParams)parameter).thresholdMode)
+            {
+                case "Global (Triangle)":
+                    bestThreshold = CvInvoke.Threshold(filter_image, imageClone, 0, 255, ThresholdType.Triangle);
+                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                        CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
+                    break;
+                case "Global (Manual)":
+                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                        CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.BinaryInv);
+                    else
+                        CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.Binary);
+                    break;
+                case "Global (Otsu)":
+                    bestThreshold = CvInvoke.Threshold(filter_image, imageClone, 0, 255, ThresholdType.Otsu);
+                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                        CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
+                    break;
+                case "Local (MeanC)":
+                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                    else
+                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                    break;
+                case "Local (GaussianC)":
+                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                    else
+                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                    break;
+                default:
+                    return filter_image.Clone();
+            }
+            return imageClone;
+            /*
+            CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.Mask);
+            CvInvoke.Imshow("Mask", imageClone);
+            */
+        }
+
         /*
         private string createFilterString(Dictionary<string, ArrayList> MeasurementProperties, string m_strBlobsFilter)
         {
@@ -531,17 +565,4 @@ namespace OpenCV_Vision_Pro
         }*/
     }
     
-    public class BlobParams: IParams
-    {
-        public Dictionary<string, ArrayList> MeasurementProperties { get; set; } = new Dictionary<string, ArrayList>();
-        public List<string> morphologyOperation { get; set; } = new List<string>();
-        public double threshold { get; set; } = 128;
-        public int minArea { get; set; } = 10;
-        public string polarity { get; set; } = "Dark blobs, Light background";
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
-        public string thresholdMode { get; set; } = "Global (Otsu)";
-        public int blockSize { get; set; } = 17;
-        public int param1 { get; set; } = 10;
-    }
 }

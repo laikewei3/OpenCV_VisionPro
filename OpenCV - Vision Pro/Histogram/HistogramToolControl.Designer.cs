@@ -31,6 +31,7 @@
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.m_HistogramInput = new System.Windows.Forms.TabPage();
             this.m_HistogramOutput = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.m_dgvHisData = new System.Windows.Forms.DataGridView();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -53,6 +54,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.tabControl2.SuspendLayout();
             this.m_HistogramOutput.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_dgvHisData)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -67,7 +69,7 @@
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(200, 545);
+            this.tabControl2.Size = new System.Drawing.Size(345, 440);
             this.tabControl2.TabIndex = 1;
             // 
             // m_HistogramInput
@@ -76,7 +78,7 @@
             this.m_HistogramInput.Location = new System.Drawing.Point(4, 22);
             this.m_HistogramInput.Name = "m_HistogramInput";
             this.m_HistogramInput.Padding = new System.Windows.Forms.Padding(3);
-            this.m_HistogramInput.Size = new System.Drawing.Size(192, 519);
+            this.m_HistogramInput.Size = new System.Drawing.Size(337, 414);
             this.m_HistogramInput.TabIndex = 0;
             this.m_HistogramInput.Text = "Input";
             this.m_HistogramInput.UseVisualStyleBackColor = true;
@@ -84,24 +86,39 @@
             // m_HistogramOutput
             // 
             this.m_HistogramOutput.AutoScroll = true;
-            this.m_HistogramOutput.Controls.Add(this.groupBox6);
-            this.m_HistogramOutput.Controls.Add(this.groupBox2);
+            this.m_HistogramOutput.Controls.Add(this.tableLayoutPanel1);
             this.m_HistogramOutput.Location = new System.Drawing.Point(4, 22);
             this.m_HistogramOutput.Name = "m_HistogramOutput";
             this.m_HistogramOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.m_HistogramOutput.Size = new System.Drawing.Size(192, 519);
+            this.m_HistogramOutput.Size = new System.Drawing.Size(337, 414);
             this.m_HistogramOutput.TabIndex = 1;
             this.m_HistogramOutput.Text = "Output";
             this.m_HistogramOutput.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.groupBox6, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox2, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(651, 391);
+            this.tableLayoutPanel1.TabIndex = 2;
             // 
             // groupBox6
             // 
             this.groupBox6.AutoSize = true;
             this.groupBox6.Controls.Add(this.m_dgvHisData);
-            this.groupBox6.Location = new System.Drawing.Point(6, 311);
-            this.groupBox6.MinimumSize = new System.Drawing.Size(0, 500);
+            this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox6.Location = new System.Drawing.Point(307, 3);
+            this.groupBox6.MinimumSize = new System.Drawing.Size(200, 0);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(309, 500);
+            this.groupBox6.Size = new System.Drawing.Size(341, 385);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Data";
@@ -115,30 +132,31 @@
             this.m_dgvHisData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.m_dgvHisData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_dgvHisData.Location = new System.Drawing.Point(3, 16);
-            this.m_dgvHisData.MinimumSize = new System.Drawing.Size(0, 500);
+            this.m_dgvHisData.MinimumSize = new System.Drawing.Size(250, 0);
             this.m_dgvHisData.Name = "m_dgvHisData";
             this.m_dgvHisData.ReadOnly = true;
             this.m_dgvHisData.RowHeadersVisible = false;
             this.m_dgvHisData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.m_dgvHisData.Size = new System.Drawing.Size(303, 500);
+            this.m_dgvHisData.Size = new System.Drawing.Size(335, 366);
             this.m_dgvHisData.TabIndex = 0;
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.m_HisOutTable);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(309, 305);
+            this.groupBox2.Size = new System.Drawing.Size(298, 385);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Statictics";
             // 
             // m_HisOutTable
             // 
+            this.m_HisOutTable.AutoSize = true;
             this.m_HisOutTable.ColumnCount = 2;
-            this.m_HisOutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.80749F));
-            this.m_HisOutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.19251F));
+            this.m_HisOutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.m_HisOutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.m_HisOutTable.Controls.Add(this.m_tbSample, 1, 7);
             this.m_HisOutTable.Controls.Add(this.m_tbVariance, 1, 6);
             this.m_HisOutTable.Controls.Add(this.m_tbSD, 1, 5);
@@ -155,7 +173,7 @@
             this.m_HisOutTable.Controls.Add(this.label7, 0, 6);
             this.m_HisOutTable.Controls.Add(this.m_tbMin, 1, 0);
             this.m_HisOutTable.Controls.Add(this.label8, 0, 7);
-            this.m_HisOutTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_HisOutTable.Dock = System.Windows.Forms.DockStyle.Top;
             this.m_HisOutTable.Location = new System.Drawing.Point(3, 16);
             this.m_HisOutTable.Name = "m_HisOutTable";
             this.m_HisOutTable.RowCount = 8;
@@ -167,14 +185,13 @@
             this.m_HisOutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.m_HisOutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.m_HisOutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-            this.m_HisOutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.m_HisOutTable.Size = new System.Drawing.Size(303, 286);
+            this.m_HisOutTable.Size = new System.Drawing.Size(292, 208);
             this.m_HisOutTable.TabIndex = 0;
             // 
             // m_tbSample
             // 
             this.m_tbSample.Enabled = false;
-            this.m_tbSample.Location = new System.Drawing.Point(87, 248);
+            this.m_tbSample.Location = new System.Drawing.Point(61, 185);
             this.m_tbSample.Name = "m_tbSample";
             this.m_tbSample.Size = new System.Drawing.Size(100, 20);
             this.m_tbSample.TabIndex = 15;
@@ -182,7 +199,7 @@
             // m_tbVariance
             // 
             this.m_tbVariance.Enabled = false;
-            this.m_tbVariance.Location = new System.Drawing.Point(87, 213);
+            this.m_tbVariance.Location = new System.Drawing.Point(61, 159);
             this.m_tbVariance.Name = "m_tbVariance";
             this.m_tbVariance.Size = new System.Drawing.Size(100, 20);
             this.m_tbVariance.TabIndex = 14;
@@ -190,7 +207,7 @@
             // m_tbSD
             // 
             this.m_tbSD.Enabled = false;
-            this.m_tbSD.Location = new System.Drawing.Point(87, 178);
+            this.m_tbSD.Location = new System.Drawing.Point(61, 133);
             this.m_tbSD.Name = "m_tbSD";
             this.m_tbSD.Size = new System.Drawing.Size(100, 20);
             this.m_tbSD.TabIndex = 13;
@@ -198,7 +215,7 @@
             // m_tbMean
             // 
             this.m_tbMean.Enabled = false;
-            this.m_tbMean.Location = new System.Drawing.Point(87, 143);
+            this.m_tbMean.Location = new System.Drawing.Point(61, 107);
             this.m_tbMean.Name = "m_tbMean";
             this.m_tbMean.Size = new System.Drawing.Size(100, 20);
             this.m_tbMean.TabIndex = 12;
@@ -206,7 +223,7 @@
             // m_tbMode
             // 
             this.m_tbMode.Enabled = false;
-            this.m_tbMode.Location = new System.Drawing.Point(87, 108);
+            this.m_tbMode.Location = new System.Drawing.Point(61, 81);
             this.m_tbMode.Name = "m_tbMode";
             this.m_tbMode.Size = new System.Drawing.Size(100, 20);
             this.m_tbMode.TabIndex = 11;
@@ -214,7 +231,7 @@
             // m_tbMedian
             // 
             this.m_tbMedian.Enabled = false;
-            this.m_tbMedian.Location = new System.Drawing.Point(87, 73);
+            this.m_tbMedian.Location = new System.Drawing.Point(61, 55);
             this.m_tbMedian.Name = "m_tbMedian";
             this.m_tbMedian.Size = new System.Drawing.Size(100, 20);
             this.m_tbMedian.TabIndex = 10;
@@ -222,7 +239,7 @@
             // m_tbMax
             // 
             this.m_tbMax.Enabled = false;
-            this.m_tbMax.Location = new System.Drawing.Point(87, 38);
+            this.m_tbMax.Location = new System.Drawing.Point(61, 29);
             this.m_tbMax.Name = "m_tbMax";
             this.m_tbMax.Size = new System.Drawing.Size(100, 20);
             this.m_tbMax.TabIndex = 9;
@@ -230,7 +247,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 73);
+            this.label3.Location = new System.Drawing.Point(3, 55);
             this.label3.Margin = new System.Windows.Forms.Padding(3);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(42, 13);
@@ -240,7 +257,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 108);
+            this.label4.Location = new System.Drawing.Point(3, 81);
             this.label4.Margin = new System.Windows.Forms.Padding(3);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(34, 13);
@@ -250,7 +267,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 143);
+            this.label5.Location = new System.Drawing.Point(3, 107);
             this.label5.Margin = new System.Windows.Forms.Padding(3);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(34, 13);
@@ -260,7 +277,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 178);
+            this.label6.Location = new System.Drawing.Point(3, 133);
             this.label6.Margin = new System.Windows.Forms.Padding(3);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(52, 13);
@@ -280,7 +297,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 38);
+            this.label2.Location = new System.Drawing.Point(3, 29);
             this.label2.Margin = new System.Windows.Forms.Padding(3);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(51, 13);
@@ -290,7 +307,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 213);
+            this.label7.Location = new System.Drawing.Point(3, 159);
             this.label7.Margin = new System.Windows.Forms.Padding(3);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(49, 13);
@@ -300,7 +317,7 @@
             // m_tbMin
             // 
             this.m_tbMin.Enabled = false;
-            this.m_tbMin.Location = new System.Drawing.Point(87, 3);
+            this.m_tbMin.Location = new System.Drawing.Point(61, 3);
             this.m_tbMin.Name = "m_tbMin";
             this.m_tbMin.Size = new System.Drawing.Size(100, 20);
             this.m_tbMin.TabIndex = 8;
@@ -308,7 +325,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 248);
+            this.label8.Location = new System.Drawing.Point(3, 185);
             this.label8.Margin = new System.Windows.Forms.Padding(3);
             this.label8.MaximumSize = new System.Drawing.Size(100, 0);
             this.label8.Name = "label8";
@@ -323,14 +340,16 @@
             this.Controls.Add(this.tabControl2);
             this.MinimumSize = new System.Drawing.Size(200, 0);
             this.Name = "HistogramToolControl";
-            this.Size = new System.Drawing.Size(200, 545);
+            this.Size = new System.Drawing.Size(345, 440);
             this.Load += new System.EventHandler(this.HistogramToolControl_Load);
             this.tabControl2.ResumeLayout(false);
             this.m_HistogramOutput.ResumeLayout(false);
-            this.m_HistogramOutput.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.m_dgvHisData)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.m_HisOutTable.ResumeLayout(false);
             this.m_HisOutTable.PerformLayout();
             this.ResumeLayout(false);
@@ -362,5 +381,6 @@
         internal System.Windows.Forms.TextBox m_tbMode;
         internal System.Windows.Forms.TextBox m_tbMedian;
         internal System.Windows.Forms.TextBox m_tbMax;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }
