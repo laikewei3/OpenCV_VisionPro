@@ -44,10 +44,19 @@
             this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageConvertToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorSegmentorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorMatchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorExtractorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mLDLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.yOLOv7ObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_GetInputImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openImageFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findLineToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -174,6 +183,7 @@
             // 
             // m_treeViewTools
             // 
+            this.m_treeViewTools.AllowDrop = true;
             this.m_treeViewTools.BackColor = System.Drawing.SystemColors.ControlLight;
             this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_treeViewTools.ImageIndex = 0;
@@ -185,6 +195,9 @@
             this.m_treeViewTools.TabIndex = 0;
             this.m_treeViewTools.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseClick);
             this.m_treeViewTools.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseDoubleClick);
+            this.m_treeViewTools.DragDrop += new System.Windows.Forms.DragEventHandler(this.m_treeViewTools_DragDrop);
+            this.m_treeViewTools.DragEnter += new System.Windows.Forms.DragEventHandler(this.m_treeViewTools_DragEnter);
+            this.m_treeViewTools.DragOver += new System.Windows.Forms.DragEventHandler(this.m_treeViewTools_DragOver);
             // 
             // imageList1
             // 
@@ -193,21 +206,29 @@
             this.imageList1.Images.SetKeyName(0, "blob.png");
             this.imageList1.Images.SetKeyName(1, "caliper.png");
             this.imageList1.Images.SetKeyName(2, "histogram.png");
+            this.imageList1.Images.SetKeyName(3, "convert.png");
+            this.imageList1.Images.SetKeyName(4, "segmentor.png");
+            this.imageList1.Images.SetKeyName(5, "match.png");
+            this.imageList1.Images.SetKeyName(6, "extractor.png");
             // 
             // m_AddToolList
             // 
             this.m_AddToolList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.blobToolMenuItem,
             this.caliperToolMenuItem,
-            this.histogramToolMenuItem});
+            this.histogramToolMenuItem,
+            this.findLineToolToolStripMenuItem,
+            this.imageConvertToolToolStripMenuItem,
+            this.colorToolToolStripMenuItem,
+            this.mLDLToolStripMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(156, 70);
+            this.m_AddToolList.Size = new System.Drawing.Size(181, 180);
             // 
             // blobToolMenuItem
             // 
             this.blobToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("blobToolMenuItem.Image")));
             this.blobToolMenuItem.Name = "blobToolMenuItem";
-            this.blobToolMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.blobToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.blobToolMenuItem.Text = "Blob Tool";
             this.blobToolMenuItem.Click += new System.EventHandler(this.blobToolMenuItem_Click);
             // 
@@ -215,7 +236,7 @@
             // 
             this.caliperToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("caliperToolMenuItem.Image")));
             this.caliperToolMenuItem.Name = "caliperToolMenuItem";
-            this.caliperToolMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.caliperToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.caliperToolMenuItem.Text = "Caliper Tool";
             this.caliperToolMenuItem.Click += new System.EventHandler(this.caliperToolMenuItem_Click);
             // 
@@ -223,32 +244,101 @@
             // 
             this.histogramToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("histogramToolMenuItem.Image")));
             this.histogramToolMenuItem.Name = "histogramToolMenuItem";
-            this.histogramToolMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.histogramToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.histogramToolMenuItem.Text = "Histogram Tool";
             this.histogramToolMenuItem.Click += new System.EventHandler(this.histogramToolMenuItem_Click);
+            // 
+            // imageConvertToolToolStripMenuItem
+            // 
+            this.imageConvertToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.convert;
+            this.imageConvertToolToolStripMenuItem.Name = "imageConvertToolToolStripMenuItem";
+            this.imageConvertToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imageConvertToolToolStripMenuItem.Text = "Image Convert Tool";
+            this.imageConvertToolToolStripMenuItem.Click += new System.EventHandler(this.imageConvertToolToolStripMenuItem_Click);
+            // 
+            // colorToolToolStripMenuItem
+            // 
+            this.colorToolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.colorSegmentorToolToolStripMenuItem,
+            this.colorMatchToolToolStripMenuItem,
+            this.colorExtractorToolToolStripMenuItem});
+            this.colorToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.color1;
+            this.colorToolToolStripMenuItem.Name = "colorToolToolStripMenuItem";
+            this.colorToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.colorToolToolStripMenuItem.Text = "Color Tool";
+            // 
+            // colorSegmentorToolToolStripMenuItem
+            // 
+            this.colorSegmentorToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.segmentor;
+            this.colorSegmentorToolToolStripMenuItem.Name = "colorSegmentorToolToolStripMenuItem";
+            this.colorSegmentorToolToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.colorSegmentorToolToolStripMenuItem.Text = "Color Segmentor Tool";
+            this.colorSegmentorToolToolStripMenuItem.Click += new System.EventHandler(this.colorSegmentorToolToolStripMenuItem_Click);
+            // 
+            // colorMatchToolToolStripMenuItem
+            // 
+            this.colorMatchToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.match;
+            this.colorMatchToolToolStripMenuItem.Name = "colorMatchToolToolStripMenuItem";
+            this.colorMatchToolToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.colorMatchToolToolStripMenuItem.Text = "Color Match Tool";
+            this.colorMatchToolToolStripMenuItem.Click += new System.EventHandler(this.colorMatchToolToolStripMenuItem_Click);
+            // 
+            // colorExtractorToolToolStripMenuItem
+            // 
+            this.colorExtractorToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.extractor;
+            this.colorExtractorToolToolStripMenuItem.Name = "colorExtractorToolToolStripMenuItem";
+            this.colorExtractorToolToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.colorExtractorToolToolStripMenuItem.Text = "Color Extractor Tool";
+            this.colorExtractorToolToolStripMenuItem.Click += new System.EventHandler(this.colorExtractorToolToolStripMenuItem_Click);
+            // 
+            // mLDLToolStripMenuItem
+            // 
+            this.mLDLToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.yOLOv7ObjectDetectionToolStripMenuItem});
+            this.mLDLToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.mldl;
+            this.mLDLToolStripMenuItem.Name = "mLDLToolStripMenuItem";
+            this.mLDLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mLDLToolStripMenuItem.Text = "ML/DL";
+            // 
+            // yOLOv7ObjectDetectionToolStripMenuItem
+            // 
+            this.yOLOv7ObjectDetectionToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.yolo;
+            this.yOLOv7ObjectDetectionToolStripMenuItem.Name = "yOLOv7ObjectDetectionToolStripMenuItem";
+            this.yOLOv7ObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.yOLOv7ObjectDetectionToolStripMenuItem.Text = "YOLOv7 Object Detection";
+            this.yOLOv7ObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.yOLOv7ObjectDetectionToolStripMenuItem_Click);
             // 
             // m_GetInputImageMenu
             // 
             this.m_GetInputImageMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openImageFileToolStripMenuItem,
+            this.openFolderToolStripMenuItem,
             this.openVideoFileToolStripMenuItem,
             this.openCameraToolStripMenuItem});
             this.m_GetInputImageMenu.Name = "m_GetInputImageMenu";
-            this.m_GetInputImageMenu.Size = new System.Drawing.Size(181, 92);
+            this.m_GetInputImageMenu.Size = new System.Drawing.Size(161, 92);
             // 
             // openImageFileToolStripMenuItem
             // 
             this.openImageFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openImageFileToolStripMenuItem.Image")));
             this.openImageFileToolStripMenuItem.Name = "openImageFileToolStripMenuItem";
-            this.openImageFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openImageFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openImageFileToolStripMenuItem.Text = "Open Image File";
             this.openImageFileToolStripMenuItem.Click += new System.EventHandler(this.openImageFileToolStripMenuItem_Click);
+            // 
+            // openFolderToolStripMenuItem
+            // 
+            this.openFolderToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.folder;
+            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.openFolderToolStripMenuItem.Text = "Open Folder";
+            this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openImageFileToolStripMenuItem_Click);
             // 
             // openVideoFileToolStripMenuItem
             // 
             this.openVideoFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openVideoFileToolStripMenuItem.Image")));
             this.openVideoFileToolStripMenuItem.Name = "openVideoFileToolStripMenuItem";
-            this.openVideoFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openVideoFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openVideoFileToolStripMenuItem.Text = "Open Video File";
             this.openVideoFileToolStripMenuItem.Click += new System.EventHandler(this.openVideoFileToolStripMenuItem_Click);
             // 
@@ -256,8 +346,15 @@
             // 
             this.openCameraToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openCameraToolStripMenuItem.Image")));
             this.openCameraToolStripMenuItem.Name = "openCameraToolStripMenuItem";
-            this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openCameraToolStripMenuItem.Text = "Open Camera";
+            // 
+            // findLineToolToolStripMenuItem
+            // 
+            this.findLineToolToolStripMenuItem.Name = "findLineToolToolStripMenuItem";
+            this.findLineToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.findLineToolToolStripMenuItem.Text = "Find Line Tool";
+            this.findLineToolToolStripMenuItem.Click += new System.EventHandler(this.findLineToolToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -305,6 +402,15 @@
         private System.Windows.Forms.ToolStripMenuItem openCameraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openVideoFileToolStripMenuItem;
         public System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ToolStripMenuItem imageConvertToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem colorToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem colorSegmentorToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem colorMatchToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem colorExtractorToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mLDLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem yOLOv7ObjectDetectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findLineToolToolStripMenuItem;
     }
 }
 

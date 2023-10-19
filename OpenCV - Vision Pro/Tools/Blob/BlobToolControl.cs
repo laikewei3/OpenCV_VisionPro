@@ -38,27 +38,18 @@ namespace OpenCV_Vision_Pro
             BlobParams = (BlobParams)parameter;
             BindingSource bindingSource = new BindingSource() { DataSource = m_measurementList };
             m_cbBlobProperties.DataSource = bindingSource;
-            Panel panel = new Panel
-            {
-                Height = 65,
-                Dock = DockStyle.Top
-            };
-            Panel tempPanel = new Panel
-            {
-                Dock = DockStyle.Top
-            };
-
-            tempPanel.Controls.Add(BlobParams.m_roi);
-            BlobParams.m_roi.Dock = DockStyle.Fill;
-            panel.Controls.Add(tempPanel);
-            m_BlobInput.Controls.Add(panel); 
+            BlobParams.m_roi.Dock = DockStyle.Top;
+            m_BlobInput.Controls.Add(BlobParams.m_roi); 
         }
 
         private void BlobToolControl_Load(object sender, EventArgs e)
         {
             if (parameter.m_boolHasROI)
             {
-                parameter.m_roi.m_comboBoxROI.SelectedIndex = 1;
+                if(parameter.m_roi.points != null)
+                    parameter.m_roi.m_comboBoxROI.SelectedIndex = 2;
+                else
+                    parameter.m_roi.m_comboBoxROI.SelectedIndex = 1;
             }
 
             if (BlobParams.MeasurementProperties.Count <= 0)
@@ -105,10 +96,12 @@ namespace OpenCV_Vision_Pro
             {
                 int N = int.Parse(m_dgvBlobResults.SelectedRows[0].Cells[0].Value.ToString());
                 Bitmap tempBitamp = m_toolWindow.m_displayControl.m_bitmapList["LastRun."+m_toolWindow.m_toolBase.ToolName+".BlobImage"].ToBitmap();
-                using(Pen pen = new Pen(Color.DeepSkyBlue,2))
+                using (Pen pen = new Pen(Color.DeepSkyBlue,2))
                 using (Graphics graphics = Graphics.FromImage(tempBitamp))
                 {
                     graphics.DrawPolygon(pen, ((BlobTool)m_toolWindow.m_toolBase).contourByRow[N]);
+                    pen.Dispose();
+                    graphics.Dispose();
                 }
                 resultSelectedImage = tempBitamp.ToMat();
                 m_toolWindow.m_displayControl.m_display.Image = resultSelectedImage;

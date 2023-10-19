@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -46,77 +47,17 @@ namespace OpenCV_Vision_Pro
     // Declare Variable
     public partial class BlobTool : IToolBase
     {
-        // One Results
-        private class Blob
-        {
-            public int ID { get; set; }
-            public double Area { get; set; }
-            public double CenterMassX { get; set; }
-            public double CenterMassY { get; set; }
-            public string ConnectivityLabel { get; set; }
-            public double Angle { get; set; }
-            public double BoundaryPixelLength { get; set; }
-            public double Perimeter { get; set; }
-            public int NumChildren { get; set; }
-            public double InertiaX { get; set; }
-            public double InertiaY { get; set; }
-            public double InertiaMin { get; set; }
-            public double InertiaMax { get; set; }
-            public double Elongation { get; set; }
-            public double Acircularity { get; set; }
-            public double AcircularityRms { get; set; }
-            public double ImageBoundCenterX { get; set; }
-            public double ImageBoundCenterY { get; set; }
-            public double ImageBoundMinX { get; set; }
-            public double ImageBoundMaxX { get; set; }
-            public double ImageBoundMinY { get; set; }
-            public double ImageBoundMaxY { get; set; }
-            public double ImageBoundWidth { get; set; }
-            public double ImageBoundHeight { get; set; }
-            public double ImageBoundAspect { get; set; }
-            public double MedianX { get; set; }
-            public double MedianY { get; set; }
-            public double BoundCenterX { get; set; }
-            public double BoundCenterY { get; set; }
-            public double BoundMinX { get; set; }
-            public double BoundMaxX { get; set; }
-            public double BoundMinY { get; set; }
-            public double BoundMaxY { get; set; }
-            public double BoundWidth { get; set; }
-            public double BoundHeight { get; set; }
-            public double BoundAspect { get; set; }
-            public double BoundPrincipalMinX { get; set; }
-            public double BoundPrincipalMaxX { get; set; }
-            public double BoundPrincipalMinY { get; set; }
-            public double BoundPrincipalMaxY { get; set; }
-            public double BoundPrincipalWidth { get; set; }
-            public double BoundPrincipalHeight { get; set; }
-            public double BoundPrincipalAspect { get; set; }
-            public double NotClipped { get; set; }
-        }
+        public  Bitmap toolIcon { get; } = Resources.blob;
+        public  string ToolName { get; set; }
+        public  UserControlBase m_toolControl { get; set; }
+        public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
+        public  BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
+        public  BindingSource resultSource { get; set; }
+        public  Rectangle m_rectROI { get; set; }
+        public  IParams parameter { get; set; } = new BlobParams();
 
-        // List of Blob and BlobImage
-        private class BlobResults : IDisposable
-        {
-            public List<Blob> blobs { get; set; } = new List<Blob>();
-            public Mat BlobImage { get; set; }
-
-            public void Dispose()
-            {
-                BlobImage?.Dispose();
-            }
-        }
-
-        public override Bitmap toolIcon { get; } = Resources.blob;
-        public override string ToolName { get; set; }
-        public override UserControlBase m_toolControl { get; set; }
-        public override AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
-        public override BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public override BindingSource resultSource { get; set; }
-        public override Rectangle m_rectROI { get; set; }
-        public override IParams parameter { get; set; } = new BlobParams();
-
-        private BlobResults blobResults;
+        public  IToolResult toolResult { get; set; }
+        public BlobResults blobResults { get { return (BlobResults)toolResult; } set { toolResult = value; } }
         public Dictionary<int, Point[]> contourByRow { get; set; } = new Dictionary<int, Point[]>();
     }
 
@@ -125,7 +66,7 @@ namespace OpenCV_Vision_Pro
     {
         public BlobTool(string toolName) { this.ToolName = toolName; }
 
-        public override void getGUI()
+        public  void getGUI()
         {
             if (m_rectROI != null && !m_rectROI.IsEmpty)
             {
@@ -136,17 +77,17 @@ namespace OpenCV_Vision_Pro
             m_toolControl = new BlobToolControl(parameter) { Dock = DockStyle.Fill };
         }
         
-        public override void Run(Mat img, Rectangle region)
+        public  void Run(Mat img, Rectangle region)
         {
             Mat image;
             if (region.IsEmpty)
                 image = img.Clone();
-            else if(((BlobToolControl)m_toolControl).m_roi.polygonPoint == null)
+            else if(((BlobToolControl)m_toolControl).m_roi.points == null)
                 image = new Mat(img,region);
             else
             {
                 Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((BlobToolControl)m_toolControl).m_roi.polygonPoint), new MCvScalar(255, 255, 255));
+                CvInvoke.FillPoly(mask, new VectorOfPoint(((BlobToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
 
                 Mat bitImage = new Mat();
                 CvInvoke.BitwiseAnd(img, mask, bitImage);
@@ -205,31 +146,20 @@ namespace OpenCV_Vision_Pro
                 Stack<int> stack = new Stack<int>();
                 stack.Push(0);
                 BlobRecursiveRun(hierarchy, contours,true, combinedImage,stack);
-                blobResults.BlobImage = combinedImage.ToMat();
+                blobResults.resultImage = combinedImage.ToMat();
 
+                grayBrush.Dispose();
+                graphics.Dispose();
                 combinedImage.Dispose();
             }
             contours.Dispose();
             hierarchy.Dispose();
             imageClone.Dispose();
             //=============================================================================================================
-
-            /*
-            //============================================= Filter Results ================================================
-            string m_strBlobsFilter = "";
-            m_strBlobsFilter = createFilterString(((BlobParams)parameter).MeasurementProperties, m_strBlobsFilter);
-            if (m_strBlobsFilter != "")
-            {
-                var options = ScriptOptions.Default.AddReferences(typeof(Blob).Assembly);
-                Func<Blob, bool> FilterExpression = await CSharpScript.EvaluateAsync<Func<Blob, bool>>(m_strBlobsFilter, options);
-                blobResults.blobs = new List<Blob>(blobResults.blobs.Where(FilterExpression).ToList());
-            }
-            //=============================================================================================================
-            */
             image.Dispose();
         }
 
-        public override object showResult()
+        public  object showResult()
         {
             resultSource?.Dispose();
 
@@ -239,25 +169,25 @@ namespace OpenCV_Vision_Pro
             if (m_toolControl == null)
                 return resultSource;
             
-            SortableBindingList<Blob> resultList = new SortableBindingList<Blob>();
+            SortableBindingList<BlobData> resultList = new SortableBindingList<BlobData>();
             resultSource.DataSource = resultList;
             
-            foreach (Blob r in blobResults.blobs)
+            foreach (BlobData r in blobResults.blobs)
                 resultList.Add(r);
            
             return resultSource;
         }
 
-        public override void showResultImages()
+        public  void showResultImages()
         {
             if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".BlobImage"))
             {
                 Form1.m_bitmapList["LastRun." + ToolName + ".BlobImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".BlobImage"] = blobResults.BlobImage.Clone();
+                Form1.m_bitmapList["LastRun." + ToolName + ".BlobImage"] = blobResults.resultImage.Clone();
             }
             else
             {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".BlobImage", blobResults.BlobImage.Clone());
+                Form1.m_bitmapList.Add("LastRun." + ToolName + ".BlobImage", blobResults.resultImage.Clone());
                 if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".BlobImage"))
                     Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".BlobImage");
             }
@@ -265,17 +195,17 @@ namespace OpenCV_Vision_Pro
             if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".BlobImage"))
             {
                 m_bitmapList["LastRun." + ToolName + ".BlobImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".BlobImage"] = blobResults.BlobImage.Clone();
+                m_bitmapList["LastRun." + ToolName + ".BlobImage"] = blobResults.resultImage.Clone();
             }
             else
             {
-                m_bitmapList.Add("LastRun." + ToolName + ".BlobImage", blobResults.BlobImage.Clone());
+                m_bitmapList.Add("LastRun." + ToolName + ".BlobImage", blobResults.resultImage.Clone());
                 if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".BlobImage"))
                     m_DisplaySelection.Add("LastRun." + ToolName + ".BlobImage");
             }
         }
 
-        public override void Dispose()
+        public  void Dispose()
         {
             blobResults?.Dispose();
             m_toolControl?.Dispose();
@@ -318,7 +248,7 @@ namespace OpenCV_Vision_Pro
                     bool m_boolPass = true;
                     if (m_moments.M00 > ((BlobParams)parameter).minArea)
                     {
-                        Blob m_blob = new Blob();
+                        BlobData m_blob = new BlobData();
                         double CenterMassX = Math.Round(m_moments.M10 / m_moments.M00, 4);
                         double CenterMassY = Math.Round(m_moments.M01 / m_moments.M00, 4);
 
@@ -358,7 +288,7 @@ namespace OpenCV_Vision_Pro
                         {
                             string key = kvp.Key;
                             ArrayList value = kvp.Value;
-                            PropertyInfo propInfo = typeof(Blob).GetProperty(key);
+                            PropertyInfo propInfo = typeof(BlobData).GetProperty(key);
                             double lowValue = double.Parse((string)value[1]);
                             double highValue = double.Parse((string)value[2]);
                             if (propInfo != null)
@@ -377,7 +307,7 @@ namespace OpenCV_Vision_Pro
 
                                 if ((String)value[0] == "Include")
                                 {
-                                    if (m_doubleResult < lowValue && m_doubleResult > highValue) //要跳过
+                                    if (m_doubleResult < lowValue || m_doubleResult > highValue) //要跳过
                                     {
                                         m_boolPass = false;
                                         break;
@@ -409,6 +339,7 @@ namespace OpenCV_Vision_Pro
                                     {
                                         contourByRow.Add(index, points);
                                         contourGraphics.DrawPolygon(pen, points);
+                                        pen.Dispose();
                                     }
                                 }
                                 catch (Exception ex)
@@ -421,6 +352,7 @@ namespace OpenCV_Vision_Pro
                                     using (Brush blob = new SolidBrush(Color.White))
                                     {
                                         contourGraphics.FillPolygon(blob, points);
+                                        blob.Dispose();
                                     }
                                 }
 
@@ -429,18 +361,22 @@ namespace OpenCV_Vision_Pro
                                     using (Brush hole = new SolidBrush(Color.Black))
                                     {
                                         contourGraphics.FillPolygon(hole, points);
+                                        hole.Dispose();
                                     }
                                 }
+                                contourGraphics.Dispose();
                             }
                         }
                         else
                         {
                             using (Graphics contourGraphics = Graphics.FromImage(combinedImage))
                             {
-                                using (Brush hole = new SolidBrush(Color.Gray))
+                                using (Brush background = new SolidBrush(Color.Gray))
                                 {
-                                    contourGraphics.FillPolygon(hole, contours[index].ToArray());
+                                    contourGraphics.FillPolygon(background, contours[index].ToArray());
+                                    background.Dispose();
                                 }
+                                contourGraphics.Dispose();
                             }
                         }
                     }
@@ -463,45 +399,49 @@ namespace OpenCV_Vision_Pro
 
         private Mat GetThresholdImage(Mat filter_image, Mat imageClone)
         {
-            double bestThreshold;
-            switch (((BlobParams)parameter).thresholdMode)
+            try
             {
-                case "Global (Triangle)":
-                    bestThreshold = CvInvoke.Threshold(filter_image, imageClone, 0, 255, ThresholdType.Triangle);
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
-                    break;
-                case "Global (Manual)":
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.BinaryInv);
-                    else
-                        CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.Binary);
-                    break;
-                case "Global (Otsu)":
-                    bestThreshold = CvInvoke.Threshold(filter_image, imageClone, 0, 255, ThresholdType.Otsu);
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
-                    break;
-                case "Local (MeanC)":
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    else
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    break;
-                case "Local (GaussianC)":
-                    if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    else
-                        CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
-                    break;
-                default:
-                    return filter_image.Clone();
+                double bestThreshold;
+                switch (((BlobParams)parameter).thresholdMode)
+                {
+                    case "Global (Triangle)":
+                        bestThreshold = CvInvoke.Threshold(filter_image, imageClone, 0, 255, ThresholdType.Triangle);
+                        if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                            CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
+                        break;
+                    case "Global (Manual)":
+                        if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                            CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.BinaryInv);
+                        else
+                            CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.Binary);
+                        break;
+                    case "Global (Otsu)":
+                        bestThreshold = CvInvoke.Threshold(filter_image, imageClone, 0, 255, ThresholdType.Otsu);
+                        if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                            CvInvoke.Threshold(filter_image, imageClone, bestThreshold, 255, ThresholdType.BinaryInv);
+                        break;
+                    case "Local (MeanC)":
+                        if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                            CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                        else
+                            CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.MeanC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                        break;
+                    case "Local (GaussianC)":
+                        if (((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                            CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.BinaryInv, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                        else
+                            CvInvoke.AdaptiveThreshold(filter_image, imageClone, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, ((BlobParams)parameter).blockSize, ((BlobParams)parameter).param1);
+                        break;
+                    default:
+                        return filter_image;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                MessageBox.Show("Input Image Error in "+ToolName);
             }
             return imageClone;
-            /*
-            CvInvoke.Threshold(filter_image, imageClone, ((BlobParams)parameter).threshold, 255, ThresholdType.Mask);
-            CvInvoke.Imshow("Mask", imageClone);
-            */
         }
 
         /*

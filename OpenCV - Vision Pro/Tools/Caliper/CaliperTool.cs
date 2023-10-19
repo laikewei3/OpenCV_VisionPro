@@ -1,6 +1,8 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Emgu.CV.ML;
 using Emgu.CV.Structure;
+using OpenCV_Vision_Pro.Caliper;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
 using Shared.ComponentModel.SortableBindingList;
@@ -29,94 +31,30 @@ namespace OpenCV_Vision_Pro
         public bool m_boolHasROI { get; set; } = false;
     }
 
-    // Declare Variable
     public partial class CaliperTool : IToolBase
     {
-        private class CaliperResult : IDisposable
-        {
-            public SortableBindingList<Edges> caliperEdges { get; set; } = new SortableBindingList<Edges>();
-            public Mat caliperImage { get; set; }
+        public Bitmap toolIcon { get; } = Resources.caliper;
+        public string ToolName { get; set; }
+        public UserControlBase m_toolControl { get; set; }
+        public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
+        public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
+        public BindingSource resultSource { get; set; }
+        public Rectangle m_rectROI { get; set; }
 
-            public void Dispose()
-            {
-                caliperImage.Dispose();
-            }
-        }
-        private class Edges
-        {
-            public double Score { get; set; }
-            public int Edge0 { get; set; }
-            public double Position { get; set; }
-            public double X { get; set; }
-            public double Y { get; set; }
-            public double ScoringFunction0 { get; set; }
-            public double Contrast_E0 { get; set; }
-        }
-        private class EdgesPair
-        {
-            public EdgesPair(double score, int edge0, int edge1, double measured_Width, double position, double x, double y, double scoringFunction0, double contrast_E0, double distance_E0, double x0, double y0, double contrast_E1, double distance_E1, double x1, double y1)
-            {
-                Score = score;
-                Edge0 = edge0;
-                Edge1 = edge1;
-                Measured_Width = measured_Width;
-                Position = position;
-                X = x;
-                Y = y;
-                ScoringFunction0 = scoringFunction0;
-                Contrast_E0 = contrast_E0;
-                Distance_E0 = distance_E0;
-                X0 = x0;
-                Y0 = y0;
-                Contrast_E1 = contrast_E1;
-                Distance_E1 = distance_E1;
-                X1 = x1;
-                Y1 = y1;
-            }
+        public IParams parameter { get; set; } = new CaliperParams();
 
-            public double Score { get; set; }
-            public int Edge0 { get; set; }
-            public int Edge1 { get; set; }
-            public double Measured_Width { get; set; }
-            public double Position { get; set; }
-            public double X { get; set; }
-            public double Y { get; set; }
-            public double ScoringFunction0 { get; set; }
-            public double Contrast_E0 { get; set; }
-            public double Distance_E0 { get; set; }
-            public double X0 { get; set; }
-            public double Y0 { get; set; }
-            public double Contrast_E1 { get; set; }
-            public double Distance_E1 { get; set; }
-            public double X1 { get; set; }
-            public double Y1 { get; set; }
-        }
-
-        public override Bitmap toolIcon { get; } = Resources.caliper;
-        public override string ToolName { get; set; }
-        public override UserControlBase m_toolControl { get; set; }
-        public override AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
-        public override BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public override BindingSource resultSource { get; set; }
-        public override Rectangle m_rectROI { get; set; }
-
-        public override IParams parameter { get; set; } = new CaliperParams();
-        private CaliperResult caliperResult { get; set; }
+        public IToolResult toolResult { get; set; }
+        private CaliperResult caliperResult { get { return (CaliperResult)toolResult; } set { toolResult = value; } }
         public Dictionary<int, List<int>> caliperPoints { get; set; }
 
         private SortableBindingList<EdgesPair> caliperEdgesPair;
-    }
-
-    // Methods
-    public partial class CaliperTool : IToolBase
-    {
         public CaliperTool(string toolName)
         {
             caliperPoints = new Dictionary<int, List<int>>();
             ToolName = toolName;
         }
 
-        public override void getGUI()
+        public  void getGUI()
         {
             if (m_rectROI != null && !m_rectROI.IsEmpty)
             {
@@ -127,7 +65,7 @@ namespace OpenCV_Vision_Pro
             m_toolControl = new CaliperToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
-        public override void Run(Mat image, Rectangle region)
+        public  void Run(Mat image, Rectangle region)
         {
             if (((CaliperToolControl)m_toolControl) != null)
                 parameter = ((CaliperToolControl)m_toolControl).CaliperParams;
@@ -145,20 +83,12 @@ namespace OpenCV_Vision_Pro
             //=============================================== Image Preprocessing =================================================
             Mat imageCanny = image.Clone();
             CvInvoke.Canny(image,imageCanny, 40, 150, 3, true);
-            /*
-             * 当使用 CvInvoke.HoughLinesP 函数进行直线检测时，以下是各个参数的解释：
-             * image：这是输入的边缘检测图像，通常是使用Canny边缘检测或其他方法得到的。
-             * rho：这是Hough变换中极坐标的分辨率，表示以像素为单位的距离分辨率。它通常设置为1。
-             * theta：这是Hough变换中角度的分辨率，表示弧度为单位的角度分辨率。通常设置为 Math.PI / 2，以检测垂直线。
-             * threshold：这是用于确定检测到的直线的阈值。只有累加器中的值大于等于阈值时，才会被认为是一条直线。你可以根据图像的复杂性和噪声水平来调整此值。
-             * minLineLength：这是一条线段的最小长度。检测到的线段中，小于此长度的线段将被忽略。
-             * maxLineGap：这是连接两条线段之间的最大距离。如果两条线段之间的距离小于此值，它们将被合并成一条线段。
-            */
             //=====================================================================================================================
 
             //======================================== Get Caliper Edge using HoughLine ===========================================
             Mat line = new Mat();
             Mat ROI = new Mat(imageCanny, region);
+
             if (region.IsEmpty)
                 CvInvoke.HoughLines(imageCanny, line, 1, Math.PI, ((CaliperParams)parameter).contrastThreshold);
             else
@@ -224,7 +154,7 @@ namespace OpenCV_Vision_Pro
                 EdgesResult(imageClone, region);
         }
 
-        public override object showResult()
+        public  object showResult()
         {
             resultSource?.Dispose();
             resultSource = new BindingSource();
@@ -240,16 +170,16 @@ namespace OpenCV_Vision_Pro
             return resultSource;
         }
 
-        public override void showResultImages()
+        public  void showResultImages()
         {
             if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".CaliperImage"))
             {
                 Form1.m_bitmapList["LastRun." + ToolName + ".CaliperImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".CaliperImage"] = caliperResult.caliperImage.Clone();
+                Form1.m_bitmapList["LastRun." + ToolName + ".CaliperImage"] = caliperResult.resultImage.Clone();
             }
             else
             {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".CaliperImage", caliperResult.caliperImage.Clone());
+                Form1.m_bitmapList.Add("LastRun." + ToolName + ".CaliperImage", caliperResult.resultImage.Clone());
                 if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".CaliperImage"))
                     Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".CaliperImage");
             }
@@ -257,17 +187,17 @@ namespace OpenCV_Vision_Pro
             if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".CaliperImage"))
             {
                 m_bitmapList["LastRun." + ToolName + ".CaliperImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".CaliperImage"] = caliperResult.caliperImage.Clone();
+                m_bitmapList["LastRun." + ToolName + ".CaliperImage"] = caliperResult.resultImage.Clone();
             }
             else
             {
-                m_bitmapList.Add("LastRun." + ToolName + ".CaliperImage", caliperResult.caliperImage.Clone());
+                m_bitmapList.Add("LastRun." + ToolName + ".CaliperImage", caliperResult.resultImage.Clone());
                 if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".CaliperImage"))
                     m_DisplaySelection.Add("LastRun." + ToolName + ".CaliperImage");
             }
         }
 
-        public override void Dispose()
+        public  void Dispose()
         {
             caliperResult?.Dispose();
             m_bitmapList?.Dispose();
@@ -310,7 +240,6 @@ namespace OpenCV_Vision_Pro
             Bitmap combinedImage = new Bitmap(imageClone.Width, imageClone.Height);
             using (Graphics graphics = Graphics.FromImage(combinedImage))
             {
-
                 graphics.DrawImage(imageClone.ToBitmap(), 0, 0);
                 List<int> m_listDeleteIndex = new List<int>();
                 for (int i = 0; i < caliperResult.caliperEdges.Count; i++)
@@ -344,15 +273,18 @@ namespace OpenCV_Vision_Pro
                                 contourGraphics.DrawLine(pen, x, 0, x, y);
                             else
                                 contourGraphics.DrawLine(pen, x + region.X, region.Y, x + region.X, region.Y + region.Height);
+                            pen.Dispose();
+                            contourGraphics.Dispose();
                         }
                     }
                     else
                         m_listDeleteIndex.Add(i);
+                    graphics.Dispose();
                 }
                 for (int i = m_listDeleteIndex.Count-1; i >= 0; i--)
                     caliperResult.caliperEdges.RemoveAt(m_listDeleteIndex[i]);
 
-                caliperResult.caliperImage = combinedImage.ToMat();
+                caliperResult.resultImage = combinedImage.ToMat();
                 combinedImage.Dispose();
             }
             //=========================================================================================================
@@ -449,8 +381,9 @@ namespace OpenCV_Vision_Pro
                         break;
                 }
 
-                caliperResult.caliperImage = combinedImage.ToMat();
+                caliperResult.resultImage = combinedImage.ToMat();
                 combinedImage.Dispose();
+                graphics.Dispose();
             }
             //=========================================================================================================*/
         }

@@ -1,4 +1,6 @@
 ﻿using Emgu.CV;
+using OpenCV_Vision_Pro.Tools.ColorMatcher;
+using OpenCV_Vision_Pro.Tools.ImageSegmentor;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -64,7 +66,12 @@ namespace OpenCV_Vision_Pro
                     image?.Dispose();
                 }
             }
-            m_toolBase.m_toolControl.m_roi.m_comboBoxROI.SelectedIndexChanged += m_comboBoxROI_SelectedIndexChanged;
+            m_boolHasROI = m_toolBase.parameter.m_boolHasROI;
+            if(m_toolBase.m_toolControl.m_roi!=null)
+                m_toolBase.m_toolControl.m_roi.m_comboBoxROI.SelectedIndexChanged += m_comboBoxROI_SelectedIndexChanged;
+
+            if(m_toolBase.m_toolControl is ColorUserControlBase)
+                m_displayControl.m_colorTools = ((ColorUserControlBase)m_toolBase.m_toolControl).m_colorTools;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -73,10 +80,19 @@ namespace OpenCV_Vision_Pro
                 m_toolBase.m_bitmapList = m_displayControl.m_bitmapList?.CloneDictionaryCloningValues();
             m_displayControl.m_bitmapList?.Dispose();
             m_toolBase.parameter = m_toolBase.m_toolControl.parameter;
-            m_toolBase.m_rectROI = m_displayControl.m_roi.ROIRectangle;
-            m_toolBase.parameter.m_roi = m_displayControl.m_roi.Clone();
-            m_displayControl.m_roi = null;
-            m_toolBase.parameter.m_boolHasROI = m_boolHasROI;
+
+            if(m_displayControl.m_roi != null)
+            {
+                m_displayControl.m_roi.X -= m_displayControl.zoom[0];
+                m_displayControl.m_roi.Y -= m_displayControl.zoom[1];
+                m_displayControl.m_roi.ROI_Width -= m_displayControl.zoom[2];
+                m_displayControl.m_roi.ROI_Height -= m_displayControl.zoom[3];
+                m_toolBase.m_rectROI = m_displayControl.m_roi.ROIRectangle;
+                m_toolBase.parameter.m_roi = m_displayControl.m_roi.Clone();
+                m_displayControl.m_roi = null;
+                m_toolBase.parameter.m_boolHasROI = m_boolHasROI;
+            }
+
             m_timer.Dispose();
             bindingSource?.Dispose();
             base.OnFormClosing(e);
@@ -91,11 +107,19 @@ namespace OpenCV_Vision_Pro
             }
 
             Rectangle m_rectangle;
-
-            if (m_displayControl.m_roi.m_comboBoxROI.SelectedIndex == 0)
+            if(m_displayControl.m_roi == null)
+                m_rectangle = new Rectangle();
+            else if (m_displayControl.m_roi.m_comboBoxROI.SelectedIndex == 0)
                 m_rectangle = new Rectangle();
             else
-               m_rectangle = m_toolBase.m_toolControl.m_roi.ROIRectangle;
+            {
+                m_rectangle = m_toolBase.m_toolControl.m_roi.ROIRectangle;
+
+                m_rectangle.X -= m_displayControl.zoom[0];
+                m_rectangle.Y -= m_displayControl.zoom[1];
+                m_rectangle.Width -= m_displayControl.zoom[2];
+                m_rectangle.Height -= m_displayControl.zoom[3];
+            }
             
             Mat m_imageProcess = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
             m_toolBase.Run(m_imageProcess, m_rectangle);
@@ -111,7 +135,7 @@ namespace OpenCV_Vision_Pro
         {
             ComboBox m_cbROI = (ComboBox)sender;
             m_boolHasROI = true;
-            
+
             if (m_displayControl != null)
             {
                 m_displayControl.m_display.Invalidate();

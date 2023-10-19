@@ -52,4 +52,10 @@ namespace OpenCV_Vision_Pro
         void SetDataSource(object bs);
         
     }
+
+    public interface ColorUserControlBase : UserControlBase
+    {
+        ColorTools m_colorTools { get; set; }
+    }
+
 }

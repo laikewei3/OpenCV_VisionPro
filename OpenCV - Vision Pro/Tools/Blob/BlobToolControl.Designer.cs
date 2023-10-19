@@ -488,6 +488,11 @@ namespace OpenCV_Vision_Pro
             0,
             0,
             0});
+            this.m_NumSegmentation3.Minimum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            -2147483648});
             this.m_NumSegmentation3.Name = "m_NumSegmentation3";
             this.m_NumSegmentation3.Size = new System.Drawing.Size(70, 20);
             this.m_NumSegmentation3.TabIndex = 10;

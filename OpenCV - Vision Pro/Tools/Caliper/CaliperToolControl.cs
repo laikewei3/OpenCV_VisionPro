@@ -24,19 +24,8 @@ namespace OpenCV_Vision_Pro
             parameter = caliperParams;
             CaliperParams = (CaliperParams)parameter;
 
-            Panel panel = new Panel
-            {
-                Height = 65,
-                Dock = DockStyle.Top
-            };
-            Panel tempPanel = new Panel
-            {
-                Dock = DockStyle.Top
-            };
-            tempPanel.Controls.Add(CaliperParams.m_roi);
-            CaliperParams.m_roi.Dock = DockStyle.Fill;
-            panel.Controls.Add(tempPanel);
-            m_CaliperInput.Controls.Add(panel);
+            CaliperParams.m_roi.Dock = DockStyle.Top;
+            m_CaliperInput.Controls.Add(CaliperParams.m_roi);
         }
 
         private void CaliperToolControl_Load(object sender, EventArgs e)
@@ -107,6 +96,8 @@ namespace OpenCV_Vision_Pro
                     }
                     resultSelectedImage = tempBitmap.ToMat();
                     m_toolWindow.m_displayControl.m_display.Image = resultSelectedImage;
+                    pen.Dispose();
+                    graphics.Dispose();
                     tempBitmap?.Dispose();
                 }
             }

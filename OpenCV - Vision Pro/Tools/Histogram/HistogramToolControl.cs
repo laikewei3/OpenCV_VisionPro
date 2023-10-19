@@ -16,21 +16,11 @@ namespace OpenCV_Vision_Pro
         {
             InitializeComponent();
             resultDataGrid = m_dgvHisData;
-            Panel panel = new Panel
-            {
-                Height = 65,
-                Dock = DockStyle.Top
-            };
-            Panel tempPanel = new Panel
-            {
-                Dock = DockStyle.Top
-            };
+            
             parameter = historgramParams;
             this.historgramParams = (HistorgramParams)parameter;
-            tempPanel.Controls.Add(historgramParams.m_roi);
             historgramParams.m_roi.Dock = DockStyle.Fill;
-            panel.Controls.Add(tempPanel);
-            m_HistogramInput.Controls.Add(panel);
+            m_HistogramInput.Controls.Add(historgramParams.m_roi);
 
             m_HistogramOutput.HorizontalScroll.Maximum = 0;
             m_HistogramOutput.AutoScroll = false;

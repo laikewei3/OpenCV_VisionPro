@@ -109,6 +109,7 @@ namespace OpenCV_Vision_Pro
             this.m_display.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_display_MouseDown);
             this.m_display.MouseMove += new System.Windows.Forms.MouseEventHandler(this.m_display_MouseMove);
             this.m_display.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_display_MouseUp);
+            this.m_display.Resize += new System.EventHandler(this.m_display_Resize);
             // 
             // panel1
             // 
