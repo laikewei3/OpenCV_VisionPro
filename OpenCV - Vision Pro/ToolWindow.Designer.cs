@@ -15,8 +15,8 @@ namespace OpenCV_Vision_Pro
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            m_toolBase.m_toolControl.Dispose();
-            m_displayControl.Dispose();
+            m_toolBase.m_toolControl?.Dispose();
+            m_displayControl?.Dispose();
             if (disposing && (components != null))
             {
                 components.Dispose();

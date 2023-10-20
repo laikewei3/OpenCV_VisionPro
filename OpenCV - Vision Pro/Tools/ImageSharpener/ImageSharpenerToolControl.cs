@@ -31,12 +31,25 @@ namespace OpenCV_Vision_Pro
         }
 
         public void SetDataSource(object bs) {
-            m_scoreVariance.Text = ((double)bs).ToString();
+            if(bs != null)
+            {
+                m_scoreVariance.Text = ((double)bs).ToString();
+            }
         }
 
         private void m_comboBoxColorMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             SharpenerParams.runMode = m_comboBoxColorMode.SelectedItem.ToString();
+            if(String.Compare(SharpenerParams.runMode,"Expose") == 0)
+            {
+                m_nudgamma.Visible = true;
+                m_labelGamma.Visible = true;
+            }
+            else
+            {
+                m_nudgamma.Visible = false;
+                m_labelGamma.Visible = false;
+            }
         }
 
         private void ImageSharpenerToolControl_Load(object sender, EventArgs e)
@@ -50,6 +63,12 @@ namespace OpenCV_Vision_Pro
             }
 
             m_comboBoxColorMode.SelectedItem = SharpenerParams.runMode;
+            m_nudgamma.Value = (decimal)SharpenerParams.gamma;
+        }
+
+        private void m_nudgamma_ValueChanged(object sender, EventArgs e)
+        {
+            SharpenerParams.gamma = (double)m_nudgamma.Value;
         }
     }
 }

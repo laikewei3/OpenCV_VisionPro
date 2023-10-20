@@ -197,7 +197,6 @@ namespace OpenCV_Vision_Pro
                 m_labelTotalTime.Text = " / " + answer;
             }
         }
-
         
         // ROI METHODS
         private Point GetHandlePoint(Rectangle rect, int value)
@@ -344,8 +343,6 @@ namespace OpenCV_Vision_Pro
                     m_colorTools.m_nudBlue.Value = (decimal)scalar.V0;
                     m_colorTools.m_nudGreen.Value = (decimal)scalar.V1;
                     m_colorTools.m_nudRed.Value = (decimal)scalar.V2;
-
-
                 }
             }
         }

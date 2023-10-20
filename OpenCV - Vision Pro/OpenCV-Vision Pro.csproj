@@ -95,6 +95,7 @@
     <Compile Include="Display + ROI\ColorTools.Designer.cs">
       <DependentUpon>ColorTools.cs</DependentUpon>
     </Compile>
+    <Compile Include="HelperClass.cs" />
     <Compile Include="Tools\Blob\BlobResult.cs" />
     <Compile Include="Tools\ImageSharpener\ImageSharpenerTool.cs" />
     <Compile Include="Tools\ImageSharpener\ImageSharpenerToolControl.cs">

@@ -81,8 +81,14 @@ namespace OpenCV_Vision_Pro.LineSegment
             Mat imageClone = image.Clone(); // Clone for future Reference
 
             //=============================================== Image Preprocessing =================================================
-            Mat imageBlur = new Mat();
-            CvInvoke.CvtColor(image, imageBlur, ColorConversion.Bgr2Gray);
+            Mat imageBlur;
+            if (image.NumberOfChannels == 1)
+            {
+                imageBlur = new Mat();
+                CvInvoke.CvtColor(image, imageBlur, ColorConversion.Bgr2Gray);
+            }
+            else
+                imageBlur = image.Clone();
             CvInvoke.GaussianBlur(imageBlur, imageBlur, new Size(5, 5), 1);
             Mat imageCanny = image.Clone();
             CvInvoke.Canny(imageBlur, imageCanny, 40, 150, 3, true);
@@ -299,7 +305,7 @@ namespace OpenCV_Vision_Pro.LineSegment
 
                     Point myPoint = new Point(pt2.Y < vanishPoint.Y ? pt1.X : pt2.X, pt2.Y < vanishPoint.Y ? pt1.Y : pt2.Y);
 
-                    double x = myPoint.X + ((vanishPoint.Y + 30 - myPoint.Y) * (vanishPoint.X - myPoint.X)) / (vanishPoint.Y - myPoint.Y);
+                    double x = myPoint.X + ((vanishPoint.Y + 30 - myPoint.Y) * (vanishPoint.X - myPoint.X)) / (vanishPoint.Y - myPoint.Y+1e-10);
                     Point p1 = new Point((int)x, vanishPoint.Y + 30);
                     LineSegmentResult.LineSegmentEdges.Add(new LineSegments(j++, calculateDistance(vanishPoint.X, vanishPoint.Y, myPoint.X, myPoint.Y), calculateAngle()));
                     
@@ -341,5 +347,6 @@ namespace OpenCV_Vision_Pro.LineSegment
                 colorMask.Dispose();
             }
         }
+
     }
 }

@@ -80,22 +80,7 @@ namespace OpenCV_Vision_Pro.Tools.ColorMatcher
 
         public void Run(Mat img, Rectangle region)
         {
-            Mat image;
-            if (region.IsEmpty)
-                image = img.Clone();
-            else if (((ColorMatchToolControl)m_toolControl).m_roi.points == null)
-                image = new Mat(img, region);
-            else
-            {
-                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((ColorMatchToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
-
-                Mat bitImage = new Mat();
-                CvInvoke.BitwiseAnd(img, mask, bitImage);
-                image = new Mat(bitImage, region);
-                bitImage?.Dispose();
-                mask?.Dispose();
-            }
+            Mat image = HelperClass.getROIImage(img,region, ((ColorMatchToolControl)m_toolControl).m_roi.points);
 
             matcherResults?.Dispose();
             matcherResults = new ColorMatcherResults();

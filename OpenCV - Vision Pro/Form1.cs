@@ -21,22 +21,23 @@ namespace OpenCV_Vision_Pro
         private static DisplayControl m_displayControl;
         public static AutoDisposeDict<string, Mat> m_bitmapList { get { return m_displayControl.m_bitmapList; } private set { m_displayControl.m_bitmapList = value; } }
         public static BindingList<string> m_form1DisplaySelection { get; private set; }
+        
+        private Dictionary<string, int> m_dictToolCount = new Dictionary<string, int> {
+            {"BlobTool",0},
+            {"CaliperTool",0},
+            {"HistogramTool",0},
+            {"ImageConvertTool",0},
+            {"ColorSegmentorTool",0},
+            {"ColorMatcherTool",0},
+            {"ColorExtractorTool",0},
+            {"ImageSharpenerTool",0 },
+            {"LineSegmentTool", 0}
+        };
 
         private string[] files;
         private static int m_cntFileIndex = 0;
         private static int[] m_cntImageIndices;
         private static int m_cntImageIndex;
-
-        private Dictionary<string, int> m_dictToolCount = new Dictionary<string, int> {
-            {"m_intCntBlob",0},
-            {"m_intCntCaliper",0},
-            {"m_intCntHistogram",0},
-            {"m_intCntConvert",0},
-            {"m_intCntSegmentor",0},
-            {"m_intCntMatcher",0},
-            {"m_intCntExtractor",0},
-            {"m_intCntFindLine",0 }
-        };
 
         private Timer m_timer;
 
@@ -134,6 +135,7 @@ namespace OpenCV_Vision_Pro
 
                     if (openFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
                     {
+                        m_displayControl.m_display.Width = splitContainer1.Panel2.Width - 50; m_displayControl.m_display.Height = splitContainer1.Panel2.Height - 50;
                         if (videoCapture != null)
                         {
                             Application.Idle -= ProcessFrame;
@@ -154,7 +156,7 @@ namespace OpenCV_Vision_Pro
 
                         m_cntFileIndex = 0; m_cntImageIndex = 0;
                         m_cntImageIndices = new int[files.Length];
-                        m_displayControl.m_display.Width = splitContainer1.Panel2.Width - 20; m_displayControl.m_display.Height = splitContainer1.Panel2.Height - 20;
+                        
                         m_form1DisplaySelection.Clear();
                         m_form1DisplaySelection.Add("LastRun.OutputImage");
 
@@ -167,6 +169,7 @@ namespace OpenCV_Vision_Pro
                                 {
                                     m_cntImageIndices[i] = image.GetFrameCount(FrameDimension.Page);
                                 }
+                                image.Dispose();
                             }
                         }
                         OpenImages(files, m_cntFileIndex, m_cntImageIndex);
@@ -201,13 +204,14 @@ namespace OpenCV_Vision_Pro
                             using (Bitmap m_image = (Bitmap)Bitmap.FromStream(memStream))
                             {
                                 Mat tempMat = m_image.ToMat();
-                                Size newSize = resize(tempMat.Width, tempMat.Height, m_displayControl.m_display.Width, m_displayControl.m_display.Height);
-                                CvInvoke.Resize(tempMat, tempMat, newSize);
-                                m_displayControl.m_display.Size = newSize;
+                                Size newSize = HelperClass.resize(tempMat.Width, tempMat.Height, m_displayControl.m_display.Width, m_displayControl.m_display.Height);
                                 m_bitmapList?.Dispose();
                                 m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", tempMat.Clone() } };
+
+                                CvInvoke.Resize(tempMat, tempMat, newSize);
+                                m_displayControl.m_display.Size = newSize;
                                 m_displayControl.m_display.Image?.Dispose();
-                                m_displayControl.m_display.Image = m_bitmapList["LastRun.OutputImage"];
+                                m_displayControl.m_display.Image = m_bitmapList["LastRun.OutputImage"];//.Clone();
                                 tempMat.Dispose();
                                 m_image.Dispose();
                             }
@@ -226,15 +230,6 @@ namespace OpenCV_Vision_Pro
             return new Mat();
         }
 
-        public static Size resize(int oriWidth, int oriHeight, int currWidth, int currHeight)
-        {
-            double widthScale = (double)currWidth / oriWidth;
-            double heightScale = (double)currHeight / oriHeight;
-            double minScale = Math.Min(widthScale, heightScale);
-            Size newSize = new Size((int)(oriWidth * minScale), (int)(oriHeight * minScale));
-            return newSize;
-        }
-
         private async void ProcessFrame(object sender, EventArgs e)
         {
             if (processing) return;
@@ -250,24 +245,23 @@ namespace OpenCV_Vision_Pro
                     {
                         if (!resizedOnce)
                         {
-                            Size newSize = resize(frame.Width, frame.Height, m_displayControl.m_display.Width, m_displayControl.m_display.Height);
+                            Size newSize = HelperClass.resize(frame.Width, frame.Height, m_displayControl.m_display.Width, m_displayControl.m_display.Height);
                             CvInvoke.Resize(frame, frame, newSize);
                             m_displayControl.m_display.Size = newSize;
                         }
 
-                        m_bitmapList?.Dispose();
                         await Task.Run(() =>
                         {
                             if (m_displayControl.m_display.Image != null)
                                 m_displayControl.m_display.Image.Dispose();
-
+                            m_bitmapList?.Dispose();
                             m_bitmapList = new AutoDisposeDict<string, Mat> { { "LastRun.OutputImage", frame.Clone() } };
                         });
 
                         if (!runContinue)
                             m_displayControl.m_display.Image = null;
                         if (String.Compare(m_displayControl.m_cbImages.SelectedItem.ToString(), "LastRun.OutputImage") == 0)
-                            m_displayControl.m_display.Image = m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()];
+                            m_displayControl.m_display.Image = frame;//.Clone();
                         if (m_displayControl.m_playPauseButton.Visible)
                             m_displayControl.m_trackBarVideoDuration.Value++;
 
@@ -378,10 +372,7 @@ namespace OpenCV_Vision_Pro
                 return;
             }
 
-            if (videoCapture != null)
-            {
-
-            }
+            if (videoCapture != null) { }
             else if (files == null)
             {
                 MessageBox.Show("2:No Input Image");
@@ -434,7 +425,6 @@ namespace OpenCV_Vision_Pro
 
             node.tool.Run(node.tool.m_bitmapList["Current.InputImage"], m_rectangle);
             node.tool.showResultImages();
-
             foreach (ToolsTreeNode childNode in node.Nodes)
                 ProcessGroup(childNode, node.tool.toolResult.resultImage); // Recursively process child nodes
         }
@@ -445,93 +435,63 @@ namespace OpenCV_Vision_Pro
                 ProcessGroup((ToolsTreeNode)node, null);
         }
 
-        private void blobToolMenuItem_Click(object sender, EventArgs e)
+        private void AddToolMenuItem_Click(object sender, EventArgs e)
         {
-            BlobTool blobTool = new BlobTool("BlobTool" + (++m_dictToolCount["m_intCntBlob"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(blobTool)
+            IToolBase tool;
+            int imageIndex = 0;
+            switch (((ToolStripMenuItem)sender).Name)
             {
-                Name = blobTool.ToolName,
-                Text = blobTool.ToolName,
-                ImageIndex = 0,
-                SelectedImageIndex = 0
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
-        }
-
-        private void caliperToolMenuItem_Click(object sender, EventArgs e)
-        {
-            CaliperTool caliperTool = new CaliperTool("CaliperTool" + (++m_dictToolCount["m_intCntCaliper"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(caliperTool)
+                case "blobToolMenuItem":
+                    tool = new BlobTool("BlobTool" + (++m_dictToolCount["BlobTool"]).ToString());
+                    imageIndex = 0;
+                    break;
+                case "caliperToolMenuItem":
+                    tool = new CaliperTool("CaliperTool" + (++m_dictToolCount["CaliperTool"]).ToString());
+                    imageIndex = 1;
+                    break;
+                case "histogramToolMenuItem":
+                    tool = new HistogramTool("HistogramTool" + (++m_dictToolCount["HistogramTool"]).ToString());
+                    imageIndex = 2;
+                    break;
+                case "imageConvertToolToolStripMenuItem":
+                    tool = new ImageConvertTool("ImageConvertTool" + (++m_dictToolCount["ImageConvertTool"]).ToString());
+                    imageIndex = 3;
+                    break;
+                case "colorSegmentorToolToolStripMenuItem":
+                    tool = new ColorSegmentorTool("ColorSegmentorTool" + (++m_dictToolCount["ColorSegmentorTool"]).ToString());
+                    imageIndex = 4;
+                    break;
+                case "colorMatchToolToolStripMenuItem":
+                    tool = new ColorMatcherTool("ColorMatcherTool" + (++m_dictToolCount["ColorMatcherTool"]).ToString());
+                    imageIndex = 5;
+                    break;
+                case "colorExtractorToolToolStripMenuItem":
+                    tool = new ColorExtractorTool("ColorExtractorTool" + (++m_dictToolCount["ColorExtractorTool"]).ToString());
+                    imageIndex = 6;
+                    break;
+                case "imageSharpenerToolToolStripMenuItem":
+                    tool = new ImageSharpenerTool("ImageSharpenerTool" + (++m_dictToolCount["ImageSharpenerTool"]).ToString());
+                    imageIndex = 6;
+                    break;
+                case "findLineToolToolStripMenuItem":
+                    tool = new LineSegmentTool("LineSegmentTool" + (++m_dictToolCount["LineSegmentTool"]).ToString());
+                    imageIndex = 6;
+                    break;
+                case "yOLOv7ObjectDetectionToolStripMenuItem":
+                    tool = new yolov7ObjectDetection("yolov7ObjectDetectionTool");
+                    ((yolov7ObjectDetection)tool).loadModel();
+                    imageIndex = 6;
+                    break;
+                default:
+                    MessageBox.Show("Invalid Tool Added");
+                    return;
+            }
+            ToolsTreeNode m_treeNode = new ToolsTreeNode(tool)
             {
-                Name = caliperTool.ToolName,
-                Text = caliperTool.ToolName,
-                ImageIndex = 1,
-                SelectedImageIndex = 1
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
-        }
-
-        private void histogramToolMenuItem_Click(object sender, EventArgs e)
-        {
-            HistogramTool histogramTool = new HistogramTool("HistogramTool" + (++m_dictToolCount["m_intCntHistogram"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(histogramTool)
-            {
-                Name = histogramTool.ToolName,
-                Text = histogramTool.ToolName,
-                ImageIndex = 2,
-                SelectedImageIndex = 2
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
-        }
-
-        private void imageConvertToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImageConvertTool imageConvertTool = new ImageConvertTool("ImageConvertTool" + (++m_dictToolCount["m_intCntConvert"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(imageConvertTool)
-            {
-                Name = imageConvertTool.ToolName,
-                Text = imageConvertTool.ToolName,
-                ImageIndex = 3,
-                SelectedImageIndex = 3
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
-        }
-
-        private void colorSegmentorToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorSegmentorTool colorSegmentorTool = new ColorSegmentorTool("ColorSegmentorTool" + (++m_dictToolCount["m_intCntSegmentor"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(colorSegmentorTool)
-            {
-                Name = colorSegmentorTool.ToolName,
-                Text = colorSegmentorTool.ToolName,
-                ImageIndex = 4,
-                SelectedImageIndex = 4
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
-        }
-
-        private void colorMatchToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorMatcherTool colorMatcherTool = new ColorMatcherTool("ColorMatcherTool" + (++m_dictToolCount["m_intCntMatcher"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(colorMatcherTool)
-            {
-                Name = colorMatcherTool.ToolName,
-                Text = colorMatcherTool.ToolName,
-                ImageIndex = 5,
-                SelectedImageIndex = 5
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
-        }
-
-        private void colorExtractorToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorExtractorTool colorExtractorTool = new ColorExtractorTool("ColorExtractorTool" + (++m_dictToolCount["m_intCntExtractor"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(colorExtractorTool)
-            {
-                Name = colorExtractorTool.ToolName,
-                Text = colorExtractorTool.ToolName,
-                ImageIndex = 6,
-                SelectedImageIndex = 6
+                Name = tool.ToolName,
+                Text = tool.ToolName,
+                ImageIndex = imageIndex,
+                SelectedImageIndex = imageIndex
             };
             m_treeViewTools.Nodes.Add(m_treeNode);
         }
@@ -738,31 +698,6 @@ namespace OpenCV_Vision_Pro
         {
             if (e.KeyCode == Keys.Space)
                 m_displayControl.m_playPauseButton.PerformClick();
-        }
-
-        private void yOLOv7ObjectDetectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            yolov7ObjectDetection yolo = new yolov7ObjectDetection();
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(yolo)
-            {
-                ImageIndex = 6,
-                SelectedImageIndex = 6
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
-            yolo.loadModel();
-        }
-
-        private void findLineToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LineSegmentTool lineSegmentTool = new LineSegmentTool("LineSegmentTool" + (++m_dictToolCount["m_intCntFindLine"]).ToString());
-            ToolsTreeNode m_treeNode = new ToolsTreeNode(lineSegmentTool)
-            {
-                Name = lineSegmentTool.ToolName,
-                Text = lineSegmentTool.ToolName,
-                ImageIndex = 6,
-                SelectedImageIndex = 6
-            };
-            m_treeViewTools.Nodes.Add(m_treeNode);
         }
     }
 }

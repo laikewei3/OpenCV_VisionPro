@@ -52,6 +52,11 @@ namespace OpenCV_Vision_Pro
         public IToolResult toolResult { get; set; }
         private yoloResult yoloResults { get { return (yoloResult)toolResult; } set { toolResult = value; } }
 
+        public yolov7ObjectDetection(string toolName)
+        {
+            ToolName = toolName;
+        }
+
         public void Dispose()
         {
             toolIcon?.Dispose();
@@ -98,7 +103,7 @@ namespace OpenCV_Vision_Pro
             float nmsThreshold = 0.4f;
             int defaultSize = 416;
 
-            System.Drawing.Size newSize = Form1.resize(imgInput.Width, imgInput.Height, defaultSize, defaultSize);
+            System.Drawing.Size newSize = HelperClass.resize(imgInput.Width, imgInput.Height, defaultSize, defaultSize);
             Mat resizeMat = new Mat();
             CvInvoke.Resize(imgInput, resizeMat, newSize);
             int topBottom = (defaultSize - newSize.Height) / 2;

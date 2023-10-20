@@ -44,7 +44,7 @@
             this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageConvertToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findLineToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorSegmentorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorMatchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,7 +56,9 @@
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findLineToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageConvertToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageSharpenerToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -218,9 +220,9 @@
             this.caliperToolMenuItem,
             this.histogramToolMenuItem,
             this.findLineToolToolStripMenuItem,
-            this.imageConvertToolToolStripMenuItem,
             this.colorToolToolStripMenuItem,
-            this.mLDLToolStripMenuItem});
+            this.mLDLToolStripMenuItem,
+            this.imageToolToolStripMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
             this.m_AddToolList.Size = new System.Drawing.Size(181, 180);
             // 
@@ -230,7 +232,7 @@
             this.blobToolMenuItem.Name = "blobToolMenuItem";
             this.blobToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.blobToolMenuItem.Text = "Blob Tool";
-            this.blobToolMenuItem.Click += new System.EventHandler(this.blobToolMenuItem_Click);
+            this.blobToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // caliperToolMenuItem
             // 
@@ -238,7 +240,7 @@
             this.caliperToolMenuItem.Name = "caliperToolMenuItem";
             this.caliperToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.caliperToolMenuItem.Text = "Caliper Tool";
-            this.caliperToolMenuItem.Click += new System.EventHandler(this.caliperToolMenuItem_Click);
+            this.caliperToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // histogramToolMenuItem
             // 
@@ -246,15 +248,14 @@
             this.histogramToolMenuItem.Name = "histogramToolMenuItem";
             this.histogramToolMenuItem.Size = new System.Drawing.Size(180, 22);
             this.histogramToolMenuItem.Text = "Histogram Tool";
-            this.histogramToolMenuItem.Click += new System.EventHandler(this.histogramToolMenuItem_Click);
+            this.histogramToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
-            // imageConvertToolToolStripMenuItem
+            // findLineToolToolStripMenuItem
             // 
-            this.imageConvertToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.convert;
-            this.imageConvertToolToolStripMenuItem.Name = "imageConvertToolToolStripMenuItem";
-            this.imageConvertToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.imageConvertToolToolStripMenuItem.Text = "Image Convert Tool";
-            this.imageConvertToolToolStripMenuItem.Click += new System.EventHandler(this.imageConvertToolToolStripMenuItem_Click);
+            this.findLineToolToolStripMenuItem.Name = "findLineToolToolStripMenuItem";
+            this.findLineToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.findLineToolToolStripMenuItem.Text = "Find Line Tool";
+            this.findLineToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // colorToolToolStripMenuItem
             // 
@@ -273,7 +274,7 @@
             this.colorSegmentorToolToolStripMenuItem.Name = "colorSegmentorToolToolStripMenuItem";
             this.colorSegmentorToolToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.colorSegmentorToolToolStripMenuItem.Text = "Color Segmentor Tool";
-            this.colorSegmentorToolToolStripMenuItem.Click += new System.EventHandler(this.colorSegmentorToolToolStripMenuItem_Click);
+            this.colorSegmentorToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // colorMatchToolToolStripMenuItem
             // 
@@ -281,7 +282,7 @@
             this.colorMatchToolToolStripMenuItem.Name = "colorMatchToolToolStripMenuItem";
             this.colorMatchToolToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.colorMatchToolToolStripMenuItem.Text = "Color Match Tool";
-            this.colorMatchToolToolStripMenuItem.Click += new System.EventHandler(this.colorMatchToolToolStripMenuItem_Click);
+            this.colorMatchToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // colorExtractorToolToolStripMenuItem
             // 
@@ -289,7 +290,7 @@
             this.colorExtractorToolToolStripMenuItem.Name = "colorExtractorToolToolStripMenuItem";
             this.colorExtractorToolToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.colorExtractorToolToolStripMenuItem.Text = "Color Extractor Tool";
-            this.colorExtractorToolToolStripMenuItem.Click += new System.EventHandler(this.colorExtractorToolToolStripMenuItem_Click);
+            this.colorExtractorToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // mLDLToolStripMenuItem
             // 
@@ -306,7 +307,7 @@
             this.yOLOv7ObjectDetectionToolStripMenuItem.Name = "yOLOv7ObjectDetectionToolStripMenuItem";
             this.yOLOv7ObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.yOLOv7ObjectDetectionToolStripMenuItem.Text = "YOLOv7 Object Detection";
-            this.yOLOv7ObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.yOLOv7ObjectDetectionToolStripMenuItem_Click);
+            this.yOLOv7ObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // m_GetInputImageMenu
             // 
@@ -349,12 +350,29 @@
             this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openCameraToolStripMenuItem.Text = "Open Camera";
             // 
-            // findLineToolToolStripMenuItem
+            // imageToolToolStripMenuItem
             // 
-            this.findLineToolToolStripMenuItem.Name = "findLineToolToolStripMenuItem";
-            this.findLineToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.findLineToolToolStripMenuItem.Text = "Find Line Tool";
-            this.findLineToolToolStripMenuItem.Click += new System.EventHandler(this.findLineToolToolStripMenuItem_Click);
+            this.imageToolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.imageConvertToolToolStripMenuItem,
+            this.imageSharpenerToolToolStripMenuItem});
+            this.imageToolToolStripMenuItem.Name = "imageToolToolStripMenuItem";
+            this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imageToolToolStripMenuItem.Text = "Image Tool";
+            // 
+            // imageConvertToolToolStripMenuItem
+            // 
+            this.imageConvertToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.convert;
+            this.imageConvertToolToolStripMenuItem.Name = "imageConvertToolToolStripMenuItem";
+            this.imageConvertToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.imageConvertToolToolStripMenuItem.Text = "Image Convert Tool";
+            this.imageConvertToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // imageSharpenerToolToolStripMenuItem
+            // 
+            this.imageSharpenerToolToolStripMenuItem.Name = "imageSharpenerToolToolStripMenuItem";
+            this.imageSharpenerToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.imageSharpenerToolToolStripMenuItem.Text = "Image Sharpener Tool";
+            this.imageSharpenerToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // Form1
             // 
@@ -402,7 +420,6 @@
         private System.Windows.Forms.ToolStripMenuItem openCameraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openVideoFileToolStripMenuItem;
         public System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.ToolStripMenuItem imageConvertToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem colorToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem colorSegmentorToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem colorMatchToolToolStripMenuItem;
@@ -411,6 +428,9 @@
         private System.Windows.Forms.ToolStripMenuItem mLDLToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem yOLOv7ObjectDetectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findLineToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageConvertToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageSharpenerToolToolStripMenuItem;
     }
 }
 
