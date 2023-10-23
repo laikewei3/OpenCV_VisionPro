@@ -92,24 +92,7 @@ namespace OpenCV_Vision_Pro
 
         public  void Run(Mat img, Rectangle region)
         {
-            Mat gray;
-            if (region.IsEmpty)
-                gray = img.Clone();
-            else if(((HistogramToolControl)m_toolControl).m_roi.points == null)
-                gray = new Mat(img, region);
-            else
-            {  
-                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((HistogramToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
-                Mat bitImage = new Mat();
-                CvInvoke.BitwiseAnd(img, mask, bitImage);
-                CvInvoke.BitwiseNot(mask,mask);
-                CvInvoke.CvtColor(bitImage, bitImage, Emgu.CV.CvEnum.ColorConversion.Gray2Bgra);
-                bitImage.SetTo(new MCvScalar(0,255,0,0), mask);
-                gray = new Mat(bitImage, region);
-                bitImage?.Dispose();
-                mask?.Dispose();
-            }
+            Mat gray = HelperClass.getROIImage(img, region, parameter.m_roi.points);
 
             m_histogramResult = new HistogramResult();
             //=============================================== Declare Variable =============================================

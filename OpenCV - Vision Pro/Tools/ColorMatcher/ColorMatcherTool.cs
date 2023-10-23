@@ -80,7 +80,7 @@ namespace OpenCV_Vision_Pro.Tools.ColorMatcher
 
         public void Run(Mat img, Rectangle region)
         {
-            Mat image = HelperClass.getROIImage(img,region, ((ColorMatchToolControl)m_toolControl).m_roi.points);
+            Mat image = HelperClass.getROIImage(img,region, parameter.m_roi.points);
 
             matcherResults?.Dispose();
             matcherResults = new ColorMatcherResults();

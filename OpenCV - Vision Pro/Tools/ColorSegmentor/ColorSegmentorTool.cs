@@ -67,22 +67,7 @@ namespace OpenCV_Vision_Pro
         
         public  void Run(Mat img, Rectangle region)
         {
-            Mat image;
-            if (region.IsEmpty)
-                image = img.Clone();
-            else if(((ColorSegmentorToolControl)m_toolControl).m_roi.points == null)
-                image = new Mat(img,region);
-            else
-            {
-                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((ColorSegmentorToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
-
-                Mat bitImage = new Mat();
-                CvInvoke.BitwiseAnd(img, mask, bitImage);
-                image = new Mat(bitImage, region);
-                bitImage?.Dispose();
-                mask?.Dispose();
-            }
+            Mat image = HelperClass.getROIImage(img, region, parameter.m_roi.points);
 
             segmentorResults?.Dispose();
             segmentorResults = new ColorSegmentorResults();

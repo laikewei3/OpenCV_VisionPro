@@ -96,7 +96,6 @@
       <DependentUpon>ColorTools.cs</DependentUpon>
     </Compile>
     <Compile Include="HelperClass.cs" />
-    <Compile Include="Tools\Blob\BlobResult.cs" />
     <Compile Include="Tools\ImageSharpener\ImageSharpenerTool.cs" />
     <Compile Include="Tools\ImageSharpener\ImageSharpenerToolControl.cs">
       <SubType>UserControl</SubType>
@@ -104,7 +103,6 @@
     <Compile Include="Tools\ImageSharpener\ImageSharpenerToolControl.Designer.cs">
       <DependentUpon>ImageSharpenerToolControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\LineSegmentDetector\LineSegmentResult.cs" />
     <Compile Include="Tools\LineSegmentDetector\LineSegmentTool.cs" />
     <Compile Include="Tools\LineSegmentDetector\LineSegmentToolControl.cs">
       <SubType>UserControl</SubType>
@@ -112,7 +110,6 @@
     <Compile Include="Tools\LineSegmentDetector\LineSegmentToolControl.Designer.cs">
       <DependentUpon>LineSegmentToolControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\Caliper\CaliperResult.cs" />
     <Compile Include="DataContainer\AutoDisposeDict.cs" />
     <Compile Include="DataContainer\AutoDisposeList.cs" />
     <Compile Include="Tools\Blob\BlobTool.cs" />

@@ -3,6 +3,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
+using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,21 +25,21 @@ namespace OpenCV_Vision_Pro
     }
     public class ImageConvertTool : IToolBase
     {
-        public  Bitmap toolIcon { get; } = Resources.convert;
-        public  string ToolName { get; set; }
-        public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
-        public  BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public  UserControlBase m_toolControl { get; set; }
-        public  Rectangle m_rectROI { get; set; }
-        public  IParams parameter { get; set; } = new ConvertParams();
-        public  BindingSource resultSource { get; set; }
+        public Bitmap toolIcon { get; } = Resources.convert;
+        public string ToolName { get; set; }
+        public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
+        public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
+        public UserControlBase m_toolControl { get; set; }
+        public Rectangle m_rectROI { get; set; }
+        public IParams parameter { get; set; } = new ConvertParams();
+        public BindingSource resultSource { get; set; }
 
-        public  IToolResult toolResult { get; set; }
+        public IToolResult toolResult { get; set; }
         private ConvertResults convertResults { get { return (ConvertResults)toolResult; } set { toolResult = value; } }
 
         public ImageConvertTool(string toolName) { this.ToolName = toolName; }
 
-        public  void Dispose()
+        public void Dispose()
         {
             toolIcon?.Dispose();
             m_bitmapList?.Dispose();
@@ -46,7 +47,7 @@ namespace OpenCV_Vision_Pro
             resultSource?.Dispose();
         }
 
-        public  void getGUI()
+        public void getGUI()
         {
             if (m_rectROI != null && !m_rectROI.IsEmpty)
             {
@@ -57,25 +58,9 @@ namespace OpenCV_Vision_Pro
             m_toolControl = new ImageConvertToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
-        public  void Run(Mat img, Rectangle region)
+        public void Run(Mat img, Rectangle region)
         {
-            Mat image;
-            if (region.IsEmpty)
-                image = img.Clone();
-            else if (((ImageConvertToolControl)m_toolControl).m_roi.points == null)
-                image = new Mat(img, region);
-            else
-            {
-                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((ImageConvertToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
-
-                Mat bitImage = new Mat();
-                CvInvoke.BitwiseAnd(img, mask, bitImage);
-                image = new Mat(bitImage, region);
-                bitImage?.Dispose();
-                mask?.Dispose();
-            }
-
+            Mat image = HelperClass.getROIImage(img, region, parameter.m_roi.points);
             convertResults?.Dispose();
             convertResults = new ConvertResults();
 
@@ -129,12 +114,12 @@ namespace OpenCV_Vision_Pro
 
         }
 
-        public  object showResult()
+        public object showResult()
         {
             return null;
         }
 
-        public  void showResultImages()
+        public void showResultImages()
         {
             if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".ConvertImage"))
             {

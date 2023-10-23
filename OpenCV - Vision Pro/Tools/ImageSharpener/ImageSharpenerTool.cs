@@ -4,6 +4,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
+using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,22 +62,7 @@ namespace OpenCV_Vision_Pro
 
         public  void Run(Mat img, Rectangle region)
         {
-            Mat image;
-            if (region.IsEmpty)
-                image = img.Clone();
-            else if (((ImageSharpenerToolControl)m_toolControl).m_roi.points == null)
-                image = new Mat(img, region);
-            else
-            {
-                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((ImageSharpenerToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
-
-                Mat bitImage = new Mat();
-                CvInvoke.BitwiseAnd(img, mask, bitImage);
-                image = new Mat(bitImage, region);
-                bitImage?.Dispose();
-                mask?.Dispose();
-            }
+            Mat image = HelperClass.getROIImage(img, region, parameter.m_roi.points);
 
             SharpenerResult?.Dispose();
             SharpenerResult = new SharpenerResults();
