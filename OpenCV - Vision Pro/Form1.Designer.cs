@@ -1,6 +1,8 @@
-﻿namespace OpenCV_Vision_Pro
+﻿using OpenCV_Vision_Pro.Properties;
+
+namespace OpenCV_Vision_Pro
 {
-    partial class Form1
+    public partial class Form1
     {
         /// <summary>
         /// Required designer variable.
@@ -29,36 +31,34 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.m_BtnAddTool = new System.Windows.Forms.Button();
             this.m_RunBtn = new System.Windows.Forms.Button();
             this.m_OpenBtn = new System.Windows.Forms.Button();
             this.m_RunBtnContinuous = new System.Windows.Forms.Button();
+            this.m_labelToMLDL = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.m_treeViewTools = new System.Windows.Forms.TreeView();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.m_AddToolList = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findLineToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageConvertToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageSharpenerToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorSegmentorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorMatchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorExtractorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mLDLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.yOLOv7ObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.blobToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findLineToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_GetInputImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openImageFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageConvertToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageSharpenerToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.polarUnwarpToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -90,6 +90,7 @@
             this.flowLayoutPanel1.Controls.Add(this.m_RunBtn);
             this.flowLayoutPanel1.Controls.Add(this.m_OpenBtn);
             this.flowLayoutPanel1.Controls.Add(this.m_RunBtnContinuous);
+            this.flowLayoutPanel1.Controls.Add(this.m_labelToMLDL);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -100,7 +101,7 @@
             // m_BtnAddTool
             // 
             this.m_BtnAddTool.AutoSize = true;
-            this.m_BtnAddTool.Image = ((System.Drawing.Image)(resources.GetObject("m_BtnAddTool.Image")));
+            this.m_BtnAddTool.Image = global::OpenCV_Vision_Pro.Properties.Resources.tool;
             this.m_BtnAddTool.Location = new System.Drawing.Point(3, 3);
             this.m_BtnAddTool.Name = "m_BtnAddTool";
             this.m_BtnAddTool.Size = new System.Drawing.Size(80, 26);
@@ -113,7 +114,7 @@
             // m_RunBtn
             // 
             this.m_RunBtn.AutoSize = true;
-            this.m_RunBtn.Image = ((System.Drawing.Image)(resources.GetObject("m_RunBtn.Image")));
+            this.m_RunBtn.Image = global::OpenCV_Vision_Pro.Properties.Resources.run;
             this.m_RunBtn.Location = new System.Drawing.Point(89, 3);
             this.m_RunBtn.Name = "m_RunBtn";
             this.m_RunBtn.Size = new System.Drawing.Size(75, 26);
@@ -126,7 +127,7 @@
             // m_OpenBtn
             // 
             this.m_OpenBtn.AutoSize = true;
-            this.m_OpenBtn.Image = ((System.Drawing.Image)(resources.GetObject("m_OpenBtn.Image")));
+            this.m_OpenBtn.Image = global::OpenCV_Vision_Pro.Properties.Resources.open;
             this.m_OpenBtn.Location = new System.Drawing.Point(170, 3);
             this.m_OpenBtn.Name = "m_OpenBtn";
             this.m_OpenBtn.Size = new System.Drawing.Size(75, 26);
@@ -139,7 +140,7 @@
             // m_RunBtnContinuous
             // 
             this.m_RunBtnContinuous.AutoSize = true;
-            this.m_RunBtnContinuous.Image = ((System.Drawing.Image)(resources.GetObject("m_RunBtnContinuous.Image")));
+            this.m_RunBtnContinuous.Image = global::OpenCV_Vision_Pro.Properties.Resources.continuous;
             this.m_RunBtnContinuous.Location = new System.Drawing.Point(251, 3);
             this.m_RunBtnContinuous.Name = "m_RunBtnContinuous";
             this.m_RunBtnContinuous.Size = new System.Drawing.Size(113, 26);
@@ -148,6 +149,23 @@
             this.m_RunBtnContinuous.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.m_RunBtnContinuous.UseVisualStyleBackColor = true;
             this.m_RunBtnContinuous.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_RunBtnContinuous_MouseClick);
+            // 
+            // m_labelToMLDL
+            // 
+            this.m_labelToMLDL.AutoSize = true;
+            this.m_labelToMLDL.Image = global::OpenCV_Vision_Pro.Properties.Resources.mldl;
+            this.m_labelToMLDL.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_labelToMLDL.Location = new System.Drawing.Point(370, 3);
+            this.m_labelToMLDL.Margin = new System.Windows.Forms.Padding(3);
+            this.m_labelToMLDL.Name = "m_labelToMLDL";
+            this.m_labelToMLDL.Padding = new System.Windows.Forms.Padding(5);
+            this.m_labelToMLDL.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.m_labelToMLDL.Size = new System.Drawing.Size(75, 23);
+            this.m_labelToMLDL.TabIndex = 5;
+            this.m_labelToMLDL.TabStop = true;
+            this.m_labelToMLDL.Text = "       ML/ DL";
+            this.m_labelToMLDL.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_labelToMLDL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_labelToMLDL_LinkClicked);
             // 
             // tableLayoutPanel2
             // 
@@ -188,11 +206,8 @@
             this.m_treeViewTools.AllowDrop = true;
             this.m_treeViewTools.BackColor = System.Drawing.SystemColors.ControlLight;
             this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.m_treeViewTools.ImageIndex = 0;
-            this.m_treeViewTools.ImageList = this.imageList1;
             this.m_treeViewTools.Location = new System.Drawing.Point(0, 0);
             this.m_treeViewTools.Name = "m_treeViewTools";
-            this.m_treeViewTools.SelectedImageIndex = 0;
             this.m_treeViewTools.Size = new System.Drawing.Size(258, 523);
             this.m_treeViewTools.TabIndex = 0;
             this.m_treeViewTools.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseClick);
@@ -201,61 +216,44 @@
             this.m_treeViewTools.DragEnter += new System.Windows.Forms.DragEventHandler(this.m_treeViewTools_DragEnter);
             this.m_treeViewTools.DragOver += new System.Windows.Forms.DragEventHandler(this.m_treeViewTools_DragOver);
             // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "blob.png");
-            this.imageList1.Images.SetKeyName(1, "caliper.png");
-            this.imageList1.Images.SetKeyName(2, "histogram.png");
-            this.imageList1.Images.SetKeyName(3, "convert.png");
-            this.imageList1.Images.SetKeyName(4, "segmentor.png");
-            this.imageList1.Images.SetKeyName(5, "match.png");
-            this.imageList1.Images.SetKeyName(6, "extractor.png");
-            // 
             // m_AddToolList
             // 
             this.m_AddToolList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.imageToolToolStripMenuItem,
+            this.colorToolToolStripMenuItem,
             this.blobToolMenuItem,
             this.caliperToolMenuItem,
             this.histogramToolMenuItem,
-            this.findLineToolToolStripMenuItem,
-            this.colorToolToolStripMenuItem,
-            this.mLDLToolStripMenuItem,
-            this.imageToolToolStripMenuItem});
+            this.findLineToolToolStripMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(181, 180);
+            this.m_AddToolList.Size = new System.Drawing.Size(181, 158);
             // 
-            // blobToolMenuItem
+            // imageToolToolStripMenuItem
             // 
-            this.blobToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("blobToolMenuItem.Image")));
-            this.blobToolMenuItem.Name = "blobToolMenuItem";
-            this.blobToolMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.blobToolMenuItem.Text = "Blob Tool";
-            this.blobToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            this.imageToolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.imageConvertToolToolStripMenuItem,
+            this.imageSharpenerToolToolStripMenuItem,
+            this.polarUnwarpToolToolStripMenuItem});
+            this.imageToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.image;
+            this.imageToolToolStripMenuItem.Name = "imageToolToolStripMenuItem";
+            this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imageToolToolStripMenuItem.Text = "Image Tool";
             // 
-            // caliperToolMenuItem
+            // imageConvertToolToolStripMenuItem
             // 
-            this.caliperToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("caliperToolMenuItem.Image")));
-            this.caliperToolMenuItem.Name = "caliperToolMenuItem";
-            this.caliperToolMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.caliperToolMenuItem.Text = "Caliper Tool";
-            this.caliperToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            this.imageConvertToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.convert;
+            this.imageConvertToolToolStripMenuItem.Name = "imageConvertToolToolStripMenuItem";
+            this.imageConvertToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.imageConvertToolToolStripMenuItem.Text = "Image Convert Tool";
+            this.imageConvertToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
-            // histogramToolMenuItem
+            // imageSharpenerToolToolStripMenuItem
             // 
-            this.histogramToolMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("histogramToolMenuItem.Image")));
-            this.histogramToolMenuItem.Name = "histogramToolMenuItem";
-            this.histogramToolMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.histogramToolMenuItem.Text = "Histogram Tool";
-            this.histogramToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
-            // 
-            // findLineToolToolStripMenuItem
-            // 
-            this.findLineToolToolStripMenuItem.Name = "findLineToolToolStripMenuItem";
-            this.findLineToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.findLineToolToolStripMenuItem.Text = "Find Line Tool";
-            this.findLineToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            this.imageSharpenerToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.editor;
+            this.imageSharpenerToolToolStripMenuItem.Name = "imageSharpenerToolToolStripMenuItem";
+            this.imageSharpenerToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.imageSharpenerToolToolStripMenuItem.Text = "Image Sharpener Tool";
+            this.imageSharpenerToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // colorToolToolStripMenuItem
             // 
@@ -263,7 +261,7 @@
             this.colorSegmentorToolToolStripMenuItem,
             this.colorMatchToolToolStripMenuItem,
             this.colorExtractorToolToolStripMenuItem});
-            this.colorToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.color1;
+            this.colorToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.color;
             this.colorToolToolStripMenuItem.Name = "colorToolToolStripMenuItem";
             this.colorToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.colorToolToolStripMenuItem.Text = "Color Tool";
@@ -292,22 +290,37 @@
             this.colorExtractorToolToolStripMenuItem.Text = "Color Extractor Tool";
             this.colorExtractorToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
-            // mLDLToolStripMenuItem
+            // blobToolMenuItem
             // 
-            this.mLDLToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.yOLOv7ObjectDetectionToolStripMenuItem});
-            this.mLDLToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.mldl;
-            this.mLDLToolStripMenuItem.Name = "mLDLToolStripMenuItem";
-            this.mLDLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.mLDLToolStripMenuItem.Text = "ML/DL";
+            this.blobToolMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.blob;
+            this.blobToolMenuItem.Name = "blobToolMenuItem";
+            this.blobToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.blobToolMenuItem.Text = "Blob Tool";
+            this.blobToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
-            // yOLOv7ObjectDetectionToolStripMenuItem
+            // caliperToolMenuItem
             // 
-            this.yOLOv7ObjectDetectionToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.yolo;
-            this.yOLOv7ObjectDetectionToolStripMenuItem.Name = "yOLOv7ObjectDetectionToolStripMenuItem";
-            this.yOLOv7ObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.yOLOv7ObjectDetectionToolStripMenuItem.Text = "YOLOv7 Object Detection";
-            this.yOLOv7ObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            this.caliperToolMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.caliper;
+            this.caliperToolMenuItem.Name = "caliperToolMenuItem";
+            this.caliperToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.caliperToolMenuItem.Text = "Caliper Tool";
+            this.caliperToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // histogramToolMenuItem
+            // 
+            this.histogramToolMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.histogram;
+            this.histogramToolMenuItem.Name = "histogramToolMenuItem";
+            this.histogramToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.histogramToolMenuItem.Text = "Histogram Tool";
+            this.histogramToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // findLineToolToolStripMenuItem
+            // 
+            this.findLineToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.line;
+            this.findLineToolToolStripMenuItem.Name = "findLineToolToolStripMenuItem";
+            this.findLineToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.findLineToolToolStripMenuItem.Text = "Find Line Tool";
+            this.findLineToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // m_GetInputImageMenu
             // 
@@ -321,7 +334,7 @@
             // 
             // openImageFileToolStripMenuItem
             // 
-            this.openImageFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openImageFileToolStripMenuItem.Image")));
+            this.openImageFileToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.file;
             this.openImageFileToolStripMenuItem.Name = "openImageFileToolStripMenuItem";
             this.openImageFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openImageFileToolStripMenuItem.Text = "Open Image File";
@@ -337,7 +350,7 @@
             // 
             // openVideoFileToolStripMenuItem
             // 
-            this.openVideoFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openVideoFileToolStripMenuItem.Image")));
+            this.openVideoFileToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.video;
             this.openVideoFileToolStripMenuItem.Name = "openVideoFileToolStripMenuItem";
             this.openVideoFileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openVideoFileToolStripMenuItem.Text = "Open Video File";
@@ -345,34 +358,17 @@
             // 
             // openCameraToolStripMenuItem
             // 
-            this.openCameraToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openCameraToolStripMenuItem.Image")));
+            this.openCameraToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.camera;
             this.openCameraToolStripMenuItem.Name = "openCameraToolStripMenuItem";
             this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openCameraToolStripMenuItem.Text = "Open Camera";
             // 
-            // imageToolToolStripMenuItem
+            // polarUnwarpToolToolStripMenuItem
             // 
-            this.imageToolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.imageConvertToolToolStripMenuItem,
-            this.imageSharpenerToolToolStripMenuItem});
-            this.imageToolToolStripMenuItem.Name = "imageToolToolStripMenuItem";
-            this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.imageToolToolStripMenuItem.Text = "Image Tool";
-            // 
-            // imageConvertToolToolStripMenuItem
-            // 
-            this.imageConvertToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.convert;
-            this.imageConvertToolToolStripMenuItem.Name = "imageConvertToolToolStripMenuItem";
-            this.imageConvertToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.imageConvertToolToolStripMenuItem.Text = "Image Convert Tool";
-            this.imageConvertToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
-            // 
-            // imageSharpenerToolToolStripMenuItem
-            // 
-            this.imageSharpenerToolToolStripMenuItem.Name = "imageSharpenerToolToolStripMenuItem";
-            this.imageSharpenerToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.imageSharpenerToolToolStripMenuItem.Text = "Image Sharpener Tool";
-            this.imageSharpenerToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            this.polarUnwarpToolToolStripMenuItem.Name = "polarUnwarpToolToolStripMenuItem";
+            this.polarUnwarpToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.polarUnwarpToolToolStripMenuItem.Text = "Polar Unwarp Tool";
+            this.polarUnwarpToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // Form1
             // 
@@ -381,7 +377,7 @@
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::OpenCV_Vision_Pro.Properties.Resources.vision;
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "Form1";
@@ -419,18 +415,17 @@
         private System.Windows.Forms.ToolStripMenuItem openImageFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openCameraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openVideoFileToolStripMenuItem;
-        public System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolStripMenuItem colorToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem colorSegmentorToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem colorMatchToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem colorExtractorToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mLDLToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem yOLOv7ObjectDetectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findLineToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageConvertToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageSharpenerToolToolStripMenuItem;
+        private System.Windows.Forms.LinkLabel m_labelToMLDL;
+        private System.Windows.Forms.ToolStripMenuItem polarUnwarpToolToolStripMenuItem;
     }
 }
 

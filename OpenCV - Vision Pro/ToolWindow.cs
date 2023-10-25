@@ -1,9 +1,11 @@
 ﻿using Emgu.CV;
 using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using OpenCV_Vision_Pro.Tools.ImageSegmentor;
+using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
@@ -19,7 +21,7 @@ namespace OpenCV_Vision_Pro
         private bool m_boolHasROI = false;
         private BindingSource bindingSource;
 
-        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool DestroyIcon(IntPtr handle);
 
         public ToolWindow(IToolBase tool)
@@ -49,9 +51,12 @@ namespace OpenCV_Vision_Pro
         private void ToolWindow_Load(object sender, EventArgs e)
         {
             m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
-            IntPtr iconHandle = m_toolBase.toolIcon.GetHicon();
+            Enum.TryParse(m_toolBase.GetType().Name, out ToolIndex index);
+            Bitmap iconBitmap = new Bitmap(HelperClass.iconList.Images[(int)index]);
+            IntPtr iconHandle = iconBitmap.GetHicon();
             Icon icon = Icon.FromHandle(iconHandle);
-            this.Icon = (Icon)icon.Clone();
+            this.Icon = icon;
+            iconBitmap.Dispose();
             icon.Dispose();
             DestroyIcon(iconHandle);
 
@@ -72,6 +77,8 @@ namespace OpenCV_Vision_Pro
 
             if(m_toolBase.m_toolControl is ColorUserControlBase)
                 m_displayControl.m_colorTools = ((ColorUserControlBase)m_toolBase.m_toolControl).m_colorTools;
+            if (m_toolBase is PolarUnWrapTool)
+                m_displayControl.PolarUnwrap = m_toolBase;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -87,7 +94,6 @@ namespace OpenCV_Vision_Pro
                 m_displayControl.m_roi.Y -= m_displayControl.zoom[1];
                 m_displayControl.m_roi.ROI_Width -= m_displayControl.zoom[2];
                 m_displayControl.m_roi.ROI_Height -= m_displayControl.zoom[3];
-                m_toolBase.m_rectROI = m_displayControl.m_roi.ROIRectangle;
                 m_toolBase.parameter.m_roi = m_displayControl.m_roi.Clone();
                 m_displayControl.m_roi = null;
                 m_toolBase.parameter.m_boolHasROI = m_boolHasROI;
@@ -124,6 +130,7 @@ namespace OpenCV_Vision_Pro
             Mat m_imageProcess = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
             m_toolBase.Run(m_imageProcess, m_rectangle);
             m_toolBase.showResultImages();
+
             m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
             m_imageProcess?.Dispose();
             int index = m_displayControl.m_cbImages.SelectedIndex;

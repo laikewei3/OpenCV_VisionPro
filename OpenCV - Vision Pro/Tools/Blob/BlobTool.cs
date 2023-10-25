@@ -107,7 +107,6 @@ namespace OpenCV_Vision_Pro
     // Declare Variable
     public partial class BlobTool : IToolBase
     {
-        public  Bitmap toolIcon { get; } = Resources.blob;
         public  string ToolName { get; set; }
         public  UserControlBase m_toolControl { get; set; }
         public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
@@ -139,7 +138,7 @@ namespace OpenCV_Vision_Pro
         
         public  void Run(Mat img, Rectangle region)
         {
-            Mat image = HelperClass.getROIImage(img, region, parameter.m_roi.points);
+            parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat image);
             if (!region.IsEmpty && parameter.m_roi.points != null)
             {
 

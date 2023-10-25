@@ -2,7 +2,6 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.ML;
 using Emgu.CV.Structure;
-using OpenCV_Vision_Pro.Caliper;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
 using Shared.ComponentModel.SortableBindingList;
@@ -94,7 +93,6 @@ namespace OpenCV_Vision_Pro
 
     public partial class CaliperTool : IToolBase
     {
-        public Bitmap toolIcon { get; } = Resources.caliper;
         public string ToolName { get; set; }
         public UserControlBase m_toolControl { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }

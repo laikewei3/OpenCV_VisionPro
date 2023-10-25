@@ -59,7 +59,6 @@ namespace OpenCV_Vision_Pro
             public double Cumulative { get; set; }
         }
 
-        public  Bitmap toolIcon { get; } = Resources.histogram;
         public  string ToolName { get; set; }
         public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public  UserControlBase m_toolControl { get; set; }
@@ -92,7 +91,7 @@ namespace OpenCV_Vision_Pro
 
         public  void Run(Mat img, Rectangle region)
         {
-            Mat gray = HelperClass.getROIImage(img, region, parameter.m_roi.points);
+            parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat gray);
 
             m_histogramResult = new HistogramResult();
             //=============================================== Declare Variable =============================================

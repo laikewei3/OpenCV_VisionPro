@@ -13,7 +13,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenCV_Vision_Pro.Caliper;
 using System.Security.Cryptography;
 using System.Windows.Media;
 using Emgu.CV.Util;
@@ -36,7 +35,6 @@ namespace OpenCV_Vision_Pro.LineSegment
 
     public class LineSegmentTool : IToolBase
     {
-        public Bitmap toolIcon { get; } = Resources.caliper;
         public string ToolName { get; set; }
         public UserControlBase m_toolControl { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
@@ -82,7 +80,7 @@ namespace OpenCV_Vision_Pro.LineSegment
 
             //=============================================== Image Preprocessing =================================================
             Mat imageBlur;
-            if (image.NumberOfChannels == 1)
+            if (image.NumberOfChannels != 1)
             {
                 imageBlur = new Mat();
                 CvInvoke.CvtColor(image, imageBlur, ColorConversion.Bgr2Gray);

@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using OpenCV_Vision_Pro.Properties;
+using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
@@ -47,7 +48,7 @@ namespace OpenCV_Vision_Pro
             // m_RunToolBtn
             // 
             this.m_RunToolBtn.AutoSize = true;
-            this.m_RunToolBtn.Image = ((System.Drawing.Image)(resources.GetObject("m_RunToolBtn.Image")));
+            this.m_RunToolBtn.Image = Resources.run;
             this.m_RunToolBtn.Location = new System.Drawing.Point(3, 3);
             this.m_RunToolBtn.Name = "m_RunToolBtn";
             this.m_RunToolBtn.Size = new System.Drawing.Size(81, 26);

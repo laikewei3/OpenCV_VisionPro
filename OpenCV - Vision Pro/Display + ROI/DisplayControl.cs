@@ -4,6 +4,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Properties;
 using OpenCV_Vision_Pro.Tools.ImageSegmentor;
+using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ namespace OpenCV_Vision_Pro
 {
     public partial class DisplayControl : UserControl
     {
+        public IToolBase PolarUnwrap {  get; set; }
         public VideoCapture m_VideoCapture { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public ROI m_roi { get; set; }
@@ -246,6 +248,19 @@ namespace OpenCV_Vision_Pro
                     using (Pen p = new Pen(Color.DeepSkyBlue, 2) { DashStyle = DashStyle.Dash })
                     {
                         e.Graphics.DrawRectangle(p, m_roi.ROIRectangle);
+                        if (this.ParentForm.Text.StartsWith("ImagePolarUnWrapTool"))
+                        {
+                            Pen pen = new Pen(Color.Yellow, 1); 
+                            e.Graphics.DrawEllipse(pen, m_roi.ROIRectangle);
+                            Rectangle innerRect = m_roi.ROIRectangle;
+                            int circlewidth = ((PolarUnWrapParams)PolarUnwrap.parameter).lineheight;
+                            innerRect.X += circlewidth;
+                            innerRect.Y += circlewidth;
+                            innerRect.Width -= circlewidth*2;
+                            innerRect.Height -= circlewidth*2;
+                            e.Graphics.DrawEllipse(pen, innerRect);
+                            pen.Dispose();
+                        }
                         for (int i = 1; i < 9; i++)
                         {
                             e.Graphics.FillRectangle(cornerP, GetHandleRect(m_roi.ROIRectangle,i));

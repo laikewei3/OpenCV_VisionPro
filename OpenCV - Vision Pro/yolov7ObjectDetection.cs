@@ -17,6 +17,9 @@ using OpenCV_Vision_Pro.Interface;
 using System.Collections;
 using System.Windows;
 using OpenCV_Vision_Pro.LineSegment;
+using System.Runtime.InteropServices;
+using SortCS;
+using System.Windows.Media.Media3D;
 
 namespace OpenCV_Vision_Pro
 {
@@ -40,8 +43,6 @@ namespace OpenCV_Vision_Pro
             }
         }
 
-        public Bitmap toolIcon { get; }
-
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
@@ -55,11 +56,12 @@ namespace OpenCV_Vision_Pro
         public yolov7ObjectDetection(string toolName)
         {
             ToolName = toolName;
+            loadModel();
         }
 
         public void Dispose()
         {
-            toolIcon?.Dispose();
+            Model.Dispose();
             m_bitmapList?.Dispose();
             m_toolControl?.Dispose();
             resultSource?.Dispose();
@@ -74,6 +76,7 @@ namespace OpenCV_Vision_Pro
         {
             try
             {
+                /*
                 using (CommonOpenFileDialog openFileDialog = new CommonOpenFileDialog { Multiselect = true })
                 {
                     if(openFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
@@ -86,7 +89,14 @@ namespace OpenCV_Vision_Pro
                         labels = File.ReadAllLines(PathLabels).ToList();
                     }
                     openFileDialog.Dispose();
-                }
+                }*/
+                string PathWeights = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.weights";
+                string PathConfig = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.cfg";
+                string PathLabels = "C:\\Users\\T0571\\Downloads\\coco.names";
+                Model = DnnInvoke.ReadNetFromDarknet(PathConfig, PathWeights);
+                labels = File.ReadAllLines(PathLabels).ToList(); 
+                Model.SetPreferableBackend(Emgu.CV.Dnn.Backend.Cuda);
+                Model.SetPreferableTarget(Target.Cuda);
             }
             catch (Exception e)
             {
@@ -99,8 +109,8 @@ namespace OpenCV_Vision_Pro
             yoloResults?.Dispose();
             yoloResults = new yoloResult();
 
-            float confThreshold = 0.5f;
-            float nmsThreshold = 0.4f;
+            float confThreshold = 0.7f;
+            float nmsThreshold = 0.5f;
             int defaultSize = 416;
 
             System.Drawing.Size newSize = HelperClass.resize(imgInput.Width, imgInput.Height, defaultSize, defaultSize);
@@ -108,38 +118,34 @@ namespace OpenCV_Vision_Pro
             CvInvoke.Resize(imgInput, resizeMat, newSize);
             int topBottom = (defaultSize - newSize.Height) / 2;
             int leftRight = (defaultSize - newSize.Width) / 2;
-            CvInvoke.CopyMakeBorder(resizeMat, resizeMat, topBottom,topBottom,leftRight,leftRight,BorderType.Constant,new MCvScalar(0,0,0));
-            
+            CvInvoke.CopyMakeBorder(resizeMat, resizeMat, topBottom, topBottom, leftRight, leftRight, BorderType.Constant, new MCvScalar(0, 0, 0));
+
             Image<Bgr, byte> imageInput = resizeMat.ToImage<Bgr, byte>().Resize(defaultSize, defaultSize, Inter.Cubic);
             resizeMat.Dispose();
 
-            Mat input = DnnInvoke.BlobFromImage(imageInput,1/255.0,swapRB:true);
+            Mat input = DnnInvoke.BlobFromImage(imageInput, 1 / 255.0, swapRB: true);
             Model.SetInput(input);
-            Model.SetPreferableBackend(Emgu.CV.Dnn.Backend.OpenCV);
-            Model.SetPreferableTarget(Target.Cpu);
-
-            VectorOfMat vectorOfMat = new VectorOfMat();
-            Model.Forward(vectorOfMat, Model.UnconnectedOutLayersNames);
-
             input.Dispose();
 
+            VectorOfMat vectorOfMat = new VectorOfMat();
             VectorOfRect bboxes = new VectorOfRect();
             VectorOfFloat scores = new VectorOfFloat();
             VectorOfInt indices = new VectorOfInt();
+            Model.Forward(vectorOfMat, Model.UnconnectedOutLayersNames);
 
-            for(int i = 0; i < vectorOfMat.Size; i++)
+            for (int i = 0; i < vectorOfMat.Size; i++)
             {
                 Mat mat = vectorOfMat[i];
                 var data = ArrayTo2DList(mat.GetData());
-                for(int j = 0; j < data.Count; j++)
+                for (int j = 0; j < data.Count; j++)
                 {
                     var row = data[j];
                     var rowScores = row.Skip(5).ToArray();
                     var classId = rowScores.ToList().IndexOf(rowScores.Max());
                     var confidence = rowScores[classId];
-                    if(confidence > confThreshold)
+                    if (confidence > confThreshold)
                     {
-                        var center_x = (int)(row[0]*imageInput.Width);
+                        var center_x = (int)(row[0] * imageInput.Width);
                         var center_y = (int)(row[1] * imageInput.Width);
 
                         var width = (int)(row[2] * imageInput.Width);
@@ -153,17 +159,21 @@ namespace OpenCV_Vision_Pro
                         scores.Push(new float[] { confidence });
                     }
                 }
+                mat?.Dispose();
             }
+            vectorOfMat.Dispose();
 
             var idx = DnnInvoke.NMSBoxes(bboxes.ToArray(), scores.ToArray(), confThreshold, nmsThreshold);
+
             var imgOutput = imageInput.Clone();
-            for(int i = 0; i < idx.Length; i++)
+            imageInput.Dispose();
+
+            for (int i = 0; i < idx.Length; i++)
             {
                 int index = idx[i];
                 var bbox = bboxes[index];
                 imgOutput.Draw(bbox, new Bgr(0, 0, 255), 2);
-                //CvInvoke.PutText(imgOutput, index.ToString(), new System.Drawing.Point(bbox.X, bbox.Y + 20), FontFace.HersheySimplex, 0.5, new Emgu.CV.Structure.MCvScalar(255, 0, 0), 2);
-                CvInvoke.PutText(imgOutput, labels[indices[index]],new System.Drawing.Point(bbox.X,bbox.Y+20),FontFace.HersheySimplex,0.5,new Emgu.CV.Structure.MCvScalar(255,0,0),2);
+                CvInvoke.PutText(imgOutput, labels[indices[index]], new System.Drawing.Point(bbox.X, bbox.Y + 20), FontFace.HersheySimplex, 0.5, new MCvScalar(255, 0, 0), 2);
             }
             bboxes.Dispose();
             scores.Dispose();
@@ -190,23 +200,10 @@ namespace OpenCV_Vision_Pro
                 if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".DetectionImage"))
                     Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".DetectionImage");
             }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".DetectionImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".DetectionImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".DetectionImage"] = yoloResults.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".DetectionImage", yoloResults.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".DetectionImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".DetectionImage");
-            }
         }
 
         private List<float[]> ArrayTo2DList(Array array)
         {
-            System.Collections.IEnumerator enumerator = array.GetEnumerator();
             int rows = array.GetLength(0);
             int cols = array.GetLength(1);
             List<float[]> list = new List<float[]>();

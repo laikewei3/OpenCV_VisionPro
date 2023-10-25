@@ -12,6 +12,21 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,6 +63,26 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
@@ -94,6 +129,12 @@
     </Compile>
     <Compile Include="Display + ROI\ColorTools.Designer.cs">
       <DependentUpon>ColorTools.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AIForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AIForm.Designer.cs">
+      <DependentUpon>AIForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HelperClass.cs" />
     <Compile Include="Tools\ImageSharpener\ImageSharpenerTool.cs" />
@@ -184,6 +225,13 @@
     <Compile Include="Tools\ColorSegmentor\ColorSegmentorToolControl.Designer.cs">
       <DependentUpon>ColorSegmentorToolControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\PolarUnWrap\PolarUnWrapTool.cs" />
+    <Compile Include="Tools\PolarUnWrap\PolarUnwrapToolControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\PolarUnWrap\PolarUnwrapToolControl.Designer.cs">
+      <DependentUpon>PolarUnwrapToolControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ToolWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,8 +241,14 @@
     <Compile Include="Interface\UserControlBase.cs" />
     <Compile Include="DataContainer\ToolsTreeNode.cs" />
     <Compile Include="yolov7ObjectDetection.cs" />
+    <EmbeddedResource Include="AIForm.resx">
+      <DependentUpon>AIForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Display + ROI\ColorTools.resx">
       <DependentUpon>ColorTools.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\Blob\BlobToolControl.resx">
       <DependentUpon>BlobToolControl.cs</DependentUpon>
@@ -211,9 +265,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Display + ROI\DisplayControl.resx">
       <DependentUpon>DisplayControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ColorMatcher\ColorMatchToolControl.resx">
       <DependentUpon>ColorMatchToolControl.cs</DependentUpon>
@@ -246,8 +297,8 @@
     <EmbeddedResource Include="Tools\ColorSegmentor\ColorSegmentorToolControl.resx">
       <DependentUpon>ColorSegmentorToolControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ToolWindow.resx">
-      <DependentUpon>ToolWindow.cs</DependentUpon>
+    <EmbeddedResource Include="Tools\PolarUnWrap\PolarUnwrapToolControl.resx">
+      <DependentUpon>PolarUnwrapToolControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -269,14 +320,17 @@
     <PackageReference Include="Emgu.CV.Bitmap">
       <Version>4.8.0.5324</Version>
     </PackageReference>
-    <PackageReference Include="Emgu.CV.runtime.windows">
-      <Version>4.8.0.5324</Version>
+    <PackageReference Include="Emgu.CV.runtime.windows.cuda">
+      <Version>4.7.0.5276</Version>
     </PackageReference>
     <PackageReference Include="Emgu.CV.UI">
       <Version>4.8.0.5324</Version>
     </PackageReference>
     <PackageReference Include="Emgu.runtime.windows.cuda.blas.lt">
       <Version>12.0.104</Version>
+    </PackageReference>
+    <PackageReference Include="Emgu.runtime.windows.cuda.dnn">
+      <Version>8.8.0</Version>
     </PackageReference>
     <PackageReference Include="Emgu.runtime.windows.cuda.dnn.cnn.infer">
       <Version>8.8.0</Version>
@@ -290,8 +344,14 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting">
       <Version>4.7.0</Version>
     </PackageReference>
+    <PackageReference Include="OpenCvSharp4.Windows">
+      <Version>4.8.0.20230708</Version>
+    </PackageReference>
     <PackageReference Include="Shared.ComponentModel.SortableBindingList">
       <Version>0.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="SortCS">
+      <Version>0.9.0</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
       <Version>7.0.0</Version>
@@ -344,6 +404,58 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\mldl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\editor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\line.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\camera.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AddTool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\continuous.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\vision.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\run.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\video.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\opencv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

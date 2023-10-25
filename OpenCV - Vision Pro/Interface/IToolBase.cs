@@ -9,21 +9,19 @@ namespace OpenCV_Vision_Pro
 {
     public interface IToolBase : IDisposable
     {
-         Bitmap toolIcon { get; }
-         string ToolName { get; set; }
-         AutoDisposeDict<string, Mat> m_bitmapList {  get; set; }
-         BindingList<string> m_DisplaySelection { get; set; }
-         UserControlBase m_toolControl { get; set; }
-         Rectangle m_rectROI { get; set; }
-         IParams parameter { get; set; }
-         BindingSource resultSource { get; set; }
-         IToolResult toolResult { get; set; }
-         
-        
-         void Run(Mat image, Rectangle region);
-         object showResult();
-         void showResultImages();
-         void getGUI();
+        string ToolName { get; set; }
+        AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
+        BindingList<string> m_DisplaySelection { get; set; }
+        UserControlBase m_toolControl { get; set; }
+        IParams parameter { get; set; }
+        BindingSource resultSource { get; set; }
+        IToolResult toolResult { get; set; }
+
+        void Run(Mat image, Rectangle region);
+        object showResult();
+        void showResultImages();
+        void getGUI();
+
     }
 
 }

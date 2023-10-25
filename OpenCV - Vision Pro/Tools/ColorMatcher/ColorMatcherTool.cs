@@ -2,7 +2,6 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
-using OpenCV_Vision_Pro.Caliper;
 using OpenCV_Vision_Pro.Interface;
 using OpenCV_Vision_Pro.Properties;
 using OpenCV_Vision_Pro.Tools.ImageSegmentor;
@@ -42,7 +41,6 @@ namespace OpenCV_Vision_Pro.Tools.ColorMatcher
 
     public class ColorMatcherTool : IToolBase
     {
-        public Bitmap toolIcon { get; } = Resources.match;
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
@@ -61,7 +59,6 @@ namespace OpenCV_Vision_Pro.Tools.ColorMatcher
 
         public void Dispose()
         {
-            toolIcon?.Dispose();
             m_bitmapList?.Dispose();
             m_toolControl?.Dispose();
             resultSource?.Dispose();
@@ -80,7 +77,7 @@ namespace OpenCV_Vision_Pro.Tools.ColorMatcher
 
         public void Run(Mat img, Rectangle region)
         {
-            Mat image = HelperClass.getROIImage(img,region, parameter.m_roi.points);
+            parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat image);
 
             matcherResults?.Dispose();
             matcherResults = new ColorMatcherResults();

@@ -25,7 +25,6 @@ namespace OpenCV_Vision_Pro
     }
     public class ImageConvertTool : IToolBase
     {
-        public Bitmap toolIcon { get; } = Resources.convert;
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
@@ -41,7 +40,6 @@ namespace OpenCV_Vision_Pro
 
         public void Dispose()
         {
-            toolIcon?.Dispose();
             m_bitmapList?.Dispose();
             m_toolControl?.Dispose();
             resultSource?.Dispose();
@@ -60,7 +58,7 @@ namespace OpenCV_Vision_Pro
 
         public void Run(Mat img, Rectangle region)
         {
-            Mat image = HelperClass.getROIImage(img, region, parameter.m_roi.points);
+            parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat image);
             convertResults?.Dispose();
             convertResults = new ConvertResults();
 

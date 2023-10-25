@@ -61,13 +61,12 @@ namespace OpenCV_Vision_Pro
             this.m_cbImages.FormattingEnabled = true;
             this.m_cbImages.Location = new System.Drawing.Point(3, 3);
             this.m_cbImages.Name = "m_cbImages";
-            this.m_cbImages.Size = new System.Drawing.Size(519, 21);
+            this.m_cbImages.Size = new System.Drawing.Size(522, 21);
             this.m_cbImages.TabIndex = 7;
             this.m_cbImages.SelectedIndexChanged += new System.EventHandler(this.m_cbImages_SelectedIndexChanged);
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.AutoSize = true;
             this.tableLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -79,8 +78,7 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(525, 510);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(528, 463);
             this.tableLayoutPanel1.TabIndex = 9;
             // 
             // panel2
@@ -91,7 +89,7 @@ namespace OpenCV_Vision_Pro
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 30);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(519, 477);
+            this.panel2.Size = new System.Drawing.Size(522, 433);
             this.panel2.TabIndex = 8;
             // 
             // m_display
@@ -121,7 +119,7 @@ namespace OpenCV_Vision_Pro
             this.panel1.Controls.Add(this.m_playPauseButton);
             this.panel1.Controls.Add(this.m_trackBarVideoDuration);
             this.panel1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.panel1.Location = new System.Drawing.Point(53, 411);
+            this.panel1.Location = new System.Drawing.Point(55, 364);
             this.panel1.Margin = new System.Windows.Forms.Padding(50, 0, 50, 10);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(419, 71);
@@ -189,7 +187,7 @@ namespace OpenCV_Vision_Pro
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "DisplayControl";
-            this.Size = new System.Drawing.Size(525, 510);
+            this.Size = new System.Drawing.Size(528, 463);
             this.Resize += new System.EventHandler(this.resize);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
