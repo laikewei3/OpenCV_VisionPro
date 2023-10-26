@@ -5,19 +5,14 @@ using System.IO;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Threading.Tasks;
 using Emgu.CV.CvEnum;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Management;
 using OpenCV_Vision_Pro.LineSegment;
 using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Threading;
 using Timer = System.Windows.Forms.Timer;
-using Emgu.CV.Features2D;
-using Emgu.CV.Structure;
-using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 
 namespace OpenCV_Vision_Pro
@@ -38,13 +33,14 @@ namespace OpenCV_Vision_Pro
             {"ColorExtractorTool",0},
             {"ImageSharpenerTool",0 },
             {"LineSegmentTool", 0},
-            {"PolarUnWrapTool",0 }
+            {"PolarUnWrapTool",0 },
+            {"PerspectiveTransformTool",0 }
         };
 
-        private string[] files;
-        private static int m_cntFileIndex = 0;
-        private static int[] m_cntImageIndices;
-        private static int m_cntImageIndex;
+        public static string[] files;
+        public static int m_cntFileIndex = 0;
+        public static int[] m_cntImageIndices;
+        public static int m_cntImageIndex;
 
         private Timer m_timer;
 
@@ -392,7 +388,7 @@ namespace OpenCV_Vision_Pro
                 }
                 OpenImages(files, m_cntFileIndex, m_cntImageIndex);
             }
-
+            
             ProcessTree(m_treeViewTools.Nodes);
 
             Size imageSize = m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()].Size;
@@ -485,6 +481,10 @@ namespace OpenCV_Vision_Pro
                     break;
                 case "polarUnwarpToolToolStripMenuItem":
                     tool = new PolarUnWrapTool("ImagePolarUnWrapTool" + (++m_dictToolCount["PolarUnWrapTool"]).ToString());
+                    imageIndex = 9;
+                    break;
+                case "perspectiveTransformToolToolStripMenuItem":
+                    tool = new PerspectiveTransformTool("ImagePerspectiveTransformTool" + (++m_dictToolCount["PerspectiveTransformTool"]).ToString());
                     imageIndex = 9;
                     break;
                 default:

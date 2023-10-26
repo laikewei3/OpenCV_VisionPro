@@ -29,9 +29,9 @@ namespace OpenCV_Vision_Pro
         List<string> labels = null;
         private DisplayControl m_displayControl;
         private string[] files;
-        private static int m_cntFileIndex = 0;
-        private static int[] m_cntImageIndices;
-        private static int m_cntImageIndex;
+        private int m_cntFileIndex = 0;
+        private int[] m_cntImageIndices;
+        private int m_cntImageIndex;
         private int skipFrame;
 
         private VideoCapture videoCapture;
@@ -49,7 +49,12 @@ namespace OpenCV_Vision_Pro
             splitContainer1.Panel2.Controls.Add(m_displayControl);
 
             m_displayControl.m_cbImages.Visible = false; Application.Idle += ProcessFrame;
-            HelperClass.GetAllConnectedCameras(openCameraToolStripMenuItem, openCamera_Click); skipFrame = 0;
+            HelperClass.GetAllConnectedCameras(openCameraToolStripMenuItem, openCamera_Click); 
+            skipFrame = 0;
+            files = Form1.files;
+            m_cntFileIndex = Form1.m_cntFileIndex;
+            m_cntImageIndices = Form1.m_cntImageIndices;
+            m_cntImageIndex = Form1.m_cntImageIndex;
         }
 
         private void m_OpenBtn_Click(object sender, EventArgs e)

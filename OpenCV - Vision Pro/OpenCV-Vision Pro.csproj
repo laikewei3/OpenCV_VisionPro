@@ -137,6 +137,13 @@
       <DependentUpon>AIForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HelperClass.cs" />
+    <Compile Include="Tools\PerspectiveTransform\PerspectiveTransformTool.cs" />
+    <Compile Include="Tools\PerspectiveTransform\PerspectiveTransformToolControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\PerspectiveTransform\PerspectiveTransformToolControl.Designer.cs">
+      <DependentUpon>PerspectiveTransformToolControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\ImageSharpener\ImageSharpenerTool.cs" />
     <Compile Include="Tools\ImageSharpener\ImageSharpenerToolControl.cs">
       <SubType>UserControl</SubType>
@@ -254,6 +261,9 @@
       <DependentUpon>BlobToolControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\PerspectiveTransform\PerspectiveTransformToolControl.resx">
+      <DependentUpon>PerspectiveTransformToolControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageSharpener\ImageSharpenerToolControl.resx">
       <DependentUpon>ImageSharpenerToolControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -309,6 +319,42 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="tessdata\configs\alto" />
+    <None Include="tessdata\configs\ambigs.train" />
+    <None Include="tessdata\configs\api_config" />
+    <None Include="tessdata\configs\bigram" />
+    <None Include="tessdata\configs\box.train" />
+    <None Include="tessdata\configs\box.train.stderr" />
+    <None Include="tessdata\configs\digits" />
+    <None Include="tessdata\configs\get.images" />
+    <None Include="tessdata\configs\hocr" />
+    <None Include="tessdata\configs\inter" />
+    <None Include="tessdata\configs\kannada" />
+    <None Include="tessdata\configs\linebox" />
+    <None Include="tessdata\configs\logfile" />
+    <None Include="tessdata\configs\lstm.train" />
+    <None Include="tessdata\configs\lstmbox" />
+    <None Include="tessdata\configs\lstmdebug" />
+    <None Include="tessdata\configs\makebox" />
+    <None Include="tessdata\configs\pdf" />
+    <None Include="tessdata\configs\quiet" />
+    <None Include="tessdata\configs\rebox" />
+    <None Include="tessdata\configs\strokewidth" />
+    <None Include="tessdata\configs\tsv" />
+    <None Include="tessdata\configs\txt" />
+    <None Include="tessdata\configs\unlv" />
+    <None Include="tessdata\configs\wordstrbox" />
+    <None Include="tessdata\eng.traineddata" />
+    <None Include="tessdata\eng.user-patterns" />
+    <None Include="tessdata\eng.user-words" />
+    <None Include="tessdata\osd.traineddata" />
+    <None Include="tessdata\pdf.ttf" />
+    <None Include="tessdata\tessconfigs\batch" />
+    <None Include="tessdata\tessconfigs\batch.nochop" />
+    <None Include="tessdata\tessconfigs\matdemo" />
+    <None Include="tessdata\tessconfigs\msdemo" />
+    <None Include="tessdata\tessconfigs\nobatch" />
+    <None Include="tessdata\tessconfigs\segdemo" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -362,6 +408,9 @@
     <PackageReference Include="System.Management">
       <Version>7.0.2</Version>
     </PackageReference>
+    <PackageReference Include="Tesseract">
+      <Version>5.2.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\blob.png" />
@@ -414,7 +463,12 @@
   <ItemGroup>
     <None Include="Resources\line.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="tessdata\jaxb-api-2.3.1.jar" />
+    <Content Include="tessdata\piccolo2d-core-3.0.1.jar" />
+    <Content Include="tessdata\piccolo2d-extras-3.0.1.jar" />
+    <Content Include="tessdata\ScrollView.jar" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\file.png" />
   </ItemGroup>
@@ -456,6 +510,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="tessdata\script\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

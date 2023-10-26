@@ -45,6 +45,7 @@ namespace OpenCV_Vision_Pro
             this.imageToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageConvertToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageSharpenerToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.polarUnwarpToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorSegmentorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorMatchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +59,7 @@ namespace OpenCV_Vision_Pro
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.polarUnwarpToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.perspectiveTransformToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -233,7 +234,8 @@ namespace OpenCV_Vision_Pro
             this.imageToolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.imageConvertToolToolStripMenuItem,
             this.imageSharpenerToolToolStripMenuItem,
-            this.polarUnwarpToolToolStripMenuItem});
+            this.polarUnwarpToolToolStripMenuItem,
+            this.perspectiveTransformToolToolStripMenuItem});
             this.imageToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.image;
             this.imageToolToolStripMenuItem.Name = "imageToolToolStripMenuItem";
             this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
@@ -243,7 +245,7 @@ namespace OpenCV_Vision_Pro
             // 
             this.imageConvertToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.convert;
             this.imageConvertToolToolStripMenuItem.Name = "imageConvertToolToolStripMenuItem";
-            this.imageConvertToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.imageConvertToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.imageConvertToolToolStripMenuItem.Text = "Image Convert Tool";
             this.imageConvertToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
@@ -251,9 +253,16 @@ namespace OpenCV_Vision_Pro
             // 
             this.imageSharpenerToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.editor;
             this.imageSharpenerToolToolStripMenuItem.Name = "imageSharpenerToolToolStripMenuItem";
-            this.imageSharpenerToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.imageSharpenerToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.imageSharpenerToolToolStripMenuItem.Text = "Image Sharpener Tool";
             this.imageSharpenerToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // polarUnwarpToolToolStripMenuItem
+            // 
+            this.polarUnwarpToolToolStripMenuItem.Name = "polarUnwarpToolToolStripMenuItem";
+            this.polarUnwarpToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.polarUnwarpToolToolStripMenuItem.Text = "Polar Unwarp Tool";
+            this.polarUnwarpToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // colorToolToolStripMenuItem
             // 
@@ -363,12 +372,12 @@ namespace OpenCV_Vision_Pro
             this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openCameraToolStripMenuItem.Text = "Open Camera";
             // 
-            // polarUnwarpToolToolStripMenuItem
+            // perspectiveTransformToolToolStripMenuItem
             // 
-            this.polarUnwarpToolToolStripMenuItem.Name = "polarUnwarpToolToolStripMenuItem";
-            this.polarUnwarpToolToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.polarUnwarpToolToolStripMenuItem.Text = "Polar Unwarp Tool";
-            this.polarUnwarpToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            this.perspectiveTransformToolToolStripMenuItem.Name = "perspectiveTransformToolToolStripMenuItem";
+            this.perspectiveTransformToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.perspectiveTransformToolToolStripMenuItem.Text = "Perspective Transform Tool";
+            this.perspectiveTransformToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // Form1
             // 
@@ -426,6 +435,7 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.ToolStripMenuItem imageSharpenerToolToolStripMenuItem;
         private System.Windows.Forms.LinkLabel m_labelToMLDL;
         private System.Windows.Forms.ToolStripMenuItem polarUnwarpToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem perspectiveTransformToolToolStripMenuItem;
     }
 }
 

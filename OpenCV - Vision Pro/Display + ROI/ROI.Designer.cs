@@ -105,7 +105,6 @@
             // 
             this.flowLayoutPanel3.Controls.Add(this.m_btnAddPoint);
             this.flowLayoutPanel3.Controls.Add(this.m_btnDeletePoint);
-            this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel3.Location = new System.Drawing.Point(0, 59);
             this.flowLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";

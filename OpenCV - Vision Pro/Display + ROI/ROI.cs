@@ -98,7 +98,9 @@ namespace OpenCV_Vision_Pro
 
         private void m_comboBoxROI_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_comboBoxROI.SelectedIndex == 2)
+            if (m_comboBoxROI.SelectedItem == null)
+                return;
+            if (m_comboBoxROI.SelectedItem.ToString() == "CogPolygon")
             {
                 bs = new BindingSource() { DataSource = polygonPoint };
                 m_PointTable.DataSource = bs;

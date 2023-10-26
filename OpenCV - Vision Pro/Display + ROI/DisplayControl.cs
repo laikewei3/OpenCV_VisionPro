@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Emgu.CV.OCR;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Properties;
@@ -241,7 +242,7 @@ namespace OpenCV_Vision_Pro
 
             if (m_roi != null)
             {
-                if (m_cbImages.SelectedIndex == 0 && m_roi.m_comboBoxROI.SelectedIndex == 1)
+                if (m_cbImages.SelectedIndex == 0 && m_roi.m_comboBoxROI.SelectedItem?.ToString() == "CogRectangle")
                 {
                     m_roi.points = null;
                     using (Brush cornerP = new SolidBrush(Color.DarkRed))
@@ -269,7 +270,7 @@ namespace OpenCV_Vision_Pro
                         p.Dispose();
                     }
                 }
-                else if (m_cbImages.SelectedIndex == 0 && m_roi.m_comboBoxROI.SelectedIndex == 2)
+                else if (m_cbImages.SelectedIndex == 0 && m_roi.m_comboBoxROI.SelectedItem?.ToString() == "CogPolygon")
                 {
                     using (GraphicsPath path = new GraphicsPath())
                     {
@@ -297,7 +298,7 @@ namespace OpenCV_Vision_Pro
                     this.Cursor = Cursors.Default;
                 }
             }
-
+            
             if (m_colorTools != null && m_cbImages.SelectedIndex == 0)
             {
                 if(m_colorTools.addColorRect || m_colorTools.addColorPoint)
@@ -368,7 +369,7 @@ namespace OpenCV_Vision_Pro
             base.OnMouseDown(e);
             if (m_roi != null)
             {
-                if (m_roi.m_comboBoxROI.SelectedIndex == 1)
+                if (m_roi.m_comboBoxROI.SelectedItem.ToString() == "CogRectangle")
                 {
                     dragHandle = 10;
                     moveType = "ROIRect";
@@ -385,7 +386,7 @@ namespace OpenCV_Vision_Pro
                     }
 
                 }
-                else if (m_roi.m_comboBoxROI.SelectedIndex == 2)
+                else if (m_roi.m_comboBoxROI.SelectedItem.ToString() == "CogPolygon")
                 {
                     dragHandle = -10; moveType = "ROIPoly";
                     for (int i = 0; i < m_roi.points.Length; i++)

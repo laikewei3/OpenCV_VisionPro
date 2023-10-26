@@ -235,9 +235,22 @@ namespace OpenCV_Vision_Pro.LineSegment
             return Math.Sqrt(Math.Pow(p2X - p1X, 2) + Math.Pow(p2Y - p1Y, 2));
         }
 
-        private double calculateAngle()
+        private double calculateAngle(Point p1, Point p2)
         {
-            return 0;
+            double len1 = Math.Sqrt(p1.X * p1.X + p1.Y * p1.Y);
+            double len2 = Math.Sqrt(p2.X * p2.X + p2.Y * p2.Y);
+
+            double dot = p1.X * p2.X + p1.Y * p2.Y;
+
+            double a = dot / (len1 * len2);
+
+            if (a >= 1.0)
+                return 0.0;
+            else if (a <= -1.0)
+                return Math.PI * 180 / Math.PI;
+            else
+                return Math.Acos(a) * 180 / Math.PI;
+
         }
 
         public object showResult()
@@ -302,7 +315,7 @@ namespace OpenCV_Vision_Pro.LineSegment
 
                     double x = myPoint.X + ((vanishPoint.Y + 30 - myPoint.Y) * (vanishPoint.X - myPoint.X)) / (vanishPoint.Y - myPoint.Y+1e-10);
                     Point p1 = new Point((int)x, vanishPoint.Y + 30);
-                    LineSegmentResult.LineSegmentEdges.Add(new LineSegments(j++, calculateDistance(vanishPoint.X, vanishPoint.Y, myPoint.X, myPoint.Y), calculateAngle()));
+                    LineSegmentResult.LineSegmentEdges.Add(new LineSegments(j++, calculateDistance(vanishPoint.X, vanishPoint.Y, myPoint.X, myPoint.Y), calculateAngle(vanishPoint, myPoint)));
                     
                     CvInvoke.ArrowedLine(image, myPoint, p1, new MCvScalar(0, 150, 150), 1, tipLength: 0.01);
                 }
@@ -325,7 +338,7 @@ namespace OpenCV_Vision_Pro.LineSegment
 
                     double x = myPoint.X + ((vanishPoint.Y + 30 - myPoint.Y) * (vanishPoint.X - myPoint.X)) / (vanishPoint.Y - myPoint.Y);
                     Point p1 = new Point((int)x, vanishPoint.Y + 30);
-                    LineSegmentResult.LineSegmentEdges.Add(new LineSegments(j++, calculateDistance(vanishPoint.X, vanishPoint.Y, myPoint.X, myPoint.Y), calculateAngle()));
+                    LineSegmentResult.LineSegmentEdges.Add(new LineSegments(j++, calculateDistance(vanishPoint.X, vanishPoint.Y, myPoint.X, myPoint.Y), calculateAngle(vanishPoint,myPoint)));
 
                     CvInvoke.ArrowedLine(rectMask, myPoint, p1, new MCvScalar(255,255,255), 1, tipLength: 0.01);
                 }
