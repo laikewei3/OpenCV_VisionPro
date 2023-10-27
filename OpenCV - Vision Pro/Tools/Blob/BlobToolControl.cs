@@ -1,15 +1,11 @@
-﻿using Emgu.CV.Structure;
-using Emgu.CV;
+﻿using Emgu.CV;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
 using System.Windows.Forms;
 using System.ComponentModel;
-using System.Reflection.Metadata;
 using OpenCV_Vision_Pro.Interface;
-using Emgu.CV.CvEnum;
 
 namespace OpenCV_Vision_Pro
 {

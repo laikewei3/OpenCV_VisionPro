@@ -34,7 +34,9 @@ namespace OpenCV_Vision_Pro
             {"ImageSharpenerTool",0 },
             {"LineSegmentTool", 0},
             {"PolarUnWrapTool",0 },
-            {"PerspectiveTransformTool",0 }
+            {"PerspectiveTransformTool",0 },
+            {"TextRecognitionTool", 0 },
+            {"ImageProcessTool",0 }
         };
 
         public static string[] files;
@@ -481,11 +483,19 @@ namespace OpenCV_Vision_Pro
                     break;
                 case "polarUnwarpToolToolStripMenuItem":
                     tool = new PolarUnWrapTool("ImagePolarUnWrapTool" + (++m_dictToolCount["PolarUnWrapTool"]).ToString());
-                    imageIndex = 9;
+                    imageIndex = 10;
                     break;
                 case "perspectiveTransformToolToolStripMenuItem":
                     tool = new PerspectiveTransformTool("ImagePerspectiveTransformTool" + (++m_dictToolCount["PerspectiveTransformTool"]).ToString());
-                    imageIndex = 9;
+                    imageIndex = 11;
+                    break;
+                case "textRecognitionToolToolStripMenuItem":
+                    tool = new TextRecognitionTool("TextRecognitionTool" + (++m_dictToolCount["TextRecognitionTool"]).ToString());
+                    imageIndex = 12;
+                    break;
+                case "imageProcessToolToolStripMenuItem":
+                    tool = new ImageProcessTool("ImageProcessTool" + (++m_dictToolCount["ImageProcessTool"]).ToString());
+                    imageIndex = 13;
                     break;
                 default:
                     MessageBox.Show("Invalid Tool Added");

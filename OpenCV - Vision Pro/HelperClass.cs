@@ -2,14 +2,10 @@
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Properties;
-using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
@@ -25,14 +21,19 @@ namespace OpenCV_Vision_Pro
         ColorExtractorTool,
         ImageSharpenerTool,
         LineSegmentTool,
-        PolarUnWrapTool
+        yoloObjectDetectionTool,
+        PolarUnWrapTool,
+        PerspectiveTransformTool,
+        TextRecognitionTool,
+        ImageProcessTool
     }
 
     public class HelperClass
     {
         public static ImageList iconList = new ImageList()
         {
-            Images = { Resources.blob, Resources.caliper, Resources.histogram, Resources.convert, Resources.segmentor, Resources.match, Resources.extractor, Resources.editor, Resources.line, Resources.yolo }
+            Images = { Resources.blob, Resources.caliper, Resources.histogram, Resources.convert, Resources.segmentor, Resources.match, Resources.extractor, Resources.editor, Resources.line,
+                Resources.yolo, Resources.polarUnwrap, Resources.transform, Resources.ocr, Resources.process }
         };
 
         public static Size resize(int oriWidth, int oriHeight, int currWidth, int currHeight)

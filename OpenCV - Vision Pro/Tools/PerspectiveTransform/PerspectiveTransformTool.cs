@@ -37,20 +37,6 @@ namespace OpenCV_Vision_Pro
 
     public partial class PerspectiveTransformTool : IToolBase
     {
-        private class PerspectiveTransformData
-        {
-            public PerspectiveTransformData(int Grey_Level, float Count, double Cumulative)
-            {
-                this.Count = Count;
-                this.Grey_Level = Grey_Level;
-                this.Cumulative = Cumulative;
-            }
-
-            public int Grey_Level { get; set; }
-            public float Count { get; set; }
-            public double Cumulative { get; set; }
-        }
-
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public UserControlBase m_toolControl { get; set; }

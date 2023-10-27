@@ -40,12 +40,15 @@ namespace OpenCV_Vision_Pro
             this.m_labelToMLDL = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label1 = new System.Windows.Forms.Label();
             this.m_treeViewTools = new System.Windows.Forms.TreeView();
             this.m_AddToolList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.imageToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageConvertToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageSharpenerToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.polarUnwarpToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.perspectiveTransformToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageProcessToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorSegmentorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorMatchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,12 +57,12 @@ namespace OpenCV_Vision_Pro
             this.caliperToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findLineToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textRecognitionToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_GetInputImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openImageFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.perspectiveTransformToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -192,6 +195,7 @@ namespace OpenCV_Vision_Pro
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.m_treeViewTools);
             // 
             // splitContainer1.Panel2
@@ -202,14 +206,25 @@ namespace OpenCV_Vision_Pro
             this.splitContainer1.SplitterDistance = 258;
             this.splitContainer1.TabIndex = 3;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.label1.Location = new System.Drawing.Point(0, 510);
+            this.label1.Margin = new System.Windows.Forms.Padding(5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "label1";
+            // 
             // m_treeViewTools
             // 
             this.m_treeViewTools.AllowDrop = true;
             this.m_treeViewTools.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Top;
             this.m_treeViewTools.Location = new System.Drawing.Point(0, 0);
             this.m_treeViewTools.Name = "m_treeViewTools";
-            this.m_treeViewTools.Size = new System.Drawing.Size(258, 523);
+            this.m_treeViewTools.Size = new System.Drawing.Size(258, 507);
             this.m_treeViewTools.TabIndex = 0;
             this.m_treeViewTools.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseClick);
             this.m_treeViewTools.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseDoubleClick);
@@ -225,9 +240,10 @@ namespace OpenCV_Vision_Pro
             this.blobToolMenuItem,
             this.caliperToolMenuItem,
             this.histogramToolMenuItem,
-            this.findLineToolToolStripMenuItem});
+            this.findLineToolToolStripMenuItem,
+            this.textRecognitionToolToolStripMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(181, 158);
+            this.m_AddToolList.Size = new System.Drawing.Size(188, 158);
             // 
             // imageToolToolStripMenuItem
             // 
@@ -235,10 +251,11 @@ namespace OpenCV_Vision_Pro
             this.imageConvertToolToolStripMenuItem,
             this.imageSharpenerToolToolStripMenuItem,
             this.polarUnwarpToolToolStripMenuItem,
-            this.perspectiveTransformToolToolStripMenuItem});
+            this.perspectiveTransformToolToolStripMenuItem,
+            this.imageProcessToolToolStripMenuItem});
             this.imageToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.image;
             this.imageToolToolStripMenuItem.Name = "imageToolToolStripMenuItem";
-            this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.imageToolToolStripMenuItem.Text = "Image Tool";
             // 
             // imageConvertToolToolStripMenuItem
@@ -259,10 +276,27 @@ namespace OpenCV_Vision_Pro
             // 
             // polarUnwarpToolToolStripMenuItem
             // 
+            this.polarUnwarpToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.polarUnwrap;
             this.polarUnwarpToolToolStripMenuItem.Name = "polarUnwarpToolToolStripMenuItem";
             this.polarUnwarpToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.polarUnwarpToolToolStripMenuItem.Text = "Polar Unwarp Tool";
             this.polarUnwarpToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // perspectiveTransformToolToolStripMenuItem
+            // 
+            this.perspectiveTransformToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.transform;
+            this.perspectiveTransformToolToolStripMenuItem.Name = "perspectiveTransformToolToolStripMenuItem";
+            this.perspectiveTransformToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.perspectiveTransformToolToolStripMenuItem.Text = "Perspective Transform Tool";
+            this.perspectiveTransformToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // imageProcessToolToolStripMenuItem
+            // 
+            this.imageProcessToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.process;
+            this.imageProcessToolToolStripMenuItem.Name = "imageProcessToolToolStripMenuItem";
+            this.imageProcessToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.imageProcessToolToolStripMenuItem.Text = "Image Process Tool";
+            this.imageProcessToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // colorToolToolStripMenuItem
             // 
@@ -272,7 +306,7 @@ namespace OpenCV_Vision_Pro
             this.colorExtractorToolToolStripMenuItem});
             this.colorToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.color;
             this.colorToolToolStripMenuItem.Name = "colorToolToolStripMenuItem";
-            this.colorToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.colorToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.colorToolToolStripMenuItem.Text = "Color Tool";
             // 
             // colorSegmentorToolToolStripMenuItem
@@ -303,7 +337,7 @@ namespace OpenCV_Vision_Pro
             // 
             this.blobToolMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.blob;
             this.blobToolMenuItem.Name = "blobToolMenuItem";
-            this.blobToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.blobToolMenuItem.Size = new System.Drawing.Size(187, 22);
             this.blobToolMenuItem.Text = "Blob Tool";
             this.blobToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
@@ -311,7 +345,7 @@ namespace OpenCV_Vision_Pro
             // 
             this.caliperToolMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.caliper;
             this.caliperToolMenuItem.Name = "caliperToolMenuItem";
-            this.caliperToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.caliperToolMenuItem.Size = new System.Drawing.Size(187, 22);
             this.caliperToolMenuItem.Text = "Caliper Tool";
             this.caliperToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
@@ -319,7 +353,7 @@ namespace OpenCV_Vision_Pro
             // 
             this.histogramToolMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.histogram;
             this.histogramToolMenuItem.Name = "histogramToolMenuItem";
-            this.histogramToolMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.histogramToolMenuItem.Size = new System.Drawing.Size(187, 22);
             this.histogramToolMenuItem.Text = "Histogram Tool";
             this.histogramToolMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
@@ -327,9 +361,17 @@ namespace OpenCV_Vision_Pro
             // 
             this.findLineToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.line;
             this.findLineToolToolStripMenuItem.Name = "findLineToolToolStripMenuItem";
-            this.findLineToolToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.findLineToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.findLineToolToolStripMenuItem.Text = "Find Line Tool";
             this.findLineToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // textRecognitionToolToolStripMenuItem
+            // 
+            this.textRecognitionToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.ocr;
+            this.textRecognitionToolToolStripMenuItem.Name = "textRecognitionToolToolStripMenuItem";
+            this.textRecognitionToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.textRecognitionToolToolStripMenuItem.Text = "Text Recognition Tool";
+            this.textRecognitionToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // m_GetInputImageMenu
             // 
@@ -372,13 +414,6 @@ namespace OpenCV_Vision_Pro
             this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openCameraToolStripMenuItem.Text = "Open Camera";
             // 
-            // perspectiveTransformToolToolStripMenuItem
-            // 
-            this.perspectiveTransformToolToolStripMenuItem.Name = "perspectiveTransformToolToolStripMenuItem";
-            this.perspectiveTransformToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.perspectiveTransformToolToolStripMenuItem.Text = "Perspective Transform Tool";
-            this.perspectiveTransformToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -397,6 +432,7 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.m_AddToolList.ResumeLayout(false);
@@ -436,6 +472,9 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.LinkLabel m_labelToMLDL;
         private System.Windows.Forms.ToolStripMenuItem polarUnwarpToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem perspectiveTransformToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem textRecognitionToolToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem imageProcessToolToolStripMenuItem;
     }
 }
 

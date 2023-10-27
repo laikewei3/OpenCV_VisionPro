@@ -502,66 +502,6 @@ namespace OpenCV_Vision_Pro
             }
             return imageClone;
         }
-
-        /*
-        private string createFilterString(Dictionary<string, ArrayList> MeasurementProperties, string m_strBlobsFilter)
-        {
-            if (MeasurementProperties.Count == 0)
-            {
-                m_strBlobsFilter = "";
-                return m_strBlobsFilter;
-            }
-            if (m_strBlobsFilter == "")
-                m_strBlobsFilter = "res => ";
-            foreach (var condition in MeasurementProperties)
-            {
-                string m_strName = condition.Key;
-                ArrayList c = condition.Value;
-                if ((String)c[0] == "Exclude")
-                {
-                    if (m_strBlobsFilter.Length > 7)
-                        m_strBlobsFilter += " && ";
-                    if (m_strName == "ConnectivityLabel")
-                    {
-                        if ((String)c[1] == "0")
-                            c[1] = "Hole";
-                        else
-                            c[1] = "Blob";
-
-                        if ((String)c[2] == "0")
-                            c[2] = "Hole";
-                        else
-                            c[2] = "Blob";
-
-                        m_strBlobsFilter += " res." + m_strName + " != \"" + c[1] + "\" && res." + m_strName + " != \"" + c[2] + "\"";
-                    }
-                    else
-                        m_strBlobsFilter += " res." + m_strName + " < " + c[1] + " || res." + m_strName + " > " + c[2];
-                }
-                else
-                {
-                    if (m_strBlobsFilter.Length > 7)
-                        m_strBlobsFilter += " && ";
-                    if (m_strName == "ConnectivityLabel")
-                    {
-                        if ((String)c[1] == "0")
-                            c[1] = "Hole";
-                        else
-                            c[1] = "Blob";
-
-                        if ((String)c[2] == "0")
-                            c[2] = "Hole";
-                        else
-                            c[2] = "Blob";
-
-                        m_strBlobsFilter += " res." + m_strName + " == \"" + c[1] + "\" || res." + m_strName + " == \"" + c[2] + "\"";
-                    }
-                    else
-                        m_strBlobsFilter += " res." + m_strName + " >= " + c[1] + " && res." + m_strName + " <= " + c[2];
-                }
-            }
-            return m_strBlobsFilter;
-        }*/
     }
     
 }
