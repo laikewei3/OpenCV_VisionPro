@@ -1,17 +1,12 @@
 ﻿using Emgu.CV;
 using OpenCV_Vision_Pro.Interface;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.AxHost;
 
 namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
 {
-    public class RotateParams:IParams
+    public class RotateFlipParams:IParams
     {
         public string rotateFlipMode { get; set; } = "No Rotation/Flip";
         public ROI m_roi { get; set; } = new ROI();
@@ -21,7 +16,7 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
     public class RotateFlipTool : ISimpleToolBase
     {
         public UserControlBase m_toolControl { get; set; }
-        public IParams parameter { get; set; } = new RotateParams();
+        public IParams parameter { get; set; } = new RotateFlipParams();
         public IToolResult toolResult { get; set; }
         public RotateFlipResult RotateFlipResult { get { return (RotateFlipResult)toolResult; } set { toolResult = value; } }
 
@@ -32,14 +27,14 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
 
         public void getGUI()
         {
-            m_toolControl = new RotateFlip(parameter) { Dock = DockStyle.Fill };
+            m_toolControl = new RotateFlipToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
         public void Run(Mat image, Rectangle region)
         {
             RotateFlipResult?.Dispose();
             RotateFlipResult = new RotateFlipResult();
-            string mode = ((RotateParams)parameter).rotateFlipMode;
+            string mode = ((RotateFlipParams)parameter).rotateFlipMode;
             Mat processedImage = new Mat();
             switch (mode)
             {

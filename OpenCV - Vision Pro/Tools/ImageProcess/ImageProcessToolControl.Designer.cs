@@ -101,10 +101,12 @@
             this.m_cbProcessMode.DropDownWidth = 150;
             this.m_cbProcessMode.FormattingEnabled = true;
             this.m_cbProcessMode.IntegralHeight = false;
+            this.m_cbProcessMode.ItemHeight = 13;
             this.m_cbProcessMode.Items.AddRange(new object[] {
             "Rotate / Flip",
             "Equalise(Fixed)",
-            "Equalise(Adaptive)"});
+            "Equalise(Adaptive)",
+            "Arithmetic"});
             this.m_cbProcessMode.Location = new System.Drawing.Point(3, 3);
             this.m_cbProcessMode.MaxDropDownItems = 50;
             this.m_cbProcessMode.Name = "m_cbProcessMode";

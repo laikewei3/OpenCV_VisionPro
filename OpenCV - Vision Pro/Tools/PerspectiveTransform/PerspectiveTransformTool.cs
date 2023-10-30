@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Reg;
-using Emgu.CV.Structure;
-using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
-using OpenCV_Vision_Pro.Properties;
-using Shared.ComponentModel.SortableBindingList;
 
 namespace OpenCV_Vision_Pro
 {

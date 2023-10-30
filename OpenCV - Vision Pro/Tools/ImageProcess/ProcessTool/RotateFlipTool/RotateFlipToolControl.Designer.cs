@@ -1,6 +1,6 @@
 ﻿namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
 {
-    partial class RotateFlip
+    partial class RotateFlipToolControl
     {
         /// <summary> 
         /// Required designer variable.

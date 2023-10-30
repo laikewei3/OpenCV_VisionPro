@@ -144,13 +144,20 @@
     <Compile Include="Tools\ImageProcess\ImageProcessToolControl.Designer.cs">
       <DependentUpon>ImageProcessToolControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\ImageProcess\ProcessTool\RotateFlip.cs">
+    <Compile Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticTool.cs" />
+    <Compile Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tools\ImageProcess\ProcessTool\RotateFlip.Designer.cs">
-      <DependentUpon>RotateFlip.cs</DependentUpon>
+    <Compile Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.Designer.cs">
+      <DependentUpon>ArithmeticToolControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\ImageProcess\ProcessTool\RotateFlipTool.cs" />
+    <Compile Include="Tools\ImageProcess\ProcessTool\RotateFlipTool\RotateFlipToolControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\ImageProcess\ProcessTool\RotateFlipTool\RotateFlipToolControl.Designer.cs">
+      <DependentUpon>RotateFlipToolControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\ImageProcess\ProcessTool\RotateFlipTool\RotateFlipTool.cs" />
     <Compile Include="Tools\TextRecognition\TextRecognitionTool.cs" />
     <Compile Include="Tools\TextRecognition\TextRecognitionToolControl.cs">
       <SubType>UserControl</SubType>
@@ -285,8 +292,11 @@
     <EmbeddedResource Include="Tools\ImageProcess\ImageProcessToolControl.resx">
       <DependentUpon>ImageProcessToolControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\RotateFlip.resx">
-      <DependentUpon>RotateFlip.cs</DependentUpon>
+    <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.resx">
+      <DependentUpon>ArithmeticToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\RotateFlipTool\RotateFlipToolControl.resx">
+      <DependentUpon>RotateFlipToolControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\TextRecognition\TextRecognitionToolControl.resx">
       <DependentUpon>TextRecognitionToolControl.cs</DependentUpon>

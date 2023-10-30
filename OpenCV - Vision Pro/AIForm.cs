@@ -25,7 +25,7 @@ namespace OpenCV_Vision_Pro
 {
     public partial class AIForm : Form
     {
-        Net Model = null;
+        Net Model = new Net();
         List<string> labels = null;
         private DisplayControl m_displayControl;
         private string[] files;
@@ -180,7 +180,6 @@ namespace OpenCV_Vision_Pro
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Invalid Images Input");
                 Console.WriteLine(ex.Message);
             }
             return new Mat();
@@ -220,7 +219,7 @@ namespace OpenCV_Vision_Pro
 
                     m_displayControl.m_display.Image?.Dispose();
 
-                    if (Model != null)
+                    if (!Model.Empty)
                     {
                         float confThreshold = 0.7f;
                         float nmsThreshold = 0.5f;
@@ -409,11 +408,11 @@ namespace OpenCV_Vision_Pro
         {
             string PathWeights = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.weights";
             string PathConfig = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.cfg";
-            string PathLabels = "C:\\Users\\T0571\\Downloads\\coco.names";
-            Model = DnnInvoke.ReadNetFromDarknet(PathConfig, PathWeights);
-            labels = File.ReadAllLines(PathLabels).ToList();
+            string PathLabels = "C:\\Users\\T0571\\Downloads\\coco.names"; 
             Model.SetPreferableBackend(Emgu.CV.Dnn.Backend.Cuda);
             Model.SetPreferableTarget(Target.Cuda);
+            Model = DnnInvoke.ReadNetFromDarknet(PathConfig, PathWeights);
+            labels = File.ReadAllLines(PathLabels).ToList();
         }
     }
 }

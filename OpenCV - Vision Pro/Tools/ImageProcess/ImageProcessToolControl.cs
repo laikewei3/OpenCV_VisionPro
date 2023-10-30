@@ -54,14 +54,17 @@ namespace OpenCV_Vision_Pro
             {
                 case "Rotate / Flip":
                     tool = new RotateFlipTool();
-                    ((RotateFlipTool)tool).parameter = new RotateParams();
-                    ((RotateFlipTool)tool).parameter = new RotateParams();
+                    ((RotateFlipTool)tool).parameter = new RotateFlipParams();
                     break;
                 case "Equalise(Fixed)":
                 case "Equalise(Adaptive)":
                     tool = new ImageSharpenerTool("");
                     ((ImageSharpenerTool)tool).parameter = new SharpenerParams();
                     ((SharpenerParams)((ImageSharpenerTool)tool).parameter).runMode = m_strSelectedProcess;
+                    break;
+                case "Arithmetic":
+                    tool = new ArithmeticTool();
+                    ((ArithmeticTool)tool).parameter = new ArithmeticParams();
                     break;
                 default:
                     MessageBox.Show("Process Error");

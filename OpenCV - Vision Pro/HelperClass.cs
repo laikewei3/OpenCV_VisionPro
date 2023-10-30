@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Management;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
@@ -28,7 +29,7 @@ namespace OpenCV_Vision_Pro
         ImageProcessTool
     }
 
-    public class HelperClass
+    public static class HelperClass
     {
         public static ImageList iconList = new ImageList()
         {

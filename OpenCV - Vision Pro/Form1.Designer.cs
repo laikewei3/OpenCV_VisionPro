@@ -221,10 +221,10 @@ namespace OpenCV_Vision_Pro
             // 
             this.m_treeViewTools.AllowDrop = true;
             this.m_treeViewTools.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Top;
+            this.m_treeViewTools.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_treeViewTools.Location = new System.Drawing.Point(0, 0);
             this.m_treeViewTools.Name = "m_treeViewTools";
-            this.m_treeViewTools.Size = new System.Drawing.Size(258, 507);
+            this.m_treeViewTools.Size = new System.Drawing.Size(258, 523);
             this.m_treeViewTools.TabIndex = 0;
             this.m_treeViewTools.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseClick);
             this.m_treeViewTools.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.m_treeViewTools_NodeMouseDoubleClick);
