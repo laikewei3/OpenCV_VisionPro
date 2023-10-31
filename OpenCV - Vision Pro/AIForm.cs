@@ -14,10 +14,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static OpenCvSharp.FileStorage;
 using Image = System.Drawing.Image;
 using Timer = System.Windows.Forms.Timer;
 
@@ -26,6 +28,7 @@ namespace OpenCV_Vision_Pro
     public partial class AIForm : Form
     {
         Net Model = new Net();
+        
         List<string> labels = null;
         private DisplayControl m_displayControl;
         private string[] files;
@@ -33,10 +36,13 @@ namespace OpenCV_Vision_Pro
         private int[] m_cntImageIndices;
         private int m_cntImageIndex;
         private int skipFrame;
+        VectorOfRect bboxes;
+        VectorOfFloat scores;
+        VectorOfInt indices;
+        VectorOfInt idx;
 
         private VideoCapture videoCapture;
         private bool resizedOnce = false;
-        private double fps;
 
         public AIForm()
         {
@@ -74,6 +80,9 @@ namespace OpenCV_Vision_Pro
             Form form = Application.OpenForms["Form1"]; form?.Show();
             Application.Idle -= ProcessFrame;
             videoCapture?.Stop();
+            bboxes.Dispose();
+            scores.Dispose();
+            indices.Dispose();
             videoCapture = null;
             videoCapture?.Dispose();
             Model?.Dispose();
@@ -187,7 +196,7 @@ namespace OpenCV_Vision_Pro
 
         private void ProcessFrame(object sender, EventArgs e)
         {
-            if (skipFrame++ % 2 == 0)
+            if (skipFrame++ % 3 == 0)
                 return;
             try
             {
@@ -221,7 +230,7 @@ namespace OpenCV_Vision_Pro
 
                     if (!Model.Empty)
                     {
-                        float confThreshold = 0.7f;
+                        float confThreshold = 0.5f;
                         float nmsThreshold = 0.5f;
                         int defaultSize = 416;
 
@@ -239,29 +248,29 @@ namespace OpenCV_Vision_Pro
                         Model.SetInput(input);
                         input.Dispose();
 
+                        
                         VectorOfMat vectorOfMat = new VectorOfMat();
-                        VectorOfRect bboxes = new VectorOfRect();
-                        VectorOfFloat scores = new VectorOfFloat();
-                        VectorOfInt indices = new VectorOfInt();
+                        
                         Model.Forward(vectorOfMat, Model.UnconnectedOutLayersNames);
 
                         for (int i = 0; i < vectorOfMat.Size; i++)
                         {
                             Mat mat = vectorOfMat[i];
-                            var data = ArrayTo2DList(mat.GetData());
-                            for (int j = 0; j < data.Count; j++)
+                            
+                            for (int j = 0; j < mat.Rows; j++)
                             {
-                                var row = data[j];
-                                var rowScores = row.Skip(5).ToArray();
-                                var classId = rowScores.ToList().IndexOf(rowScores.Max());
+                                var row = mat.Row(j).GetData().Cast<float>();
+                                var rowScores = row.Skip(5).ToList();
+                                var classId = rowScores.IndexOf(rowScores.Max());
                                 var confidence = rowScores[classId];
+                                List<float> info = row.Take(4).ToList();
                                 if (confidence > confThreshold)
                                 {
-                                    var center_x = (int)(row[0] * defaultSize);
-                                    var center_y = (int)(row[1] * defaultSize);
+                                    var center_x = (int)(info[0] * defaultSize);
+                                    var center_y = (int)(info[1] * defaultSize);
 
-                                    var width = (int)(row[2] * defaultSize);
-                                    var height = (int)(row[3] * defaultSize);
+                                    var width = (int)(info[2] * defaultSize);
+                                    var height = (int)(info[3] * defaultSize);
 
                                     var x = (int)(center_x - width / 2);
                                     var y = (int)(center_y - height / 2);
@@ -274,18 +283,20 @@ namespace OpenCV_Vision_Pro
                             mat?.Dispose();
                         }
                         vectorOfMat.Dispose();
-
-                        var idx = DnnInvoke.NMSBoxes(bboxes.ToArray(), scores.ToArray(), confThreshold, nmsThreshold);
-                        for (int i = 0; i < idx.Length; i++)
+                        
+                        DnnInvoke.NMSBoxes(bboxes, scores, confThreshold, nmsThreshold, idx);
+                        for (int i = 0; i < idx.Size; i++)
                         {
                             int index = idx[i];
                             var bbox = bboxes[index];
                             CvInvoke.Rectangle(resizeMat, bbox, new MCvScalar(0, 0, 255), 2);
                             CvInvoke.PutText(resizeMat, labels[indices[index]], new Point(bbox.X, bbox.Y + 20), FontFace.HersheySimplex, 0.5, new MCvScalar(255, 0, 0), 2);
                         }
-                        bboxes.Dispose();
-                        scores.Dispose();
-                        indices.Dispose();
+                        idx.Clear();
+                        bboxes.Clear();
+                        scores.Clear();
+                        indices.Clear();
+
                         Point point = topBottom < 1 ? new Point(leftRight, 0) : new Point(0, topBottom);
                         Mat tempMat = new Mat(resizeMat, new Rectangle(point, newSize));
 
@@ -310,10 +321,7 @@ namespace OpenCV_Vision_Pro
                     m_displayControl.m_trackBarVideoDuration.Value = 0;
                 }
             }
-            finally
-            {
-
-            }
+            finally{}
         }
 
         private List<float[]> ArrayTo2DList(Array array)
@@ -341,7 +349,7 @@ namespace OpenCV_Vision_Pro
 
             ToolStripMenuItem itemSelection = (ToolStripMenuItem)sender;
             videoCapture = new VideoCapture(openCameraToolStripMenuItem.DropDownItems.IndexOf(itemSelection));
-            fps = videoCapture.Get(CapProp.Fps);
+            //fps = videoCapture.Get(CapProp.Fps);
 
             resizedOnce = false;
             m_displayControl.m_VideoCapture = videoCapture;
@@ -371,7 +379,7 @@ namespace OpenCV_Vision_Pro
                         videoCapture = new VideoCapture(openFileDialog.FileName);
                         m_displayControl.m_VideoCapture = videoCapture;
                         double totalFrame = videoCapture.Get(CapProp.FrameCount);
-                        fps = videoCapture.Get(CapProp.Fps);
+                        //fps = videoCapture.Get(CapProp.Fps);
                         m_displayControl.m_trackBarVideoDuration.Maximum = (int)totalFrame;
 
                         m_cntImageIndices = null;
@@ -408,11 +416,15 @@ namespace OpenCV_Vision_Pro
         {
             string PathWeights = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.weights";
             string PathConfig = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.cfg";
-            string PathLabels = "C:\\Users\\T0571\\Downloads\\coco.names"; 
+            string PathLabels = "C:\\Users\\T0571\\Downloads\\coco.names";
             Model.SetPreferableBackend(Emgu.CV.Dnn.Backend.Cuda);
             Model.SetPreferableTarget(Target.Cuda);
             Model = DnnInvoke.ReadNetFromDarknet(PathConfig, PathWeights);
-            labels = File.ReadAllLines(PathLabels).ToList();
+            labels = File.ReadAllLines(PathLabels).ToList(); 
+            bboxes = new VectorOfRect();
+            scores = new VectorOfFloat();
+            indices = new VectorOfInt();
+            idx = new VectorOfInt();
         }
     }
 }

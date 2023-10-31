@@ -47,7 +47,9 @@
             "Blue",
             "Green",
             "HSV",
-            "YUV"});
+            "YUV",
+            "HSV to BGR",
+            "YUV to BGR"});
             this.m_comboBoxColorMode.Location = new System.Drawing.Point(3, 16);
             this.m_comboBoxColorMode.Margin = new System.Windows.Forms.Padding(10);
             this.m_comboBoxColorMode.Name = "m_comboBoxColorMode";

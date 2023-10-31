@@ -85,6 +85,12 @@ namespace OpenCV_Vision_Pro
                     case "HSV":
                         CvInvoke.CvtColor(image, convertResults.resultImage, Emgu.CV.CvEnum.ColorConversion.Bgr2Hsv);
                         break;
+                    case "HSV to BGR":
+                        CvInvoke.CvtColor(image, convertResults.resultImage, Emgu.CV.CvEnum.ColorConversion.Hsv2Bgr);
+                        break;
+                    case "YUV to BGR":
+                        CvInvoke.CvtColor(image, convertResults.resultImage, Emgu.CV.CvEnum.ColorConversion.Yuv2Bgr);
+                        break;
                     case "Red":
                     case "Blue":
                     case "Green":
@@ -107,7 +113,7 @@ namespace OpenCV_Vision_Pro
             }
             catch (Exception)
             {
-                convertResults.resultImage = new Mat();
+                convertResults.resultImage = image.Clone();
             }
 
         }

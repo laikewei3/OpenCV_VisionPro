@@ -137,6 +137,7 @@
       <DependentUpon>AIForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HelperClass.cs" />
+    <Compile Include="KalmanFilterClass.cs" />
     <Compile Include="Tools\ImageProcess\ImageProcessTool.cs" />
     <Compile Include="Tools\ImageProcess\ImageProcessToolControl.cs">
       <SubType>UserControl</SubType>
