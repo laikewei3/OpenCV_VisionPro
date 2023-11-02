@@ -58,11 +58,13 @@ namespace OpenCV_Vision_Pro
             this.histogramToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findLineToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textRecognitionToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.iDToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_GetInputImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openImageFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imagePaintToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -241,9 +243,10 @@ namespace OpenCV_Vision_Pro
             this.caliperToolMenuItem,
             this.histogramToolMenuItem,
             this.findLineToolToolStripMenuItem,
-            this.textRecognitionToolToolStripMenuItem});
+            this.textRecognitionToolToolStripMenuItem,
+            this.iDToolToolStripMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(188, 158);
+            this.m_AddToolList.Size = new System.Drawing.Size(188, 202);
             // 
             // imageToolToolStripMenuItem
             // 
@@ -252,7 +255,8 @@ namespace OpenCV_Vision_Pro
             this.imageSharpenerToolToolStripMenuItem,
             this.polarUnwarpToolToolStripMenuItem,
             this.perspectiveTransformToolToolStripMenuItem,
-            this.imageProcessToolToolStripMenuItem});
+            this.imageProcessToolToolStripMenuItem,
+            this.imagePaintToolToolStripMenuItem});
             this.imageToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.image;
             this.imageToolToolStripMenuItem.Name = "imageToolToolStripMenuItem";
             this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
@@ -373,6 +377,14 @@ namespace OpenCV_Vision_Pro
             this.textRecognitionToolToolStripMenuItem.Text = "Text Recognition Tool";
             this.textRecognitionToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
+            // iDToolToolStripMenuItem
+            // 
+            this.iDToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.id;
+            this.iDToolToolStripMenuItem.Name = "iDToolToolStripMenuItem";
+            this.iDToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.iDToolToolStripMenuItem.Text = "ID Tool";
+            this.iDToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
             // m_GetInputImageMenu
             // 
             this.m_GetInputImageMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -413,6 +425,13 @@ namespace OpenCV_Vision_Pro
             this.openCameraToolStripMenuItem.Name = "openCameraToolStripMenuItem";
             this.openCameraToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.openCameraToolStripMenuItem.Text = "Open Camera";
+            // 
+            // imagePaintToolToolStripMenuItem
+            // 
+            this.imagePaintToolToolStripMenuItem.Name = "imagePaintToolToolStripMenuItem";
+            this.imagePaintToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.imagePaintToolToolStripMenuItem.Text = "Image Paint Tool";
+            this.imagePaintToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // Form1
             // 
@@ -475,6 +494,8 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.ToolStripMenuItem textRecognitionToolToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem imageProcessToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem iDToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imagePaintToolToolStripMenuItem;
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using OpenCV_Vision_Pro.Tools.ColorMatcher;
+using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
 using OpenCV_Vision_Pro.Tools.ImageSegmentor;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using System;
@@ -77,8 +78,8 @@ namespace OpenCV_Vision_Pro
 
             if(m_toolBase.m_toolControl is ColorUserControlBase)
                 m_displayControl.m_colorTools = ((ColorUserControlBase)m_toolBase.m_toolControl).m_colorTools;
-            if (m_toolBase is PolarUnWrapTool)
-                m_displayControl.PolarUnwrap = m_toolBase;
+            if (m_toolBase is PolarUnWrapTool || m_toolBase is PaintTool)
+                m_displayControl.toolBase = m_toolBase;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

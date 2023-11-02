@@ -9,19 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static OpenCvSharp.FileStorage;
 using Image = System.Drawing.Image;
-using Timer = System.Windows.Forms.Timer;
 
 namespace OpenCV_Vision_Pro
 {
@@ -80,9 +74,9 @@ namespace OpenCV_Vision_Pro
             Form form = Application.OpenForms["Form1"]; form?.Show();
             Application.Idle -= ProcessFrame;
             videoCapture?.Stop();
-            bboxes.Dispose();
-            scores.Dispose();
-            indices.Dispose();
+            bboxes?.Dispose();
+            scores?.Dispose();
+            indices?.Dispose();
             videoCapture = null;
             videoCapture?.Dispose();
             Model?.Dispose();
@@ -323,7 +317,7 @@ namespace OpenCV_Vision_Pro
             }
             finally{}
         }
-
+        /*
         private List<float[]> ArrayTo2DList(Array array)
         {
             int rows = array.GetLength(0);
@@ -340,7 +334,7 @@ namespace OpenCV_Vision_Pro
                 list.Add(temp.ToArray());
             }
             return list;
-        }
+        }*/
 
         private void openCamera_Click(object sender, EventArgs e)
         {

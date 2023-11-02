@@ -14,6 +14,8 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Threading;
 using Timer = System.Windows.Forms.Timer;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
+using OpenCV_Vision_Pro.Tools.ID;
+using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
 
 namespace OpenCV_Vision_Pro
 {
@@ -36,7 +38,9 @@ namespace OpenCV_Vision_Pro
             {"PolarUnWrapTool",0 },
             {"PerspectiveTransformTool",0 },
             {"TextRecognitionTool", 0 },
-            {"ImageProcessTool",0 }
+            {"ImageProcessTool",0 },
+            {"IDTool",0},
+            {"ImagePaintTool",0 }
         };
 
         public static string[] files;
@@ -91,6 +95,7 @@ namespace OpenCV_Vision_Pro
             m_treeViewTools.ImageList = HelperClass.iconList;
             m_treeViewTools.ItemDrag += m_treeViewTools_ItemDrag;
             HelperClass.GetAllConnectedCameras(openCameraToolStripMenuItem, openCamera_Click);
+            
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -496,6 +501,14 @@ namespace OpenCV_Vision_Pro
                 case "imageProcessToolToolStripMenuItem":
                     tool = new ImageProcessTool("ImageProcessTool" + (++m_dictToolCount["ImageProcessTool"]).ToString());
                     imageIndex = 13;
+                    break;
+                case "iDToolToolStripMenuItem":
+                    tool = new IDTool("IDTool" + (++m_dictToolCount["IDTool"]).ToString());
+                    imageIndex = 14;
+                    break;
+                case "imagePaintToolToolStripMenuItem":
+                    tool = new PaintTool("ImagePaintTool" + (++m_dictToolCount["ImagePaintTool"]).ToString());
+                    imageIndex = 14;
                     break;
                 default:
                     MessageBox.Show("Invalid Tool Added");

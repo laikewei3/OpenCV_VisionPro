@@ -4,6 +4,7 @@ using Emgu.CV.OCR;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Properties;
+using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
 using OpenCV_Vision_Pro.Tools.ImageSegmentor;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using System;
@@ -22,7 +23,10 @@ namespace OpenCV_Vision_Pro
 {
     public partial class DisplayControl : UserControl
     {
-        public IToolBase PolarUnwrap {  get; set; }
+        public IToolBase toolBase { get; set; }
+       
+        private bool drawLines = false;
+
         public VideoCapture m_VideoCapture { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public ROI m_roi { get; set; }
@@ -30,7 +34,7 @@ namespace OpenCV_Vision_Pro
         public ColorTools m_colorTools { get; set; }
 
         public BindingList<string> m_DisplaySelection { get; set; }
-        
+
         private bool m_boolPlay = true;
         public bool playing
         {
@@ -48,7 +52,7 @@ namespace OpenCV_Vision_Pro
         // ROI
         private string moveType = "";
         private Rectangle oldRect;
-        private int dragHandle =-1;
+        private int dragHandle = -1;
         private Point dragPoint;
         public int[] zoom { get; set; } = new int[4];
 
@@ -200,7 +204,7 @@ namespace OpenCV_Vision_Pro
                 m_labelTotalTime.Text = " / " + answer;
             }
         }
-        
+
         // ROI METHODS
         private Point GetHandlePoint(Rectangle rect, int value)
         {
@@ -237,7 +241,7 @@ namespace OpenCV_Vision_Pro
         {
             base.OnPaint(e);
             m_display.Invalidate();
-            if(m_display.Image == null)
+            if (m_display.Image == null)
                 return;
 
             if (m_roi != null)
@@ -251,20 +255,20 @@ namespace OpenCV_Vision_Pro
                         e.Graphics.DrawRectangle(p, m_roi.ROIRectangle);
                         if (this.ParentForm.Text.StartsWith("ImagePolarUnWrapTool"))
                         {
-                            Pen pen = new Pen(Color.Yellow, 1); 
+                            Pen pen = new Pen(Color.Yellow, 1);
                             e.Graphics.DrawEllipse(pen, m_roi.ROIRectangle);
                             Rectangle innerRect = m_roi.ROIRectangle;
-                            int circlewidth = ((PolarUnWrapParams)PolarUnwrap.parameter).lineheight;
+                            int circlewidth = ((PolarUnWrapParams)toolBase.parameter).lineheight;
                             innerRect.X += circlewidth;
                             innerRect.Y += circlewidth;
-                            innerRect.Width -= circlewidth*2;
-                            innerRect.Height -= circlewidth*2;
+                            innerRect.Width -= circlewidth * 2;
+                            innerRect.Height -= circlewidth * 2;
                             e.Graphics.DrawEllipse(pen, innerRect);
                             pen.Dispose();
                         }
                         for (int i = 1; i < 9; i++)
                         {
-                            e.Graphics.FillRectangle(cornerP, GetHandleRect(m_roi.ROIRectangle,i));
+                            e.Graphics.FillRectangle(cornerP, GetHandleRect(m_roi.ROIRectangle, i));
                         }
                         cornerP.Dispose();
                         p.Dispose();
@@ -298,10 +302,10 @@ namespace OpenCV_Vision_Pro
                     this.Cursor = Cursors.Default;
                 }
             }
-            
+
             if (m_colorTools != null && m_cbImages.SelectedIndex == 0)
             {
-                if(m_colorTools.addColorRect || m_colorTools.addColorPoint)
+                if (m_colorTools.addColorRect || m_colorTools.addColorPoint)
                 {
                     if (m_colorTools.addColorRect)
                     {
@@ -335,7 +339,7 @@ namespace OpenCV_Vision_Pro
                     int n = colorMat.Rows * colorMat.Cols;
                     Mat data = colorMat.Clone().Reshape(1, n);
                     data.ConvertTo(data, DepthType.Cv32F);
-                    
+
                     VectorOfInt labels = new VectorOfInt();
                     Mat centers = new Mat();
                     CvInvoke.Kmeans(data, 10, labels, new MCvTermCriteria(), 1, KMeansInitType.PPCenters, centers);
@@ -359,6 +363,18 @@ namespace OpenCV_Vision_Pro
                     m_colorTools.m_nudBlue.Value = (decimal)scalar.V0;
                     m_colorTools.m_nudGreen.Value = (decimal)scalar.V1;
                     m_colorTools.m_nudRed.Value = (decimal)scalar.V2;
+                }
+            }
+
+            if (toolBase is PaintTool)
+            {
+                if (((PaintParams)toolBase.parameter).InPaintPoints.Count >= 2 && m_cbImages.SelectedIndex == 0)
+                {
+                    using (Pen pen = new Pen(Color.GreenYellow, ((PaintParams)toolBase.parameter).paintSize))
+                    {
+                        e.Graphics.DrawCurve(pen, ((PaintParams)toolBase.parameter).InPaintPoints.ToArray());
+                        pen.Dispose();
+                    }
                 }
             }
         }
@@ -431,9 +447,9 @@ namespace OpenCV_Vision_Pro
                             break;
                         }
                     }
-                    
+
                 }
-                if(m_colorTools.addColorPoint || m_colorTools.addColorRect)
+                if (m_colorTools.addColorPoint || m_colorTools.addColorRect)
                 {
 
                     if (move)
@@ -449,12 +465,26 @@ namespace OpenCV_Vision_Pro
                     }
                 }
             }
+
+            if (toolBase is PaintTool)
+            { 
+                drawLines = true;
+                ((PaintParams)toolBase.parameter).InPaintPoints.Clear();
+                ((PaintParams)toolBase.parameter).InPaintPoints.Add(e.Location);
+            }
         }
 
         private void m_display_MouseUp(object sender, MouseEventArgs e)
         {
             dragHandle = -1;
             base.OnMouseUp(e);
+            if (toolBase is PaintTool)
+            {
+                if(((PaintParams)toolBase.parameter).InPaintPoints.Count > 0)
+                {
+                    drawLines = false;
+                }
+            }
         }
 
         private void m_display_MouseMove(object sender, MouseEventArgs e)
@@ -464,7 +494,7 @@ namespace OpenCV_Vision_Pro
             int diffY = dragPoint.Y - e.Location.Y;
             if (oldRect != null || !oldRect.IsEmpty)
             {
-                
+
                 if (moveType == "Color" || moveType == "ROIRect")
                 {
                     Size oriSize = m_bitmapList["Current.InputImage"].Size;
@@ -628,7 +658,7 @@ namespace OpenCV_Vision_Pro
                             m_roi.ROIRectangle = rectangle;
                     }
                 }
-                else if(moveType == "ROIPoly")
+                else if (moveType == "ROIPoly")
                 {
                     if (dragHandle >= 0)
                     {
@@ -696,6 +726,15 @@ namespace OpenCV_Vision_Pro
                         }
                         dragPoint = e.Location;
                     } //MOVE ENTIRE POLYGON
+                }
+            }
+
+            if (toolBase is PaintTool)
+            {
+                if (((PaintParams)toolBase.parameter).InPaintPoints.Count > 0)
+                {
+                    if(drawLines)
+                        ((PaintParams)toolBase.parameter).InPaintPoints.Add(e.Location);
                 }
             }
             base.OnMouseMove(e);

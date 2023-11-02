@@ -70,7 +70,7 @@ namespace OpenCV_Vision_Pro
             m_TextRecognitionResult = new TextRecognitionResult();
 
             parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat image);
-            Tesseract.TesseractEngine engine = new Tesseract.TesseractEngine("C:\\Users\\T0571\\source\\repos\\OpenCV - Vision Pro\\OpenCV - Vision Pro\\tessdata\\", ((TextRecognitionParams)parameter).language);
+            Tesseract.TesseractEngine engine = new Tesseract.TesseractEngine("C:\\Users\\T0571\\source\\repos\\OpenCV_Vision_Pro\\OpenCV_Vision_Pro\\tessdata\\", ((TextRecognitionParams)parameter).language);
             Tesseract.BitmapToPixConverter converter = new Tesseract.BitmapToPixConverter();
 
             Enum.TryParse(((TextRecognitionParams)parameter).mode, out Tesseract.PageIteratorLevel myLevel);

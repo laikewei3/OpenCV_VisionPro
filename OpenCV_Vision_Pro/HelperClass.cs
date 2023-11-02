@@ -26,7 +26,8 @@ namespace OpenCV_Vision_Pro
         PolarUnWrapTool,
         PerspectiveTransformTool,
         TextRecognitionTool,
-        ImageProcessTool
+        ImageProcessTool,
+        IDTool
     }
 
     public static class HelperClass
@@ -34,7 +35,7 @@ namespace OpenCV_Vision_Pro
         public static ImageList iconList = new ImageList()
         {
             Images = { Resources.blob, Resources.caliper, Resources.histogram, Resources.convert, Resources.segmentor, Resources.match, Resources.extractor, Resources.editor, Resources.line,
-                Resources.yolo, Resources.polarUnwrap, Resources.transform, Resources.ocr, Resources.process }
+                Resources.yolo, Resources.polarUnwrap, Resources.transform, Resources.ocr, Resources.process, Resources.id }
         };
 
         public static Size resize(int oriWidth, int oriHeight, int currWidth, int currHeight)

@@ -1,18 +1,9 @@
-﻿using Emgu.CV.CvEnum;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using Emgu.CV.Util;
+﻿using Emgu.CV.Structure;
 using OpenCV_Vision_Pro.Tools.ImageSegmentor;
 using Shared.ComponentModel.SortableBindingList;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
