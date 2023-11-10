@@ -36,7 +36,10 @@
             this.openVideoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_AddToolList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.yOLOv7ObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.humanPoseDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.handLandmarkDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.m_dgvTool = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.m_BtnAddTool = new System.Windows.Forms.Button();
@@ -46,7 +49,9 @@
             this.m_GetInputImageMenu.SuspendLayout();
             this.m_AddToolList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_dgvTool)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -96,17 +101,33 @@
             // m_AddToolList
             // 
             this.m_AddToolList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.yOLOv7ObjectDetectionToolStripMenuItem});
+            this.yOLOv7ObjectDetectionToolStripMenuItem,
+            this.humanPoseDetectionToolStripMenuItem,
+            this.handLandmarkDetectionToolStripMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(210, 26);
+            this.m_AddToolList.Size = new System.Drawing.Size(214, 92);
             // 
             // yOLOv7ObjectDetectionToolStripMenuItem
             // 
             this.yOLOv7ObjectDetectionToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.yolo;
             this.yOLOv7ObjectDetectionToolStripMenuItem.Name = "yOLOv7ObjectDetectionToolStripMenuItem";
-            this.yOLOv7ObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.yOLOv7ObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.yOLOv7ObjectDetectionToolStripMenuItem.Text = "YOLOv7 Object Detection";
             this.yOLOv7ObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.yOLOv7ObjectDetectionToolStripMenuItem_Click);
+            // 
+            // humanPoseDetectionToolStripMenuItem
+            // 
+            this.humanPoseDetectionToolStripMenuItem.Name = "humanPoseDetectionToolStripMenuItem";
+            this.humanPoseDetectionToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.humanPoseDetectionToolStripMenuItem.Text = "Human Pose Detection";
+            this.humanPoseDetectionToolStripMenuItem.Click += new System.EventHandler(this.humanPoseDetectionToolStripMenuItem_Click);
+            // 
+            // handLandmarkDetectionToolStripMenuItem
+            // 
+            this.handLandmarkDetectionToolStripMenuItem.Name = "handLandmarkDetectionToolStripMenuItem";
+            this.handLandmarkDetectionToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.handLandmarkDetectionToolStripMenuItem.Text = "Hand Landmark Detection";
+            this.handLandmarkDetectionToolStripMenuItem.Click += new System.EventHandler(this.handLandmarkDetectionToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -117,6 +138,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.splitContainer1.Panel1.Controls.Add(this.m_dgvTool);
             // 
             // splitContainer1.Panel2
             // 
@@ -125,6 +147,18 @@
             this.splitContainer1.Size = new System.Drawing.Size(778, 423);
             this.splitContainer1.SplitterDistance = 257;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // m_dgvTool
+            // 
+            this.m_dgvTool.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.m_dgvTool.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.m_dgvTool.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_dgvTool.Location = new System.Drawing.Point(0, 0);
+            this.m_dgvTool.Name = "m_dgvTool";
+            this.m_dgvTool.Size = new System.Drawing.Size(257, 423);
+            this.m_dgvTool.TabIndex = 0;
+            this.m_dgvTool.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_dgvTool_CellContentClick);
+            this.m_dgvTool.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.m_dgvTool_RowsAdded);
             // 
             // tableLayoutPanel2
             // 
@@ -224,8 +258,10 @@
             this.Text = "AIForm";
             this.m_GetInputImageMenu.ResumeLayout(false);
             this.m_AddToolList.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.m_dgvTool)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -251,5 +287,8 @@
         private System.Windows.Forms.ToolStripMenuItem yOLOv7ObjectDetectionToolStripMenuItem;
         private System.Windows.Forms.Button m_OpenBtn;
         private System.Windows.Forms.LinkLabel m_labelToMLDL;
+        private System.Windows.Forms.DataGridView m_dgvTool;
+        private System.Windows.Forms.ToolStripMenuItem humanPoseDetectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem handLandmarkDetectionToolStripMenuItem;
     }
 }

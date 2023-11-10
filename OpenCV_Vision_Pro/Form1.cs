@@ -16,11 +16,16 @@ using Timer = System.Windows.Forms.Timer;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using OpenCV_Vision_Pro.Tools.ID;
 using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
+using ZXing.Common;
+using Python.Runtime;
+using System.Windows.Media;
+using System.Diagnostics;
 
 namespace OpenCV_Vision_Pro
 {
     partial class Form1 : Form
     {
+        Process process;
         private static DisplayControl m_displayControl;
         public static AutoDisposeDict<string, Mat> m_bitmapList { get { return m_displayControl.m_bitmapList; } private set { m_displayControl.m_bitmapList = value; } }
         public static BindingList<string> m_form1DisplaySelection { get; private set; }
@@ -95,7 +100,6 @@ namespace OpenCV_Vision_Pro
             m_treeViewTools.ImageList = HelperClass.iconList;
             m_treeViewTools.ItemDrag += m_treeViewTools_ItemDrag;
             HelperClass.GetAllConnectedCameras(openCameraToolStripMenuItem, openCamera_Click);
-            
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -283,6 +287,7 @@ namespace OpenCV_Vision_Pro
 
         private void openCamera_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             m_bitmapList?.Dispose();
             m_form1DisplaySelection.Clear();
             videoCapture?.Stop();
@@ -301,6 +306,7 @@ namespace OpenCV_Vision_Pro
             Application.Idle += ProcessFrame;
             m_displayControl.m_playPauseButton.Parent.Visible = false;
             m_displayControl.m_playPauseButton.Click -= PlayPauseClick;
+            this.Cursor = Cursors.Default;
         }
 
         private void openVideoFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -312,6 +318,7 @@ namespace OpenCV_Vision_Pro
                     openFileDialog.Filter = "Video File (*.mp4) | *.mp4";
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
+                        this.Cursor = Cursors.WaitCursor;
                         m_displayControl.m_playPauseButton.Parent.Visible = false;
                         m_displayControl.m_playPauseButton.Click -= PlayPauseClick;
                         m_bitmapList?.Dispose();
@@ -333,7 +340,8 @@ namespace OpenCV_Vision_Pro
                         Application.Idle += ProcessFrame;
                         m_displayControl.m_playPauseButton.Parent.Visible = true;
                         m_displayControl.m_playPauseButton.Click += PlayPauseClick;
-                        m_displayControl.m_trackBarVideoDuration.Value = 0;
+                        m_displayControl.m_trackBarVideoDuration.Value = 0; 
+                        this.Cursor = Cursors.Default;
                     }
                     openFileDialog.Dispose();
                 }
@@ -742,6 +750,73 @@ namespace OpenCV_Vision_Pro
                 form.BringToFront();
             }
             Hide();
+        }
+
+        private void m_rbCameraCalibrated_CheckedChanged(object sender, EventArgs e)
+        {
+            if (m_rbCameraCalibrated.Checked)
+            {
+                DialogResult m_calibrationSelection = MessageBox.Show("Do u want to use VIDEO as input? If no, FOLDER will be selected.", "", MessageBoxButtons.YesNoCancel);
+                this.Cursor = Cursors.WaitCursor;
+                if (m_calibrationSelection == DialogResult.Yes)
+                {
+                    new Calibration(true);
+                }
+                else if(m_calibrationSelection == DialogResult.No)
+                {
+                    new Calibration(false);
+                }
+                else if(m_calibrationSelection == DialogResult.Cancel)
+                {
+                    m_rbCameraCalibrated.Checked = false;
+                }
+                this.Cursor = Cursors.Default;
+            }
+            else
+            {
+                HelperClass.CalibrationResult?.Dispose();
+                HelperClass.CalibrationResult = null;
+    }
+        }
+
+        private void m_labelTo3D_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string pythonScriptPath = "C:\\Users\\T0571\\source\\repos\\OpenCV_Vision_Pro\\OpenCV_Vision_Pro\\PythonGUI.py";
+
+            // Create a new process start info
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "python"; // Use "python3" if required
+            psi.Arguments = pythonScriptPath;
+            psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+
+            // Start the Python process
+            process = new Process();
+            process.StartInfo = psi;
+            
+            process.Exited += (s, ev) =>
+            {
+                // Dispose of the process when it exits
+                process.Dispose();
+                process = null;
+            };
+            try
+            {
+                process.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (process != null && !process.HasExited)
+            {
+                process?.CloseMainWindow();
+                process?.Dispose();
+            }
         }
     }
 }

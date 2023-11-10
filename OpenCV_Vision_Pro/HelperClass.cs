@@ -30,8 +30,12 @@ namespace OpenCV_Vision_Pro
         IDTool
     }
 
+    
+
     public static class HelperClass
     {
+        public static CalibrationResult CalibrationResult {  get; set; }
+        
         public static ImageList iconList = new ImageList()
         {
             Images = { Resources.blob, Resources.caliper, Resources.histogram, Resources.convert, Resources.segmentor, Resources.match, Resources.extractor, Resources.editor, Resources.line,

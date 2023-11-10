@@ -5,6 +5,7 @@ using Emgu.CV.Flann;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using OpenCV_Vision_Pro.AITool;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +15,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Threading;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using Image = System.Drawing.Image;
 
@@ -21,22 +24,38 @@ namespace OpenCV_Vision_Pro
 {
     public partial class AIForm : Form
     {
-        Net Model = new Net();
-        
-        List<string> labels = null;
+
         private DisplayControl m_displayControl;
+
+        //Images
         private string[] files;
         private int m_cntFileIndex = 0;
         private int[] m_cntImageIndices;
         private int m_cntImageIndex;
         private int skipFrame;
-        VectorOfRect bboxes;
-        VectorOfFloat scores;
-        VectorOfInt indices;
-        VectorOfInt idx;
+
+        private System.Windows.Forms.Timer timer;
 
         private VideoCapture videoCapture;
         private bool resizedOnce = false;
+        private double fps = 1;
+
+        private BindingList<AIToolInfo> m_AITool = new BindingList<AIToolInfo>();
+
+        private class AIToolInfo
+        {
+            public IAITool m_AITool;
+            public string Name { get; set; }
+
+            public bool isUsing;
+
+            public AIToolInfo(IAITool m_AITool, string name, bool isUsing)
+            {
+                this.Name = name;
+                this.isUsing = isUsing;
+                this.m_AITool = m_AITool;
+            }
+        }
 
         public AIForm()
         {
@@ -47,14 +66,24 @@ namespace OpenCV_Vision_Pro
                 m_DisplaySelection = new BindingList<string>()
             };
             splitContainer1.Panel2.Controls.Add(m_displayControl);
-
-            m_displayControl.m_cbImages.Visible = false; Application.Idle += ProcessFrame;
-            HelperClass.GetAllConnectedCameras(openCameraToolStripMenuItem, openCamera_Click); 
+            
+            m_displayControl.m_cbImages.Visible = false; 
+            HelperClass.GetAllConnectedCameras(openCameraToolStripMenuItem, openCamera_Click);
             skipFrame = 0;
             files = Form1.files;
             m_cntFileIndex = Form1.m_cntFileIndex;
             m_cntImageIndices = Form1.m_cntImageIndices;
             m_cntImageIndex = Form1.m_cntImageIndex;
+
+            m_dgvTool.DataSource = new BindingSource() { DataSource = m_AITool };
+            DataGridViewButtonColumn bc = new DataGridViewButtonColumn();
+            bc.Name = "Status";
+            bc.HeaderText = "Status";
+            m_dgvTool.Columns.Add(bc);
+
+            timer = new System.Windows.Forms.Timer();
+            timer.Tick += ProcessFrame;
+            timer.Start();
         }
 
         private void m_OpenBtn_Click(object sender, EventArgs e)
@@ -72,14 +101,10 @@ namespace OpenCV_Vision_Pro
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             Form form = Application.OpenForms["Form1"]; form?.Show();
-            Application.Idle -= ProcessFrame;
+            timer.Tick -= ProcessFrame;
             videoCapture?.Stop();
-            bboxes?.Dispose();
-            scores?.Dispose();
-            indices?.Dispose();
             videoCapture = null;
             videoCapture?.Dispose();
-            Model?.Dispose();
             base.OnFormClosing(e);
         }
 
@@ -190,12 +215,13 @@ namespace OpenCV_Vision_Pro
 
         private void ProcessFrame(object sender, EventArgs e)
         {
-            if (skipFrame++ % 3 == 0)
-                return;
+            //  if (skipFrame++ % 2 != 0)
+            // {
             try
             {
                 Mat frame = new Mat();
                 bool? ret = videoCapture?.Read(frame);
+                // Use Image
                 if (ret == null)
                 {
                     frame = OpenImages(files, m_cntFileIndex, m_cntImageIndex)?.Clone();
@@ -219,89 +245,21 @@ namespace OpenCV_Vision_Pro
                         CvInvoke.Resize(frame, frame, size);
                         m_displayControl.m_display.Size = size;
                     }
-
                     m_displayControl.m_display.Image?.Dispose();
 
-                    if (!Model.Empty)
+                    foreach (AIToolInfo info in m_AITool)
                     {
-                        float confThreshold = 0.5f;
-                        float nmsThreshold = 0.5f;
-                        int defaultSize = 416;
-
-                        Size newSize = HelperClass.resize(frame.Width, frame.Height, defaultSize, defaultSize);
-                        Mat resizeMat = new Mat();
-                        CvInvoke.Resize(frame, resizeMat, newSize);
-                        int topBottom = (defaultSize - newSize.Height) / 2;
-                        int leftRight = (defaultSize - newSize.Width) / 2;
-                        newSize = resizeMat.Size;
-                        CvInvoke.CopyMakeBorder(resizeMat, resizeMat, topBottom, topBottom, leftRight, leftRight, BorderType.Constant, new MCvScalar(0, 0, 0));
-
-                        CvInvoke.Resize(resizeMat, resizeMat, new Size(defaultSize, defaultSize));
-
-                        Mat input = DnnInvoke.BlobFromImage(resizeMat, 1 / 255.0, swapRB: true);
-                        Model.SetInput(input);
-                        input.Dispose();
-
-                        
-                        VectorOfMat vectorOfMat = new VectorOfMat();
-                        
-                        Model.Forward(vectorOfMat, Model.UnconnectedOutLayersNames);
-
-                        for (int i = 0; i < vectorOfMat.Size; i++)
+                        if (info.isUsing)
                         {
-                            Mat mat = vectorOfMat[i];
-                            
-                            for (int j = 0; j < mat.Rows; j++)
-                            {
-                                var row = mat.Row(j).GetData().Cast<float>();
-                                var rowScores = row.Skip(5).ToList();
-                                var classId = rowScores.IndexOf(rowScores.Max());
-                                var confidence = rowScores[classId];
-                                List<float> info = row.Take(4).ToList();
-                                if (confidence > confThreshold)
-                                {
-                                    var center_x = (int)(info[0] * defaultSize);
-                                    var center_y = (int)(info[1] * defaultSize);
-
-                                    var width = (int)(info[2] * defaultSize);
-                                    var height = (int)(info[3] * defaultSize);
-
-                                    var x = (int)(center_x - width / 2);
-                                    var y = (int)(center_y - height / 2);
-
-                                    bboxes.Push(new Rectangle[] { new Rectangle(x, y, width, height) });
-                                    indices.Push(new int[] { classId });
-                                    scores.Push(new float[] { confidence });
-                                }
-                            }
-                            mat?.Dispose();
+                            info.m_AITool.PreProcess(frame, out Mat resizeMat, out int topBottom, out int leftRight, out Size newSize);
+                            info.m_AITool.Process();
+                            frame = info.m_AITool.Draw(resizeMat, topBottom, leftRight, newSize);
                         }
-                        vectorOfMat.Dispose();
-                        
-                        DnnInvoke.NMSBoxes(bboxes, scores, confThreshold, nmsThreshold, idx);
-                        for (int i = 0; i < idx.Size; i++)
-                        {
-                            int index = idx[i];
-                            var bbox = bboxes[index];
-                            CvInvoke.Rectangle(resizeMat, bbox, new MCvScalar(0, 0, 255), 2);
-                            CvInvoke.PutText(resizeMat, labels[indices[index]], new Point(bbox.X, bbox.Y + 20), FontFace.HersheySimplex, 0.5, new MCvScalar(255, 0, 0), 2);
-                        }
-                        idx.Clear();
-                        bboxes.Clear();
-                        scores.Clear();
-                        indices.Clear();
-
-                        Point point = topBottom < 1 ? new Point(leftRight, 0) : new Point(0, topBottom);
-                        Mat tempMat = new Mat(resizeMat, new Rectangle(point, newSize));
-
-                        m_displayControl.m_display.Image = tempMat;
-                        resizeMat.Dispose();
                     }
-                    else
-                    {
-                        m_displayControl.m_display.Image = frame;
-                        //System.Threading.Thread.Sleep((int)(1 / fps * 1000));
-                    }
+
+                    m_displayControl.m_display.Image = frame;
+                    if (m_AITool.Count == 0 && videoCapture != null)
+                            Thread.Sleep((int)(1 / fps * 1000));
 
                     if (m_displayControl.m_playPauseButton.Visible)
                         m_displayControl.m_trackBarVideoDuration.Value++;
@@ -315,43 +273,28 @@ namespace OpenCV_Vision_Pro
                     m_displayControl.m_trackBarVideoDuration.Value = 0;
                 }
             }
-            finally{}
+            finally{ this.Cursor = Cursors.Default; }
+            //  }
         }
-        /*
-        private List<float[]> ArrayTo2DList(Array array)
-        {
-            int rows = array.GetLength(0);
-            int cols = array.GetLength(1);
-            List<float[]> list = new List<float[]>();
-            List<float> temp = new List<float>();
-            for (int i = 0; i < rows; i++)
-            {
-                temp.Clear();
-                for (int j = 0; j < cols; j++)
-                {
-                    temp.Add(float.Parse(array.GetValue(i, j).ToString()));
-                }
-                list.Add(temp.ToArray());
-            }
-            return list;
-        }*/
 
         private void openCamera_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             videoCapture?.Stop();
             videoCapture?.Dispose();
 
             ToolStripMenuItem itemSelection = (ToolStripMenuItem)sender;
             videoCapture = new VideoCapture(openCameraToolStripMenuItem.DropDownItems.IndexOf(itemSelection));
-            //fps = videoCapture.Get(CapProp.Fps);
 
             resizedOnce = false;
             m_displayControl.m_VideoCapture = videoCapture;
+            fps = videoCapture.Get(CapProp.Fps);
 
             m_cntImageIndices = null;
 
             m_displayControl.m_playPauseButton.Parent.Visible = false;
             m_displayControl.m_playPauseButton.Click -= PlayPauseClick;
+            this.Cursor = Cursors.Default;
         }
 
         private void openVideoFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -363,6 +306,7 @@ namespace OpenCV_Vision_Pro
                     openFileDialog.Filter = "Video File (*.mp4) | *.mp4";
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
+                        this.Cursor = Cursors.WaitCursor;
                         m_displayControl.m_playPauseButton.Parent.Visible = false;
                         m_displayControl.m_playPauseButton.Click -= PlayPauseClick;
 
@@ -373,14 +317,14 @@ namespace OpenCV_Vision_Pro
                         videoCapture = new VideoCapture(openFileDialog.FileName);
                         m_displayControl.m_VideoCapture = videoCapture;
                         double totalFrame = videoCapture.Get(CapProp.FrameCount);
-                        //fps = videoCapture.Get(CapProp.Fps);
                         m_displayControl.m_trackBarVideoDuration.Maximum = (int)totalFrame;
 
                         m_cntImageIndices = null;
-
+                        fps = videoCapture.Get(CapProp.Fps);
                         m_displayControl.m_playPauseButton.Parent.Visible = true;
                         m_displayControl.m_playPauseButton.Click += PlayPauseClick;
                         m_displayControl.m_trackBarVideoDuration.Value = 0;
+                        this.Cursor = Cursors.Default;
                     }
                     openFileDialog.Dispose();
                 }
@@ -395,9 +339,9 @@ namespace OpenCV_Vision_Pro
                 m_displayControl.playing = !m_displayControl.playing;
 
                 if (m_displayControl.playing)
-                    Application.Idle += ProcessFrame;
+                    timer.Tick += ProcessFrame;
                 else
-                    Application.Idle -= ProcessFrame;
+                    timer.Tick -= ProcessFrame;
             }
         }
 
@@ -408,17 +352,42 @@ namespace OpenCV_Vision_Pro
 
         private void yOLOv7ObjectDetectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string PathWeights = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.weights";
-            string PathConfig = "C:\\Users\\T0571\\Downloads\\yolov7-tiny.cfg";
-            string PathLabels = "C:\\Users\\T0571\\Downloads\\coco.names";
-            Model.SetPreferableBackend(Emgu.CV.Dnn.Backend.Cuda);
-            Model.SetPreferableTarget(Target.Cuda);
-            Model = DnnInvoke.ReadNetFromDarknet(PathConfig, PathWeights);
-            labels = File.ReadAllLines(PathLabels).ToList(); 
-            bboxes = new VectorOfRect();
-            scores = new VectorOfFloat();
-            indices = new VectorOfInt();
-            idx = new VectorOfInt();
+            this.Cursor = Cursors.WaitCursor;
+            YoloDetection yolo = new YoloDetection();
+            m_AITool.Add(new AIToolInfo(yolo,yolo.GetType().Name,true));
+        }
+
+        private void m_dgvTool_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            m_dgvTool["Status", m_dgvTool.Rows.GetLastRow(DataGridViewElementStates.None)].Value = "Disable";
+        }
+
+        private void m_dgvTool_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var senderGrid = (DataGridView)sender;
+
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+            {
+                m_AITool[e.RowIndex].isUsing = !m_AITool[e.RowIndex].isUsing;
+                if (m_AITool[e.RowIndex].isUsing)
+                    senderGrid[e.ColumnIndex, e.RowIndex].Value = "Disable";
+                else
+                    senderGrid[e.ColumnIndex, e.RowIndex].Value = "Enable";
+            }
+        }
+
+        private void humanPoseDetectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            HumanPoseDetection humanPose = new HumanPoseDetection();
+            m_AITool.Add(new AIToolInfo(humanPose, humanPose.GetType().Name, true));
+        }
+
+        private void handLandmarkDetectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            HandLandmarkDetection handLandmark = new HandLandmarkDetection();
+            m_AITool.Add(new AIToolInfo(handLandmark, handLandmark.GetType().Name, true));
         }
     }
 }
