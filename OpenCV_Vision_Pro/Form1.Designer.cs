@@ -41,6 +41,7 @@ namespace OpenCV_Vision_Pro
             this.perspectiveTransformToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageProcessToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imagePaintToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageStackingToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorSegmentorToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorMatchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,7 +112,7 @@ namespace OpenCV_Vision_Pro
             this.iDToolToolStripMenuItem,
             this.toolStripSeparator2});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(188, 192);
+            this.m_AddToolList.Size = new System.Drawing.Size(188, 214);
             // 
             // imageToolToolStripMenuItem
             // 
@@ -121,7 +122,8 @@ namespace OpenCV_Vision_Pro
             this.polarUnwarpToolToolStripMenuItem,
             this.perspectiveTransformToolToolStripMenuItem,
             this.imageProcessToolToolStripMenuItem,
-            this.imagePaintToolToolStripMenuItem});
+            this.imagePaintToolToolStripMenuItem,
+            this.imageStackingToolToolStripMenuItem});
             this.imageToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.image;
             this.imageToolToolStripMenuItem.Name = "imageToolToolStripMenuItem";
             this.imageToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
@@ -173,6 +175,13 @@ namespace OpenCV_Vision_Pro
             this.imagePaintToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.imagePaintToolToolStripMenuItem.Text = "Image Paint Tool";
             this.imagePaintToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // imageStackingToolToolStripMenuItem
+            // 
+            this.imageStackingToolToolStripMenuItem.Name = "imageStackingToolToolStripMenuItem";
+            this.imageStackingToolToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.imageStackingToolToolStripMenuItem.Text = "Image Stacking Tool";
+            this.imageStackingToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // colorToolToolStripMenuItem
             // 
@@ -581,6 +590,7 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.LinkLabel m_labelTo3D;
+        private System.Windows.Forms.ToolStripMenuItem imageStackingToolToolStripMenuItem;
     }
 }
 

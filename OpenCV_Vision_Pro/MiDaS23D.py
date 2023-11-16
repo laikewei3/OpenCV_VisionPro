@@ -34,7 +34,7 @@ class MiDaS23D:
         try:
             colors = colors.reshape(-1,3)
             vertices = np.hstack([vertices.reshape(-1,3),colors])
-
+            
             ply_header = '''ply
 		        format ascii 1.0
 		        element vertex %(vert_num)d

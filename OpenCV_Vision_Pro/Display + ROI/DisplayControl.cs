@@ -315,7 +315,6 @@ namespace OpenCV_Vision_Pro
                             e.Graphics.DrawRectangle(p, m_colorTools.colorRect);
                             for (int i = 1; i < 9; i++)
                             {
-                                Console.WriteLine(m_colorTools.Parent.Name);
                                 e.Graphics.FillRectangle(cornerP, GetHandleRect(m_colorTools.colorRect, i));
                             }
                             cornerP.Dispose();

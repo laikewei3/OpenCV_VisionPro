@@ -163,6 +163,13 @@
     <Compile Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.Designer.cs">
       <DependentUpon>ArithmeticToolControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\ImageStacking\ImageStackingTool.cs" />
+    <Compile Include="Tools\ImageStacking\ImageStackingToolControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\ImageStacking\ImageStackingToolControl.Designer.cs">
+      <DependentUpon>ImageStackingToolControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\Paint Tool\PaintTool.cs" />
     <Compile Include="Tools\Paint Tool\PaintToolControl.cs">
       <SubType>UserControl</SubType>
@@ -315,6 +322,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.resx">
       <DependentUpon>ArithmeticToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\ImageStacking\ImageStackingToolControl.resx">
+      <DependentUpon>ImageStackingToolControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\Paint Tool\PaintToolControl.resx">
       <DependentUpon>PaintToolControl.cs</DependentUpon>

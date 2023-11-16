@@ -75,7 +75,7 @@ layout = [
 ]
 
 # Create the window
-window = sg.Window("Demo",layout)
+window = sg.Window("3D in Python",layout)
 
 params = Params3D()
 # Create an event loop

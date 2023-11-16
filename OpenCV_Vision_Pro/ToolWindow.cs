@@ -2,6 +2,7 @@
 using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
 using OpenCV_Vision_Pro.Tools.ImageSegmentor;
+using OpenCV_Vision_Pro.Tools.ImageStacking;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using System;
 using System.Drawing;
@@ -65,7 +66,7 @@ namespace OpenCV_Vision_Pro
             {
                 if (m_displayControl.m_bitmapList.Count > 0)
                 {
-                    Mat image = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
+                    Mat image = m_displayControl.m_bitmapList["Current.InputImage"]?.Clone();
                     m_displayControl.m_display.Width = image.Width;
                     m_displayControl.m_display.Height = image.Height;
                     m_displayControl.m_display.Image = image.Clone();
@@ -107,36 +108,43 @@ namespace OpenCV_Vision_Pro
 
         public void m_RunToolBtn_Click(object sender, EventArgs e)
         {
-            if (m_displayControl.m_display.Image == null)
+            if (m_toolBase is ImageStackingTool)
             {
-                MessageBox.Show("No Input Image");
-                return;
+                m_toolBase.Run(new Mat(), new Rectangle());
             }
-
-            Rectangle m_rectangle;
-            if(m_displayControl.m_roi == null)
-                m_rectangle = new Rectangle();
-            else if (m_displayControl.m_roi.m_comboBoxROI.SelectedIndex == 0)
-                m_rectangle = new Rectangle();
             else
             {
-                m_rectangle = m_toolBase.m_toolControl.m_roi.ROIRectangle;
+                if (m_displayControl.m_display.Image == null)
+                {
+                    MessageBox.Show("No Input Image");
+                    return;
+                }
 
-                m_rectangle.X -= m_displayControl.zoom[0];
-                m_rectangle.Y -= m_displayControl.zoom[1];
-                m_rectangle.Width -= m_displayControl.zoom[2];
-                m_rectangle.Height -= m_displayControl.zoom[3];
+                Rectangle m_rectangle;
+                if (m_displayControl.m_roi == null)
+                    m_rectangle = new Rectangle();
+                else if (m_displayControl.m_roi.m_comboBoxROI.SelectedIndex == 0)
+                    m_rectangle = new Rectangle();
+                else
+                {
+                    m_rectangle = m_toolBase.m_toolControl.m_roi.ROIRectangle;
+
+                    m_rectangle.X -= m_displayControl.zoom[0];
+                    m_rectangle.Y -= m_displayControl.zoom[1];
+                    m_rectangle.Width -= m_displayControl.zoom[2];
+                    m_rectangle.Height -= m_displayControl.zoom[3];
+                }
+
+                Mat m_imageProcess = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
+                m_toolBase.Run(m_imageProcess, m_rectangle);
+                m_toolBase.showResultImages();
+
+                m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
+                m_imageProcess?.Dispose();
+                int index = m_displayControl.m_cbImages.SelectedIndex;
+                m_displayControl.m_cbImages.SelectedIndex = 0;
+                m_displayControl.m_cbImages.SelectedIndex = index;
             }
-            
-            Mat m_imageProcess = m_displayControl.m_bitmapList["Current.InputImage"].Clone();
-            m_toolBase.Run(m_imageProcess, m_rectangle);
-            m_toolBase.showResultImages();
-
-            m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
-            m_imageProcess?.Dispose();
-            int index = m_displayControl.m_cbImages.SelectedIndex;
-            m_displayControl.m_cbImages.SelectedIndex = 0;
-            m_displayControl.m_cbImages.SelectedIndex = index;
         }
 
         private void m_comboBoxROI_SelectedIndexChanged(object sender, EventArgs e)

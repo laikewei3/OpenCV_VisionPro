@@ -16,10 +16,8 @@ using Timer = System.Windows.Forms.Timer;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using OpenCV_Vision_Pro.Tools.ID;
 using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
-using ZXing.Common;
-using Python.Runtime;
-using System.Windows.Media;
 using System.Diagnostics;
+using OpenCV_Vision_Pro.Tools.ImageStacking;
 
 namespace OpenCV_Vision_Pro
 {
@@ -27,7 +25,7 @@ namespace OpenCV_Vision_Pro
     {
         Process process;
         private static DisplayControl m_displayControl;
-        public static AutoDisposeDict<string, Mat> m_bitmapList { get { return m_displayControl.m_bitmapList; } private set { m_displayControl.m_bitmapList = value; } }
+        public static AutoDisposeDict<string, Mat> m_bitmapList { get { return m_displayControl.m_bitmapList; }  set { m_displayControl.m_bitmapList = value; } }
         public static BindingList<string> m_form1DisplaySelection { get; private set; }
         
         private static Dictionary<string, int> m_dictToolCount = new Dictionary<string, int> {
@@ -45,7 +43,8 @@ namespace OpenCV_Vision_Pro
             {"TextRecognitionTool", 0 },
             {"ImageProcessTool",0 },
             {"IDTool",0},
-            {"ImagePaintTool",0 }
+            {"ImagePaintTool",0 },
+            {"ImageStackingTool",0 }
         };
 
         public static string[] files;
@@ -194,7 +193,6 @@ namespace OpenCV_Vision_Pro
                 {
                     if (image != null)
                     {
-
                         image.SelectActiveFrame(FrameDimension.Page, imageIndex); // Switch to the current page
                         using (MemoryStream memStream = new MemoryStream())
                         {
@@ -518,6 +516,10 @@ namespace OpenCV_Vision_Pro
                     tool = new PaintTool("ImagePaintTool" + (++m_dictToolCount["ImagePaintTool"]).ToString());
                     imageIndex = 14;
                     break;
+                case "imageStackingToolToolStripMenuItem":
+                    tool = new ImageStackingTool("ImageStackingTool" + (++m_dictToolCount["ImageStackingTool"]).ToString());
+                    imageIndex = 14;
+                    break;
                 default:
                     MessageBox.Show("Invalid Tool Added");
                     return;
@@ -567,7 +569,10 @@ namespace OpenCV_Vision_Pro
 
                 ToolsTreeNode selectedNode = ((ToolsTreeNode)m_treeView.SelectedNode);
                 IToolBase tool = selectedNode.tool;
+                if(!(tool is ImageStackingTool))
+                {
 
+                
                 if (selectedNode.Parent == null && m_bitmapList != null)
                 {
                     if (tool.m_bitmapList == null)
@@ -598,6 +603,7 @@ namespace OpenCV_Vision_Pro
                             tool.m_bitmapList["Current.InputImage"] = ((ToolsTreeNode)selectedNode.Parent).tool.toolResult.resultImage?.Clone();
                         }
                     }
+                }
                 }
 
                 ToolWindow fc = Application.OpenForms[tool.ToolName] as ToolWindow;
