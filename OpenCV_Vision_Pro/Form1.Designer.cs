@@ -56,6 +56,7 @@ namespace OpenCV_Vision_Pro
             this.imageFileToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageStackingToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageStitchingToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageBlendingToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_GetInputImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openImageFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -276,7 +277,8 @@ namespace OpenCV_Vision_Pro
             // 
             this.imageFileToolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.imageStackingToolToolStripMenuItem,
-            this.imageStitchingToolToolStripMenuItem});
+            this.imageStitchingToolToolStripMenuItem,
+            this.imageBlendingToolToolStripMenuItem});
             this.imageFileToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.imagefile;
             this.imageFileToolToolStripMenuItem.Name = "imageFileToolToolStripMenuItem";
             this.imageFileToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
@@ -297,6 +299,13 @@ namespace OpenCV_Vision_Pro
             this.imageStitchingToolToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.imageStitchingToolToolStripMenuItem.Text = "Image Stitching Tool";
             this.imageStitchingToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // imageBlendingToolToolStripMenuItem
+            // 
+            this.imageBlendingToolToolStripMenuItem.Name = "imageBlendingToolToolStripMenuItem";
+            this.imageBlendingToolToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.imageBlendingToolToolStripMenuItem.Text = "Image Blending Tool";
+            this.imageBlendingToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // m_GetInputImageMenu
             // 
@@ -612,6 +621,7 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.ToolStripMenuItem imageFileToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageStackingToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageStitchingToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageBlendingToolToolStripMenuItem;
     }
 }
 

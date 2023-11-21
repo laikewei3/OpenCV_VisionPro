@@ -354,6 +354,7 @@ namespace OpenCV_Vision_Pro
                             V2 = (int)(float)centers.GetData().GetValue(labels[i], 2)
                         });
                     }
+
                     data.Dispose();
                     labels.Dispose();
                     centers.Dispose();

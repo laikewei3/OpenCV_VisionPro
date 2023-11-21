@@ -18,6 +18,7 @@ using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
 using System.Diagnostics;
 using OpenCV_Vision_Pro.Tools.ImageStacking;
 using OpenCV_Vision_Pro.Tools.ImageStitching;
+using OpenCV_Vision_Pro.Tools.ImageBlending;
 
 namespace OpenCV_Vision_Pro
 {
@@ -503,6 +504,10 @@ namespace OpenCV_Vision_Pro
                     break;
                 case "imageStitchingToolToolStripMenuItem":
                     tool = new ImageStitchingTool("ImageStitchingTool" + (++HelperClass.m_dictToolCount["ImageStitchingTool"]).ToString());
+                    imageIndex = 17;
+                    break;
+                case "imageBlendingToolToolStripMenuItem":
+                    tool = new ImageBlendingTool("ImageBlendingTool" + (++HelperClass.m_dictToolCount["ImageBlendingTool"]).ToString());
                     imageIndex = 17;
                     break;
                 default:
