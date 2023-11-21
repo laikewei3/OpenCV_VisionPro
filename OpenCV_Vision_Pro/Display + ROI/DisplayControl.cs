@@ -1,11 +1,10 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.OCR;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using ICSharpCode.SharpZipLib.Zip;
 using OpenCV_Vision_Pro.Properties;
 using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
-using OpenCV_Vision_Pro.Tools.ImageSegmentor;
 using OpenCV_Vision_Pro.Tools.PolarUnWrap;
 using System;
 using System.Collections.Generic;
@@ -13,10 +12,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Net.Mime;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using static OpenCV_Vision_Pro.ROI;
 
 namespace OpenCV_Vision_Pro
@@ -24,7 +25,7 @@ namespace OpenCV_Vision_Pro
     public partial class DisplayControl : UserControl
     {
         public ITool toolBase { get; set; }
-       
+
         private bool drawLines = false;
 
         public VideoCapture m_VideoCapture { get; set; }
@@ -380,6 +381,11 @@ namespace OpenCV_Vision_Pro
 
         private void m_display_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)
+            {
+                m_panelContextMenu.Show(m_display, e.Location);
+                return;
+            }
             bool move = true;
             base.OnMouseDown(e);
             if (m_roi != null)
@@ -466,7 +472,7 @@ namespace OpenCV_Vision_Pro
             }
 
             if (toolBase is PaintTool)
-            { 
+            {
                 drawLines = true;
                 ((PaintParams)toolBase.parameter).InPaintPoints.Clear();
                 ((PaintParams)toolBase.parameter).InPaintPoints.Add(e.Location);
@@ -475,11 +481,13 @@ namespace OpenCV_Vision_Pro
 
         private void m_display_MouseUp(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)
+                return;
             dragHandle = -1;
             base.OnMouseUp(e);
             if (toolBase is PaintTool)
             {
-                if(((PaintParams)toolBase.parameter).InPaintPoints.Count > 0)
+                if (((PaintParams)toolBase.parameter).InPaintPoints.Count > 0)
                 {
                     drawLines = false;
                 }
@@ -488,6 +496,8 @@ namespace OpenCV_Vision_Pro
 
         private void m_display_MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)
+                return;
             this.Invalidate();
             int diffX = dragPoint.X - e.Location.X;
             int diffY = dragPoint.Y - e.Location.Y;
@@ -732,7 +742,7 @@ namespace OpenCV_Vision_Pro
             {
                 if (((PaintParams)toolBase.parameter).InPaintPoints.Count > 0)
                 {
-                    if(drawLines)
+                    if (drawLines)
                         ((PaintParams)toolBase.parameter).InPaintPoints.Add(e.Location);
                 }
             }
@@ -742,6 +752,95 @@ namespace OpenCV_Vision_Pro
         private void m_display_Resize(object sender, EventArgs e)
         {
             CenterPictureBox();
+        }
+
+        private void panel2_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                m_panelContextMenu.Show(panel2, e.Location);
+            }
+        }
+
+        private void openDisplayInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EmptyForm ef = Application.OpenForms[this.ParentForm.Text + " Display"] as EmptyForm;
+            ef?.Close();
+            ef?.Dispose();
+
+            EmptyForm emptyForm = new EmptyForm()
+            {
+                Name = this.ParentForm.Text + " Display",
+                Text = this.ParentForm.Text + " Display"
+            };
+            DisplayControl newDisplay = new DisplayControl()
+            {
+                m_bitmapList = this.m_bitmapList?.CloneDictionaryCloningValues()
+            };
+            newDisplay.m_cbImages.DataSource = new BindingSource() { DataSource = m_DisplaySelection };
+            emptyForm.Controls.Add(newDisplay);
+            emptyForm.Show();
+
+        }
+
+        private void saveImageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_display.Image == null || m_bitmapList == null)
+            {
+                MessageBox.Show("No Image(s) to Save");
+                return;
+            }
+
+            bool image = ((ToolStripMenuItem)sender).Name == "ImageToolStripMenuItem";
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            if (image)
+            {
+                saveFileDialog1.Filter = "JPeg Image|*.jpg|Bitmap Image|*.bmp|Png Image|*.png";
+                saveFileDialog1.Title = "Save an Image File";
+            }
+            else
+            {
+                saveFileDialog1.Filter = "Zip file|*.zip";
+                saveFileDialog1.Title = "Save Images";
+                saveFileDialog1.FileName = this.ParentForm.Text;
+            }
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                if (saveFileDialog1.FileName != "" && image)
+                    CvInvoke.Imwrite(saveFileDialog1.FileName, m_display.Image);
+                else if(saveFileDialog1.FileName != "")
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ZipArchive zipArc = new ZipArchive(ms, ZipArchiveMode.Create, true);
+
+                        foreach (KeyValuePair<string, Mat> kvp in m_bitmapList)
+                        {
+                            ZipArchiveEntry entry = zipArc.CreateEntry(kvp.Key + ".jpg", CompressionLevel.Optimal);
+                            using (var entryStream = entry.Open())
+                            {
+                                kvp.Value.ToBitmap().Save(entryStream, ImageFormat.Jpeg);
+                            }
+
+                        }
+                        zipArc.Dispose();//MUST DISPOSE SO IT CAN WRITE
+
+                        using (var fileStream = new FileStream(saveFileDialog1.FileName, FileMode.Create))
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
+                            ms.CopyTo(fileStream);
+                            fileStream.Close();
+                            fileStream.Dispose();
+                        }
+                        ms.Dispose();
+                    }
+
+                }
+            }
+            
+            saveFileDialog1.Dispose();
         }
     }
 }

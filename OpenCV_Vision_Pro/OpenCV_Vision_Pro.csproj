@@ -98,6 +98,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
@@ -127,6 +128,12 @@
     <Compile Include="AITool\HandLandmarkDetection.cs" />
     <Compile Include="AITool\HumanPoseDetection.cs" />
     <Compile Include="Calibration.cs" />
+    <Compile Include="EmptyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EmptyForm.Designer.cs">
+      <DependentUpon>EmptyForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interface\IAITool.cs" />
     <Compile Include="AITool\YoloDetection.cs" />
     <Compile Include="Display + ROI\ColorTools.cs">
@@ -313,6 +320,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Display + ROI\ColorTools.resx">
       <DependentUpon>ColorTools.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmptyForm.resx">
+      <DependentUpon>EmptyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

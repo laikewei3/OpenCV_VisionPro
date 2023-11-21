@@ -47,11 +47,17 @@ namespace OpenCV_Vision_Pro
             this.m_playPauseButton = new System.Windows.Forms.Button();
             this.m_trackBarVideoDuration = new System.Windows.Forms.TrackBar();
             this.m_toolTipTrackBar = new System.Windows.Forms.ToolTip(this.components);
+            this.m_panelContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDisplayInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_display)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_trackBarVideoDuration)).BeginInit();
+            this.m_panelContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // m_cbImages
@@ -91,6 +97,7 @@ namespace OpenCV_Vision_Pro
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(522, 433);
             this.panel2.TabIndex = 8;
+            this.panel2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel2_MouseClick);
             // 
             // m_display
             // 
@@ -179,6 +186,44 @@ namespace OpenCV_Vision_Pro
             this.m_trackBarVideoDuration.Scroll += new System.EventHandler(this.m_trackBarVideoDuration_Scroll);
             this.m_trackBarVideoDuration.ValueChanged += new System.EventHandler(this.m_trackBarVideoDuration_ValueChanged);
             // 
+            // m_panelContextMenu
+            // 
+            this.m_panelContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToolStripMenuItem,
+            this.openDisplayInNewWindowToolStripMenuItem});
+            this.m_panelContextMenu.Name = "m_panelContextMenu";
+            this.m_panelContextMenu.Size = new System.Drawing.Size(228, 70);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.allImagesToolStripMenuItem,
+            this.ImageToolStripMenuItem});
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            // 
+            // allImagesToolStripMenuItem
+            // 
+            this.allImagesToolStripMenuItem.Name = "allImagesToolStripMenuItem";
+            this.allImagesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.allImagesToolStripMenuItem.Text = "All Images";
+            this.allImagesToolStripMenuItem.Click += new System.EventHandler(this.saveImageToolStripMenuItem_Click);
+            // 
+            // ImageToolStripMenuItem
+            // 
+            this.ImageToolStripMenuItem.Name = "ImageToolStripMenuItem";
+            this.ImageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ImageToolStripMenuItem.Text = "Current Image";
+            this.ImageToolStripMenuItem.Click += new System.EventHandler(this.saveImageToolStripMenuItem_Click);
+            // 
+            // openDisplayInNewWindowToolStripMenuItem
+            // 
+            this.openDisplayInNewWindowToolStripMenuItem.Name = "openDisplayInNewWindowToolStripMenuItem";
+            this.openDisplayInNewWindowToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openDisplayInNewWindowToolStripMenuItem.Text = "Open Display in new window";
+            this.openDisplayInNewWindowToolStripMenuItem.Click += new System.EventHandler(this.openDisplayInNewWindowToolStripMenuItem_Click);
+            // 
             // DisplayControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -195,6 +240,7 @@ namespace OpenCV_Vision_Pro
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_trackBarVideoDuration)).EndInit();
+            this.m_panelContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -211,5 +257,10 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.ToolTip m_toolTipTrackBar;
         private System.Windows.Forms.Label m_labelTotalTime;
         private System.Windows.Forms.Label m_labelCurrentTime;
+        private System.Windows.Forms.ContextMenuStrip m_panelContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem allImagesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openDisplayInNewWindowToolStripMenuItem;
     }
 }
