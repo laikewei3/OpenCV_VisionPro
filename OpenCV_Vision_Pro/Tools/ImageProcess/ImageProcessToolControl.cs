@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class ImageProcessToolControl : UserControl,UserControlBase
+    public partial class ImageProcessToolControl : UserControl,IUserDataControl
     {
         public DataGridView resultDataGrid { get; set; }
 
@@ -49,7 +49,7 @@ namespace OpenCV_Vision_Pro
             if (m_strSelectedProcess == null)
                 return;
             
-            ISimpleToolBase tool = null;
+            IBaseTool tool = null;
             switch (m_strSelectedProcess)
             {
                 case "Rotate / Flip":
@@ -86,7 +86,7 @@ namespace OpenCV_Vision_Pro
             if (control != null)
                 control.Dispose();
             tableLayoutPanel6.Controls.Remove(control);
-            ISimpleToolBase tool = ProcessParams.toolProcessList[selectedRow[0].Index].toolProcess;
+            IBaseTool tool = ProcessParams.toolProcessList[selectedRow[0].Index].toolProcess;
             if (tool is ImageSharpenerTool)
                 return;
             tool.getGUI();

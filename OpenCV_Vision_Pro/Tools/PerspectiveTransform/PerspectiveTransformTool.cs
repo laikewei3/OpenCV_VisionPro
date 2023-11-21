@@ -11,28 +11,19 @@ namespace OpenCV_Vision_Pro
 
     public class PerspectiveTransformParams: IParams
     {
-        public ROI m_roi { get; set; } = new ROI(); 
-        public bool m_boolHasROI { get; set; } = true;
     }
 
-    public class PerspectiveTransformResult : IDisposable, IToolResult
+    public class PerspectiveTransformResult : IToolResult
     {
-        public Mat resultImage { get; set; }
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 
-    public partial class PerspectiveTransformTool : IToolBase
+    public partial class PerspectiveTransformTool : ITool
     {
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
         public BindingSource resultSource { get; set; }
-        public Rectangle m_rectROI { get; set; }
         public IParams parameter { get; set; } = new PerspectiveTransformParams();
 
         public IToolResult toolResult { get; set; }
@@ -42,12 +33,6 @@ namespace OpenCV_Vision_Pro
 
         public  void getGUI()
         {
-            if(m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new PerspectiveTransformToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -177,37 +162,9 @@ namespace OpenCV_Vision_Pro
             resultSource?.Dispose();
         }
 
-        public  object showResult()
-        {
-            return null;
-        }
-
         public  void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".PerspectiveTransformImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".PerspectiveTransformImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".PerspectiveTransformImage"] = m_PerspectiveTransformResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".PerspectiveTransformImage", m_PerspectiveTransformResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".PerspectiveTransformImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".PerspectiveTransformImage");
-            }
-
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".PerspectiveTransformImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".PerspectiveTransformImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".PerspectiveTransformImage"] = m_PerspectiveTransformResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".PerspectiveTransformImage", m_PerspectiveTransformResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".PerspectiveTransformImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".PerspectiveTransformImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, m_PerspectiveTransformResult.resultImage, ToolName, "PerspectiveTransformImage");
         }
     }
 }

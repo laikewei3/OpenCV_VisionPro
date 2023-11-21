@@ -1,14 +1,15 @@
 ﻿using Emgu.CV;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenCV_Vision_Pro.Interface
 {
-    public interface IToolResult
+    public abstract class IToolResult : IDisposable
     {
-        Mat resultImage {  get; }
+        public Mat resultImage { get; set; }
+
+        public void Dispose()
+        {
+            resultImage?.Dispose();
+        }
     }
 }

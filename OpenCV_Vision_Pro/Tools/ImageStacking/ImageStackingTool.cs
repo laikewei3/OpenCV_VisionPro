@@ -78,8 +78,6 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
 
     public class ImageStackingParams : IParams
     {
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public string operation { get; set; } = "Focus";
         public SortableBindingList<string> selectedImage { get; set; } = new SortableBindingList<string>();
         public VectorOfMat vom { get; set; } = new VectorOfMat();
@@ -87,28 +85,22 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
         public IToneMappingParameter toneMapParameter { get; set; } = new DragoParams();
     }
 
-    public class ImageStackingResults : IToolResult, IDisposable
+    public class ImageStackingResults : IToolResult
     {
-        public Mat resultImage { get; set; }
 
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 
-    public class ImageStackingTool : IToolBase
+    public class ImageStackingTool : ITool
     {
-        public Rectangle m_rectROI { get; set; }
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
         public BindingSource resultSource { get; set; }
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public IParams parameter { get; set; } = new ImageStackingParams();
         public IToolResult toolResult { get; set; }
         private ImageStackingResults ImageStackingResult { get { return (ImageStackingResults)toolResult; } set { toolResult = value; } }
-        
+
         public ImageStackingTool(string toolName)
         {
             this.ToolName = toolName;
@@ -123,12 +115,6 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
 
         public void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new ImageStackingToolControl(parameter) { Dock = DockStyle.Top };
         }
 
@@ -163,14 +149,14 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
             showResultImages();
         }
 
-        private Mat laplacien(Mat image)
+        private Mat laplacian(Mat image)
         {
             int kernel_size = 5;
             int blur_size = 5;
 
             Mat gray = new Mat();
             CvInvoke.CvtColor(image, gray, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
-            
+
             Mat gauss = new Mat();
             CvInvoke.GaussianBlur(gray, gauss, new Size(blur_size, blur_size), 0);
 
@@ -179,11 +165,11 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
 
             Mat temp = Mat.Zeros(laplace.Rows, laplace.Cols, laplace.Depth, laplace.NumberOfChannels);
             Mat absolute = new Mat();
-           // Mat absolute2 = new Mat();
-           // Mat absolute = new Mat();
+            // Mat absolute2 = new Mat();
+            // Mat absolute = new Mat();
             CvInvoke.AbsDiff(laplace, temp, absolute);
-           // CvInvoke.AbsDiff(temp, laplace, absolute2);
-           // CvInvoke.BitwiseOr(absolute1, absolute2, absolute);
+            // CvInvoke.AbsDiff(temp, laplace, absolute2);
+            // CvInvoke.BitwiseOr(absolute1, absolute2, absolute);
             //MessageBox.Show(laplace.GetValueRange().Max + ",," + laplace.GetValueRange().Min+"\n"+absolute.GetValueRange().Max + ",," + absolute.GetValueRange().Min);
             gray.Dispose();
             gauss.Dispose();
@@ -208,17 +194,18 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
          */
         private Mat FocusOperation()
         {
-            ((ImageStackingParams)parameter).vom = alignImages(((ImageStackingParams)parameter).vom);
+            ((ImageStackingParams)parameter).vom = HelperClass.alignImages(((ImageStackingParams)parameter).vom);
+
+            AlignMTB alignMTB = new AlignMTB(5, 6, true);
+            alignMTB.Process(((ImageStackingParams)parameter).vom, ((ImageStackingParams)parameter).vom, new VectorOfFloat(), new Mat());
+            alignMTB.Dispose();
             Mat[] laps = new Mat[((ImageStackingParams)parameter).vom.Size];
 
             for (int i = 0; i < ((ImageStackingParams)parameter).vom.Size; i++)
             {
-                CvInvoke.Imshow("((ImageStackingParams)parameter).vom[i]", ((ImageStackingParams)parameter).vom[i]);
-                CvInvoke.WaitKey(1000);
-                laps[i] = laplacien(((ImageStackingParams)parameter).vom[i]);
-                CvInvoke.Imshow("laps[i]", laps[i]);
+                laps[i] = laplacian(((ImageStackingParams)parameter).vom[i]);
             }
-
+            
             Mat maxima = Mat.Zeros(laps[0].Rows, laps[0].Cols, laps[0].Depth, laps[0].NumberOfChannels);
             for (int i = 0; i < laps.Length; i++)
             {
@@ -231,12 +218,15 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
                 CvInvoke.Compare(laps[i], maxima, mask, CmpType.Equal);
                 masks[i] = mask;
             }
+            maxima.Dispose();
             Mat output = new Mat(laps[0].Rows, laps[0].Cols, ((ImageStackingParams)parameter).vom[0].Depth, ((ImageStackingParams)parameter).vom[0].NumberOfChannels);
             for (int i = 0; i < ((ImageStackingParams)parameter).vom.Size; i++)
             {
                 CvInvoke.BitwiseNot(((ImageStackingParams)parameter).vom[i], output, masks[i]);
-                CvInvoke.Imshow("Output", output);
-                CvInvoke.WaitKey(1000);
+                //CvInvoke.Imshow("Output", output);
+                // CvInvoke.WaitKey(250);
+                laps[i].Dispose();
+                masks[i].Dispose();
             }
 
             return 255 - output;
@@ -274,15 +264,20 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
                         Bias = ((DragoParams)tempParams).bias
                     };
                     break;
-                case "DurandParams":
-                    toneMap = new TonemapDurand
+                case "DurandParams":/*
+                    toneMap = new Emgu.CV.XPhoto.TonemapDurand
                     {
                         Gamma = ((DurandParams)tempParams).gamma,
                         Contrast = ((DurandParams)tempParams).contrast,
                         Saturation = ((DurandParams)tempParams).saturation,
                         SigmaSpace = ((DurandParams)tempParams).sigma_space,
                         SigmaColor = ((DurandParams)tempParams).sigma_color
+                    };*/
+                    toneMap = new Tonemap
+                    {
+                        Gamma = ((DurandParams)tempParams).gamma
                     };
+                    MessageBox.Show("Error on TonemapDurand, change to Tonemap.");
                     break;
                 case "ReinhardParams":
                     toneMap = new TonemapReinhard
@@ -317,148 +312,21 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
 
         private Mat FusionOperation()
         {
-            return null;
-        }
+            AlignMTB alignMTB = new AlignMTB(5, 6, cut: false);
+            alignMTB.Process(((ImageStackingParams)parameter).vom, ((ImageStackingParams)parameter).vom, new VectorOfFloat(), new Mat());
+            alignMTB.Dispose();
 
-        public object showResult()
-        {
-            return null;
+            Mat mergeMat = new Mat();
+            MergeMertens mergeMertens = new MergeMertens(1, 2, 2);
+            mergeMertens.Process(((ImageStackingParams)parameter).vom, mergeMat);
+            mergeMertens.Dispose();
+            return mergeMat;
         }
 
         public void showResultImages()
         {
-            if (m_bitmapList == null)
-                m_bitmapList = new AutoDisposeDict<string, Mat>();
-            if (Form1.m_bitmapList == null)
-                Form1.m_bitmapList = new AutoDisposeDict<string, Mat>();
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".StackImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".StackImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".StackImage"] = ImageStackingResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".StackImage", ImageStackingResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".StackImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".StackImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".StackImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".StackImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".StackImage"] = ImageStackingResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".StackImage", ImageStackingResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".StackImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".StackImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, ImageStackingResult.resultImage, ToolName, "StackImage");
         }
 
-        private VectorOfMat alignImages(VectorOfMat mats)
-        {
-            VectorOfMat alignImages = new VectorOfMat();
-            SIFT sift = new SIFT();
-
-            //Add base image, other align with it
-            alignImages.Push(mats[0]);
-
-            Mat gray = new Mat();
-            CvInvoke.CvtColor(mats[0], gray, ColorConversion.Bgr2Gray);
-            VectorOfKeyPoint keyPoint = new VectorOfKeyPoint();
-            Mat descriptors = new Mat();
-            sift.DetectAndCompute(gray, null, keyPoint, descriptors, false);
-
-            for (int i = 1; i < mats.Size; i++)
-            {
-                VectorOfKeyPoint keyPointi = new VectorOfKeyPoint();
-                Mat descriptorsi = new Mat();
-                sift.DetectAndCompute(mats[i], null, keyPointi, descriptorsi, false);
-
-                VectorOfVectorOfDMatch dMatch = new VectorOfVectorOfDMatch();
-                BFMatcher bf = new BFMatcher(DistanceType.L2);
-                bf.KnnMatch(descriptorsi,descriptors, dMatch, 2); //This returns the top two matches for each feature point (list of list)
-
-                List<MDMatch> rawMatches = new List<MDMatch>();
-                for (int m = 0; m < dMatch.Size; m++)
-                {
-                    if (dMatch[m][0].Distance < 0.7* dMatch[m][1].Distance)
-                        rawMatches.Add(dMatch[m][0]);
-                }
-                List<MDMatch> sortMatches = rawMatches.OrderBy(m => m.Distance).Take(rawMatches.Count > 128 ? 128 : rawMatches.Count).ToList();
-                
-                Mat homography = findHomography(keyPointi, keyPoint,sortMatches);
-                Mat output = new Mat();
-                if (homography.Size.IsEmpty)
-                    continue;
-                CvInvoke.WarpPerspective(mats[i], output, homography, mats[i].Size);
-
-                alignImages.Push(output);    
-            }
-
-
-            return alignImages;
-        }
-
-        private Mat findHomography(VectorOfKeyPoint keyPointi, VectorOfKeyPoint keyPoint, List<MDMatch> sortMatches)
-        {
-            Matrix<float> image1Points = new Matrix<float>(sortMatches.Count,2);
-            Matrix<float> image2Points = new Matrix<float>(sortMatches.Count,2);
-
-            for (int i = 0; i < sortMatches.Count; i++)
-            {
-                /*
-                If you look at matrixa.Data, this will be a float[,] with the first dimension corresponding 
-                to rows and the second being the columns and channels merged into one dimension. 
-                If the number of channels is N, the current channel is n and 
-                the current column is m, the index j of the second dimension is
-                j = m*N + n
-                */
-                int index1 = sortMatches[i].QueryIdx;
-                int index2 = sortMatches[i].TrainIdx;
-                image1Points[i, 0] = keyPointi[index1].Point.X;
-                image1Points[i, 1] = keyPointi[index1].Point.Y;
-                image2Points[i, 0] = keyPoint[index2].Point.X;
-                image2Points[i, 1] = keyPoint[index2].Point.Y;
-            }
-            if (sortMatches.Count < 4)
-                return new Mat();
-            return CvInvoke.FindHomography(image1Points,image2Points,RobustEstimationAlgorithm.Ransac,2.0);
-        }
-
-        private Rectangle getSharpestPart(Mat image)
-        {
-            Mat transpose = new Mat();
-            CvInvoke.Transpose(image, transpose);
-            VectorOfPoint points = new VectorOfPoint();
-            CvInvoke.FindNonZero(transpose, points);
-            int min_col = points[0].Y;
-            int max_col = points[points.Size - 1].Y;
-            Point[] pt = points.ToArray().OrderBy(p => p.X).ToArray();
-            int min_row = pt[0].X;
-            int max_row = pt[pt.Length - 1].X;
-            
-            MessageBox.Show(min_row+","+min_col+"::::"+max_row+","+max_col);
-            Size rectSize = new Size(max_row - min_row, max_col - min_col);
-            Size rectSizeThresh = new Size((int)(rectSize.Width * 0.95), (int)(rectSize.Height * 0.95));
-            //Point top_left = new Point((min_row + (int)((rectSize.Width - rectSizeThresh.Width) / 2)), min_col + (int)((rectSize.Height - rectSizeThresh.Height) / 2));
-            //Point bottom_right = new Point(top_left.X + rectSizeThresh.Width, top_left.Y + rectSizeThresh.Height);
-            return new Rectangle(points[0], rectSize);
-            /*
-             * 
-def get_bounding_box(image,thresh=0.95):
-    nonzero_indices = np.nonzero(image.T)
-    min_row, max_row = np.min(nonzero_indices[0]), np.max(nonzero_indices[0])
-    min_col, max_col = np.min(nonzero_indices[1]), np.max(nonzero_indices[1])
-    box_size = max_row - min_row + 1, max_col - min_col + 1
-    box_size_thresh = (int(box_size[0] * thresh), int(box_size[1] * thresh))
-    #box_size_thresh = (int(box_size[0]), int(box_size[1]))
-    #coordinates of the box that contains 95% of the highest pixel values
-    top_left = (min_row + int((box_size[0] - box_size_thresh[0]) / 2), min_col + int((box_size[1] - box_size_thresh[1]) / 2))
-    bottom_right = (top_left[0] + box_size_thresh[0], top_left[1] + box_size_thresh[1])
-    return (top_left[0], top_left[1]), (bottom_right[0], bottom_right[1])
-            */
-        }
     }
 }

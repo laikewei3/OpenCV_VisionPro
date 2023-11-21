@@ -2,18 +2,12 @@
 using OpenCV_Vision_Pro.Interface;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ColorMatcher
 {
-    public partial class ColorMatchToolControl : UserControl, ColorUserControlBase
+    public partial class ColorMatchToolControl : UserControl, IColorUserControlBase
     {
         public DataGridView resultDataGrid { get; set; }
         public ROI m_roi { get { return ColorMatcherParams.m_roi; } }

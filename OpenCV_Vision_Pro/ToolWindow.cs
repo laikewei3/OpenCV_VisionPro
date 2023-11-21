@@ -15,7 +15,7 @@ namespace OpenCV_Vision_Pro
     public partial class ToolWindow : Form
     {
         public DisplayControl m_displayControl { get; set; }
-        public IToolBase m_toolBase;
+        public ITool m_toolBase;
         private Timer m_timer;
         public static bool runContinue { get; set; } = false;
         public static bool nextImage { get; set; } = false;
@@ -26,7 +26,7 @@ namespace OpenCV_Vision_Pro
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool DestroyIcon(IntPtr handle);
 
-        public ToolWindow(IToolBase tool)
+        public ToolWindow(ITool tool)
         {
             m_toolBase = tool;
             InitializeComponent();
@@ -52,8 +52,10 @@ namespace OpenCV_Vision_Pro
 
         private void ToolWindow_Load(object sender, EventArgs e)
         {
-            m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
+            if(m_toolBase is IToolData dataTool)
+                ((IUserDataControl)m_toolBase.m_toolControl).SetDataSource(dataTool.showResult());
             Enum.TryParse(m_toolBase.GetType().Name, out ToolIndex index);
+            
             Bitmap iconBitmap = new Bitmap(HelperClass.iconList.Images[(int)index]);
             IntPtr iconHandle = iconBitmap.GetHicon();
             Icon icon = Icon.FromHandle(iconHandle);
@@ -77,8 +79,8 @@ namespace OpenCV_Vision_Pro
             if(m_toolBase.m_toolControl.m_roi!=null)
                 m_toolBase.m_toolControl.m_roi.m_comboBoxROI.SelectedIndexChanged += m_comboBoxROI_SelectedIndexChanged;
 
-            if(m_toolBase.m_toolControl is ColorUserControlBase)
-                m_displayControl.m_colorTools = ((ColorUserControlBase)m_toolBase.m_toolControl).m_colorTools;
+            if(m_toolBase.m_toolControl is IColorUserControlBase)
+                m_displayControl.m_colorTools = ((IColorUserControlBase)m_toolBase.m_toolControl).m_colorTools;
             if (m_toolBase is PolarUnWrapTool || m_toolBase is PaintTool)
                 m_displayControl.toolBase = m_toolBase;
         }
@@ -139,7 +141,8 @@ namespace OpenCV_Vision_Pro
                 m_toolBase.Run(m_imageProcess, m_rectangle);
                 m_toolBase.showResultImages();
 
-                m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
+                if (m_toolBase is IToolData dataTool)
+                    ((IUserDataControl)m_toolBase.m_toolControl).SetDataSource(dataTool.showResult());
                 m_imageProcess?.Dispose();
                 int index = m_displayControl.m_cbImages.SelectedIndex;
                 m_displayControl.m_cbImages.SelectedIndex = 0;
@@ -172,7 +175,8 @@ namespace OpenCV_Vision_Pro
                 this.m_displayControl.m_bitmapList = m_toolBase.m_bitmapList?.CloneDictionaryCloningValues();
                 this.m_displayControl.m_display.Image?.Dispose();
                 this.m_displayControl.m_display.Image = m_toolBase.m_bitmapList[m_displayControl.m_cbImages.SelectedItem.ToString()].Clone();
-                m_toolBase.m_toolControl.SetDataSource(m_toolBase.showResult());
+                if (m_toolBase is IToolData dataTool)
+                    ((IUserDataControl)m_toolBase.m_toolControl).SetDataSource(dataTool.showResult());
                 Form1.nextImage = false;
             }
             if (!runContinue)

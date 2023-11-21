@@ -21,31 +21,22 @@ namespace OpenCV_Vision_Pro
 
     public class TextRecognitionParams: IParams
     {
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public string mode { get; set; } = "Symbol";
         public string language { get; set; } = "eng";
     }
 
-    public class TextRecognitionResult : IDisposable, IToolResult
+    public class TextRecognitionResult : IToolResult, IDisposable
     {
-        public Mat resultImage { get; set; }
         public string text { get; set; }
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 
-    public partial class TextRecognitionTool : IToolBase
+    public partial class TextRecognitionTool : IToolData
     {   
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
         public BindingSource resultSource { get; set; }
-        public Rectangle m_rectROI { get; set; }
         public IParams parameter { get; set; } = new TextRecognitionParams();
 
         public IToolResult toolResult { get; set; }
@@ -55,12 +46,6 @@ namespace OpenCV_Vision_Pro
 
         public  void getGUI()
         {
-            if(m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new TextRecognitionToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -111,30 +96,7 @@ namespace OpenCV_Vision_Pro
 
         public  void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".TextRecognitionImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".TextRecognitionImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".TextRecognitionImage"] = m_TextRecognitionResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".TextRecognitionImage", m_TextRecognitionResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".TextRecognitionImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".TextRecognitionImage");
-            }
-
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".TextRecognitionImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".TextRecognitionImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".TextRecognitionImage"] = m_TextRecognitionResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".TextRecognitionImage", m_TextRecognitionResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".TextRecognitionImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".TextRecognitionImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, m_TextRecognitionResult.resultImage, ToolName, "TextRecognitionImage");
         }
     }
 }

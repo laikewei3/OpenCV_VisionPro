@@ -9,9 +9,9 @@ namespace OpenCV_Vision_Pro
 {
     public class ToolsTreeNode : TreeNode, IDisposable
     {
-        public IToolBase tool { get; set; }
+        public ITool tool { get; set; }
 
-        public ToolsTreeNode(IToolBase tool)
+        public ToolsTreeNode(ITool tool)
         {
             this.tool = tool;
         }

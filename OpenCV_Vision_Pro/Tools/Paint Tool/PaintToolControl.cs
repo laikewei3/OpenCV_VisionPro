@@ -4,9 +4,8 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
 {
-    public partial class PaintToolControl : UserControl, UserControlBase
+    public partial class PaintToolControl : UserControl, IUserControlBase
     {
-        public DataGridView resultDataGrid { get; set; }
         public ROI m_roi { get { return PaintParams.m_roi; } }
         public IParams parameter { get; set; }
         public PaintParams PaintParams { get; private set; }
@@ -18,10 +17,6 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
             this.PaintParams = (PaintParams)parameter;
         }
         
-        public void SetDataSource(object bs)
-        {
-        }
-
         private void m_nudPaintSize_ValueChanged(object sender, EventArgs e)
         {
             PaintParams.paintSize = (int)m_nudPaintSize.Value;

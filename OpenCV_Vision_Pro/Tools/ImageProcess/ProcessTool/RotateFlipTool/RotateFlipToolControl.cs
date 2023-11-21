@@ -12,9 +12,8 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
 {
-    public partial class RotateFlipToolControl : UserControl, UserControlBase
+    public partial class RotateFlipToolControl : UserControl, IUserControlBase
     {
-        public DataGridView resultDataGrid { get; set; }
         public ROI m_roi { get { return RotateParams.m_roi; } }
         public IParams parameter { get; set; }
         public RotateFlipParams RotateParams { get; private set; }
@@ -24,10 +23,6 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
             InitializeComponent(); 
             parameter = RotateParams;
             this.RotateParams = (RotateFlipParams)parameter;
-        }
-        
-        public void SetDataSource(object bs)
-        {
         }
 
         private void m_rbX_CheckedChanged(object sender, EventArgs e)

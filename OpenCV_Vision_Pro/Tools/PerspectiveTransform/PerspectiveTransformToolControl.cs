@@ -1,13 +1,11 @@
 ﻿using OpenCV_Vision_Pro.Interface;
-using System.Collections;
 using System;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class PerspectiveTransformToolControl : UserControl, UserControlBase
+    public partial class PerspectiveTransformToolControl : UserControl, IUserControlBase
     {
-        public DataGridView resultDataGrid { get; set; }
         public ROI m_roi { get { return PerspectiveTransformParams.m_roi; } }
         public IParams parameter { get; set; }
 
@@ -33,8 +31,5 @@ namespace OpenCV_Vision_Pro
                 parameter.m_roi.m_comboBoxROI.SelectedIndex = 0;
             }
         }
-
-        public void SetDataSource(object bs) { }
-
     }
 }

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class HistogramToolControl : UserControl, UserControlBase
+    public partial class HistogramToolControl : UserControl, IUserDataControl
     {
         public DataGridView resultDataGrid { get; set; }
         public ROI m_roi { get { return historgramParams.m_roi; } }

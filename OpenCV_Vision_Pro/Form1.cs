@@ -7,7 +7,6 @@ using System.Drawing.Imaging;
 using System.Linq;
 using Emgu.CV.CvEnum;
 using System.ComponentModel;
-using System.Collections.Generic;
 using OpenCV_Vision_Pro.LineSegment;
 using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -18,6 +17,7 @@ using OpenCV_Vision_Pro.Tools.ID;
 using OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool;
 using System.Diagnostics;
 using OpenCV_Vision_Pro.Tools.ImageStacking;
+using OpenCV_Vision_Pro.Tools.ImageStitching;
 
 namespace OpenCV_Vision_Pro
 {
@@ -28,24 +28,6 @@ namespace OpenCV_Vision_Pro
         public static AutoDisposeDict<string, Mat> m_bitmapList { get { return m_displayControl.m_bitmapList; }  set { m_displayControl.m_bitmapList = value; } }
         public static BindingList<string> m_form1DisplaySelection { get; private set; }
         
-        private static Dictionary<string, int> m_dictToolCount = new Dictionary<string, int> {
-            {"BlobTool",0},
-            {"CaliperTool",0},
-            {"HistogramTool",0},
-            {"ImageConvertTool",0},
-            {"ColorSegmentorTool",0},
-            {"ColorMatcherTool",0},
-            {"ColorExtractorTool",0},
-            {"ImageSharpenerTool",0 },
-            {"LineSegmentTool", 0},
-            {"PolarUnWrapTool",0 },
-            {"PerspectiveTransformTool",0 },
-            {"TextRecognitionTool", 0 },
-            {"ImageProcessTool",0 },
-            {"IDTool",0},
-            {"ImagePaintTool",0 },
-            {"ImageStackingTool",0 }
-        };
 
         public static string[] files;
         public static int m_cntFileIndex = 0;
@@ -275,7 +257,6 @@ namespace OpenCV_Vision_Pro
                     videoCapture.Set(CapProp.PosFrames, 0);
                     m_displayControl.m_trackBarVideoDuration.Value = 0;
                 }
-
             }
             finally
             {
@@ -452,73 +433,77 @@ namespace OpenCV_Vision_Pro
 
         private void AddToolMenuItem_Click(object sender, EventArgs e)
         {
-            IToolBase tool;
+            ITool tool;
             int imageIndex;
             switch (((ToolStripMenuItem)sender).Name)
             {
                 case "blobToolMenuItem":
-                    tool = new BlobTool("BlobTool" + (++m_dictToolCount["BlobTool"]).ToString());
+                    tool = new BlobTool("BlobTool" + (++HelperClass.m_dictToolCount["BlobTool"]).ToString());
                     imageIndex = 0;
                     break;
                 case "caliperToolMenuItem":
-                    tool = new CaliperTool("CaliperTool" + (++m_dictToolCount["CaliperTool"]).ToString());
+                    tool = new CaliperTool("CaliperTool" + (++HelperClass.m_dictToolCount["CaliperTool"]).ToString());
                     imageIndex = 1;
                     break;
                 case "histogramToolMenuItem":
-                    tool = new HistogramTool("HistogramTool" + (++m_dictToolCount["HistogramTool"]).ToString());
+                    tool = new HistogramTool("HistogramTool" + (++HelperClass.m_dictToolCount["HistogramTool"]).ToString());
                     imageIndex = 2;
                     break;
                 case "imageConvertToolToolStripMenuItem":
-                    tool = new ImageConvertTool("ImageConvertTool" + (++m_dictToolCount["ImageConvertTool"]).ToString());
+                    tool = new ImageConvertTool("ImageConvertTool" + (++HelperClass.m_dictToolCount["ImageConvertTool"]).ToString());
                     imageIndex = 3;
                     break;
                 case "colorSegmentorToolToolStripMenuItem":
-                    tool = new ColorSegmentorTool("ColorSegmentorTool" + (++m_dictToolCount["ColorSegmentorTool"]).ToString());
+                    tool = new ColorSegmentorTool("ColorSegmentorTool" + (++HelperClass.m_dictToolCount["ColorSegmentorTool"]).ToString());
                     imageIndex = 4;
                     break;
                 case "colorMatchToolToolStripMenuItem":
-                    tool = new ColorMatcherTool("ColorMatcherTool" + (++m_dictToolCount["ColorMatcherTool"]).ToString());
+                    tool = new ColorMatcherTool("ColorMatcherTool" + (++HelperClass.m_dictToolCount["ColorMatcherTool"]).ToString());
                     imageIndex = 5;
                     break;
                 case "colorExtractorToolToolStripMenuItem":
-                    tool = new ColorExtractorTool("ColorExtractorTool" + (++m_dictToolCount["ColorExtractorTool"]).ToString());
+                    tool = new ColorExtractorTool("ColorExtractorTool" + (++HelperClass.m_dictToolCount["ColorExtractorTool"]).ToString());
                     imageIndex = 6;
                     break;
                 case "imageSharpenerToolToolStripMenuItem":
-                    tool = new ImageSharpenerTool("ImageSharpenerTool" + (++m_dictToolCount["ImageSharpenerTool"]).ToString());
+                    tool = new ImageSharpenerTool("ImageSharpenerTool" + (++HelperClass.m_dictToolCount["ImageSharpenerTool"]).ToString());
                     imageIndex = 7;
                     break;
                 case "findLineToolToolStripMenuItem":
-                    tool = new LineSegmentTool("LineSegmentTool" + (++m_dictToolCount["LineSegmentTool"]).ToString());
+                    tool = new LineSegmentTool("LineSegmentTool" + (++HelperClass.m_dictToolCount["LineSegmentTool"]).ToString());
                     imageIndex = 8;
                     break;
                 case "polarUnwarpToolToolStripMenuItem":
-                    tool = new PolarUnWrapTool("ImagePolarUnWrapTool" + (++m_dictToolCount["PolarUnWrapTool"]).ToString());
+                    tool = new PolarUnWrapTool("ImagePolarUnWrapTool" + (++HelperClass.m_dictToolCount["PolarUnWrapTool"]).ToString());
                     imageIndex = 10;
                     break;
                 case "perspectiveTransformToolToolStripMenuItem":
-                    tool = new PerspectiveTransformTool("ImagePerspectiveTransformTool" + (++m_dictToolCount["PerspectiveTransformTool"]).ToString());
+                    tool = new PerspectiveTransformTool("ImagePerspectiveTransformTool" + (++HelperClass.m_dictToolCount["PerspectiveTransformTool"]).ToString());
                     imageIndex = 11;
                     break;
                 case "textRecognitionToolToolStripMenuItem":
-                    tool = new TextRecognitionTool("TextRecognitionTool" + (++m_dictToolCount["TextRecognitionTool"]).ToString());
+                    tool = new TextRecognitionTool("TextRecognitionTool" + (++HelperClass.m_dictToolCount["TextRecognitionTool"]).ToString());
                     imageIndex = 12;
                     break;
                 case "imageProcessToolToolStripMenuItem":
-                    tool = new ImageProcessTool("ImageProcessTool" + (++m_dictToolCount["ImageProcessTool"]).ToString());
+                    tool = new ImageProcessTool("ImageProcessTool" + (++HelperClass.m_dictToolCount["ImageProcessTool"]).ToString());
                     imageIndex = 13;
                     break;
                 case "iDToolToolStripMenuItem":
-                    tool = new IDTool("IDTool" + (++m_dictToolCount["IDTool"]).ToString());
+                    tool = new IDTool("IDTool" + (++HelperClass.m_dictToolCount["IDTool"]).ToString());
                     imageIndex = 14;
                     break;
                 case "imagePaintToolToolStripMenuItem":
-                    tool = new PaintTool("ImagePaintTool" + (++m_dictToolCount["ImagePaintTool"]).ToString());
-                    imageIndex = 14;
+                    tool = new PaintTool("ImagePaintTool" + (++HelperClass.m_dictToolCount["ImagePaintTool"]).ToString());
+                    imageIndex = 15;
                     break;
                 case "imageStackingToolToolStripMenuItem":
-                    tool = new ImageStackingTool("ImageStackingTool" + (++m_dictToolCount["ImageStackingTool"]).ToString());
-                    imageIndex = 14;
+                    tool = new ImageStackingTool("ImageStackingTool" + (++HelperClass.m_dictToolCount["ImageStackingTool"]).ToString());
+                    imageIndex = 16;
+                    break;
+                case "imageStitchingToolToolStripMenuItem":
+                    tool = new ImageStitchingTool("ImageStitchingTool" + (++HelperClass.m_dictToolCount["ImageStitchingTool"]).ToString());
+                    imageIndex = 17;
                     break;
                 default:
                     MessageBox.Show("Invalid Tool Added");
@@ -568,10 +553,8 @@ namespace OpenCV_Vision_Pro
                     return;
 
                 ToolsTreeNode selectedNode = ((ToolsTreeNode)m_treeView.SelectedNode);
-                IToolBase tool = selectedNode.tool;
-                if(!(tool is ImageStackingTool))
-                {
-
+                ITool tool = selectedNode.tool;
+                
                 
                 if (selectedNode.Parent == null && m_bitmapList != null)
                 {
@@ -604,7 +587,14 @@ namespace OpenCV_Vision_Pro
                         }
                     }
                 }
+                else // m_bitmapList == null
+                {
+                    m_bitmapList = new AutoDisposeDict<string, Mat> { { "Current.InputImage", new Mat() } };
+                    m_form1DisplaySelection.Add("Current.InputImage");
+                    tool.m_bitmapList = new AutoDisposeDict<string, Mat> { { "Current.InputImage", new Mat() } };
+                    tool.m_DisplaySelection.Add("Current.InputImage");
                 }
+                
 
                 ToolWindow fc = Application.OpenForms[tool.ToolName] as ToolWindow;
                 fc?.Close();

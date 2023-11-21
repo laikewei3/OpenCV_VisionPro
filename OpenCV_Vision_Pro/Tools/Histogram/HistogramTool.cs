@@ -18,13 +18,10 @@ using Shared.ComponentModel.SortableBindingList;
 namespace OpenCV_Vision_Pro
 {
 
-    public class HistorgramParams: IParams
-    {
-        public ROI m_roi { get; set; } = new ROI(); 
-        public bool m_boolHasROI { get; set; } = false;
-    }
+    public class HistorgramParams : IParams
+    { }
 
-    public class HistogramResult : IDisposable, IToolResult
+    public class HistogramResult : IToolResult
     {
         public int Minimum { get; set; }
         public int Maximum { get; set; }
@@ -34,16 +31,10 @@ namespace OpenCV_Vision_Pro
         public double StandardDeviation { get; set; }
         public double Variance { get; set; }
         public long NumberOfSample { get; set; }
-        public Mat resultImage { get; set; }
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 
     // Declare Variable
-    public partial class HistogramTool : IToolBase
+    public partial class HistogramTool : IToolData
     {
         private class HistogramData
         {
@@ -59,37 +50,29 @@ namespace OpenCV_Vision_Pro
             public double Cumulative { get; set; }
         }
 
-        public  string ToolName { get; set; }
-        public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
-        public  UserControlBase m_toolControl { get; set; }
-        public  BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public  BindingSource resultSource { get; set; }
-        public  Rectangle m_rectROI { get; set; }
-        public  IParams parameter { get; set; } = new HistorgramParams();
-
-        public  IToolResult toolResult { get; set; }
+        public string ToolName { get; set; }
+        public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
+        public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
+        public BindingSource resultSource { get; set; }
+        public IParams parameter { get; set; } = new HistorgramParams();
+        public IToolResult toolResult { get; set; }
         public HistogramResult m_histogramResult { get { return (HistogramResult)toolResult; } set { toolResult = value; } }
 
         private SortableBindingList<HistogramData> resultList;
     }
 
     // Methods
-    public partial class HistogramTool : IToolBase
+    public partial class HistogramTool : IToolData
     {
         public HistogramTool(string toolName) { ToolName = toolName; }
 
-        public  void getGUI()
+        public void getGUI()
         {
-            if(m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new HistogramToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
-        public  void Run(Mat img, Rectangle region)
+        public void Run(Mat img, Rectangle region)
         {
             parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat gray);
 
@@ -146,7 +129,7 @@ namespace OpenCV_Vision_Pro
             }
             m_histogramResult.Mode = maxCount;
             m_histogramResult.NumberOfSample = (long)cummulative_list[histogramData.Length - 1];
-            m_histogramResult.Mean = Math.Round(calMean / m_histogramResult.NumberOfSample,4);
+            m_histogramResult.Mean = Math.Round(calMean / m_histogramResult.NumberOfSample, 4);
             m_matHist.Dispose();
 
             double m_doubleHalf = m_histogramResult.NumberOfSample / 2;
@@ -158,7 +141,7 @@ namespace OpenCV_Vision_Pro
                     break;
                 }
             }
-            
+
             double m_doubleCumulativePercent = 0;
             double variance = 0;
             resultList = new SortableBindingList<HistogramData>();
@@ -170,8 +153,8 @@ namespace OpenCV_Vision_Pro
                 variance += temp;
             }
             variance /= m_histogramResult.NumberOfSample;
-            m_histogramResult.Variance = Math.Round(variance,4);
-            m_histogramResult.StandardDeviation = Math.Round(Math.Sqrt(variance),4);
+            m_histogramResult.Variance = Math.Round(variance, 4);
+            m_histogramResult.StandardDeviation = Math.Round(Math.Sqrt(variance), 4);
             //==============================================================================================================
 
             //================================================ Plot the Chart ==============================================
@@ -220,11 +203,11 @@ namespace OpenCV_Vision_Pro
             chartArea.Dispose();
             meanLine.Dispose();
             series.Dispose();
-            
+
             //==============================================================================================================
         }
 
-        public  void Dispose()
+        public void Dispose()
         {
             m_bitmapList?.Dispose();
             m_toolControl?.Dispose();
@@ -232,7 +215,7 @@ namespace OpenCV_Vision_Pro
             resultSource?.Dispose();
         }
 
-        public  object showResult()
+        public object showResult()
         {
             ArrayList arrayList = new ArrayList();
             resultSource?.Dispose();
@@ -247,32 +230,9 @@ namespace OpenCV_Vision_Pro
             return arrayList;
         }
 
-        public  void showResultImages()
+        public void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".Histogram"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".Histogram"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".Histogram"] = m_histogramResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".Histogram", m_histogramResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".Histogram"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".Histogram");
-            }
-
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".Histogram"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".Histogram"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".Histogram"] = m_histogramResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".Histogram", m_histogramResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".Histogram"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".Histogram");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList,m_DisplaySelection, m_histogramResult.resultImage,ToolName, "Histogram");
         }
     }
 }

@@ -1,19 +1,11 @@
 ﻿using OpenCV_Vision_Pro.Interface;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class ImageConvertToolControl : UserControl,UserControlBase
+    public partial class ImageConvertToolControl : UserControl,IUserControlBase
     {
-        public DataGridView resultDataGrid { get; set; }
 
         public ROI m_roi { get { return ConvertParams.m_roi; } }
 
@@ -29,8 +21,6 @@ namespace OpenCV_Vision_Pro
             ConvertParams.m_roi.Dock = DockStyle.Top;
             this.Controls.Add(ConvertParams.m_roi);
         }
-
-        public void SetDataSource(object bs) { }
 
         private void m_comboBoxColorMode_SelectedIndexChanged(object sender, EventArgs e)
         {

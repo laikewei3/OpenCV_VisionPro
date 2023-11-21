@@ -9,14 +9,14 @@ namespace OpenCV_Vision_Pro
 {
     public class ProcessToolList : IDisposable
     {
-        public ProcessToolList(string toolName, ISimpleToolBase toolProcess)
+        public ProcessToolList(string toolName, IBaseTool toolProcess)
         {
             this.toolName = toolName;
             this.toolProcess = toolProcess;
         }
 
         public string toolName {  get; set; }
-        public ISimpleToolBase toolProcess {  get; private set; }
+        public IBaseTool toolProcess {  get; private set; }
 
         public void Dispose()
         {
@@ -26,21 +26,17 @@ namespace OpenCV_Vision_Pro
 
     public class ProcessParams : IParams
     {
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public BindingList<ProcessToolList> toolProcessList { get; set; } = new BindingList<ProcessToolList>();
     }
 
-    public class ImageProcessTool : IToolBase
+    public class ImageProcessTool : IToolData
     {
         public  string ToolName { get; set; }
         public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public  BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public  UserControlBase m_toolControl { get; set; }
-        public  Rectangle m_rectROI { get; set; }
+        public  IUserControlBase m_toolControl { get; set; }
         public  IParams parameter { get; set; } = new ProcessParams();
         public  BindingSource resultSource { get; set; }
-
         public  IToolResult toolResult { get; set; }
         private ProcessResults ProcessResult { get { return (ProcessResults)toolResult; } set { toolResult = value; } }
 
@@ -55,12 +51,6 @@ namespace OpenCV_Vision_Pro
 
         public  void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new ImageProcessToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -72,7 +62,7 @@ namespace OpenCV_Vision_Pro
 
             for(int i = 0; i < ((ProcessParams)parameter).toolProcessList.Count; i++)
             {
-                ISimpleToolBase tool = ((ProcessParams)parameter).toolProcessList[i].toolProcess;
+                IBaseTool tool = ((ProcessParams)parameter).toolProcessList[i].toolProcess;
                 tool.Run(image, new Rectangle());
                 image?.Dispose();
                 image = tool.toolResult.resultImage;
@@ -88,40 +78,11 @@ namespace OpenCV_Vision_Pro
 
         public  void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".ProcessImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".ProcessImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".ProcessImage"] = ProcessResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".ProcessImage", ProcessResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".ProcessImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".ProcessImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".ProcessImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".ProcessImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".ProcessImage"] = ProcessResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".ProcessImage", ProcessResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".ProcessImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".ProcessImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, ProcessResult.resultImage, ToolName, "ProcessImage");
         }
 
-        private class ProcessResults : IDisposable, IToolResult
-        {
-            public Mat resultImage { get; set; }
-
-            public void Dispose()
-            {
-                resultImage?.Dispose();
-            }
-        }
+        private class ProcessResults : IToolResult
+        {}
 
     }
 }

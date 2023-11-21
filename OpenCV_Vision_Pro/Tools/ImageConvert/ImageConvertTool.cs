@@ -1,35 +1,23 @@
 ﻿using Emgu.CV;
-using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
-using OpenCV_Vision_Pro.Properties;
-using OpenCV_Vision_Pro.Tools.ColorMatcher;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
     public class ConvertParams : IParams
     {
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
-
         public string runMode { get; set; } = "Intensity";
     }
-    public class ImageConvertTool : IToolBase
+    public class ImageConvertTool : ITool
     {
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public UserControlBase m_toolControl { get; set; }
-        public Rectangle m_rectROI { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public IParams parameter { get; set; } = new ConvertParams();
         public BindingSource resultSource { get; set; }
 
@@ -47,12 +35,6 @@ namespace OpenCV_Vision_Pro
 
         public void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new ImageConvertToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -118,11 +100,6 @@ namespace OpenCV_Vision_Pro
 
         }
 
-        public object showResult()
-        {
-            return null;
-        }
-
         public void showResultImages()
         {
             if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".ConvertImage"))
@@ -150,14 +127,8 @@ namespace OpenCV_Vision_Pro
             }
         }
 
-        private class ConvertResults : IDisposable, IToolResult
+        private class ConvertResults : IToolResult
         {
-            public Mat resultImage { get; set; }
-
-            public void Dispose()
-            {
-                resultImage?.Dispose();
-            }
         }
 
     }

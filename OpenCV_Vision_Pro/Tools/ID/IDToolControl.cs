@@ -1,15 +1,12 @@
 ﻿using Emgu.CV;
 using OpenCV_Vision_Pro.Interface;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ID
 {
-    public partial class IDToolControl : UserControl, UserControlBase
+    public partial class IDToolControl : UserControl, IUserDataControl
     {
         public Mat resultSelectedImage { get; set; }
         public IDParams IDParams { get; private set; }

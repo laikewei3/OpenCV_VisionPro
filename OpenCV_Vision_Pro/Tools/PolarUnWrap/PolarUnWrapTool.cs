@@ -11,34 +11,25 @@ namespace OpenCV_Vision_Pro.Tools.PolarUnWrap
 {
     public class PolarUnWrapParams : IParams
     {
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public int lineheight { get; set; } = 50;
 
         public string rotation { get; set; } = "No Rotation";
     }
 
-    public class PolarUnWrapResult : IToolResult, IDisposable
+    public class PolarUnWrapResult : IToolResult
     {
-        public Mat resultImage {  get; set; }
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 
-    public class PolarUnWrapTool : IToolBase
+    public class PolarUnWrapTool : ITool
     {
         public string ToolName { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public IParams parameter { get; set; } = new PolarUnWrapParams();
         public BindingSource resultSource { get; set; }
         public IToolResult toolResult { get; set; }
         private PolarUnWrapResult PolarUnWrapResult { get { return (PolarUnWrapResult)toolResult; } set { toolResult = value; } }
-        public Rectangle m_rectROI { get; set; }
 
         public void Dispose()
         {
@@ -49,12 +40,6 @@ namespace OpenCV_Vision_Pro.Tools.PolarUnWrap
 
         public void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new PolarUnwrapToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -105,36 +90,10 @@ namespace OpenCV_Vision_Pro.Tools.PolarUnWrap
             image.Dispose();
         }
 
-        public object showResult()
-        {
-            return null;
-        }
 
         public void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".PolarUnwrapImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".PolarUnwrapImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".PolarUnwrapImage"] = PolarUnWrapResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".PolarUnwrapImage", PolarUnWrapResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".PolarUnwrapImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".PolarUnwrapImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".PolarUnwrapImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".PolarUnwrapImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".PolarUnwrapImage"] = PolarUnWrapResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".PolarUnwrapImage", PolarUnWrapResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".PolarUnwrapImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".PolarUnwrapImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, PolarUnWrapResult.resultImage, ToolName, "PolarUnwrapImage");
         }
     }
 }

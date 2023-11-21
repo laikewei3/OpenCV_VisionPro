@@ -3,14 +3,12 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
-using OpenCV_Vision_Pro.Properties;
 using Shared.ComponentModel.SortableBindingList;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -79,17 +77,11 @@ namespace OpenCV_Vision_Pro
     }
 
     // List of Blob and BlobImage
-    public class BlobResults : IDisposable, IToolResult
+    public class BlobResults : IToolResult
     {
         public List<BlobData> blobs { get; set; } = new List<BlobData>();
-
-        public Mat resultImage { get; set; }
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
+
     public class BlobParams : IParams
     {
         public Dictionary<string, ArrayList> MeasurementProperties { get; set; } = new Dictionary<string, ArrayList>();
@@ -97,46 +89,31 @@ namespace OpenCV_Vision_Pro
         public double threshold { get; set; } = 128;
         public int minArea { get; set; } = 10;
         public string polarity { get; set; } = "Dark blobs, Light background";
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public string thresholdMode { get; set; } = "Global (Otsu)";
         public int blockSize { get; set; } = 17;
         public int param1 { get; set; } = 10;
     }
 
-    // Declare Variable
-    public partial class BlobTool : IToolBase
+    public class BlobTool : IToolData
     {
-        public  string ToolName { get; set; }
-        public  UserControlBase m_toolControl { get; set; }
-        public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
-        public  BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public  BindingSource resultSource { get; set; }
-        public  Rectangle m_rectROI { get; set; }
-        public  IParams parameter { get; set; } = new BlobParams();
+        public string ToolName { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
+        public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
+        public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
+        public BindingSource resultSource { get; set; }
+        public IParams parameter { get; set; } = new BlobParams();
 
-        public  IToolResult toolResult { get; set; }
+        public IToolResult toolResult { get; set; }
         public BlobResults blobResults { get { return (BlobResults)toolResult; } set { toolResult = value; } }
         public Dictionary<int, Point[]> contourByRow { get; set; } = new Dictionary<int, Point[]>();
-    }
-
-    // Tool Method
-    public partial class BlobTool:IToolBase
-    {
         public BlobTool(string toolName) { this.ToolName = toolName; }
 
-        public  void getGUI()
+        public void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new BlobToolControl(parameter) { Dock = DockStyle.Fill };
         }
-        
-        public  void Run(Mat img, Rectangle region)
+
+        public void Run(Mat img, Rectangle region)
         {
             parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat image);
             if (!region.IsEmpty && parameter.m_roi.points != null)
@@ -144,28 +121,28 @@ namespace OpenCV_Vision_Pro
 
             }
 
-           /*
-                Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
-                CvInvoke.FillPoly(mask, new VectorOfPoint(((BlobToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
+            /*
+                 Mat mask = Mat.Zeros(img.Rows, img.Cols, img.Depth, img.NumberOfChannels);
+                 CvInvoke.FillPoly(mask, new VectorOfPoint(((BlobToolControl)m_toolControl).m_roi.points), new MCvScalar(255, 255, 255));
 
-                Mat bitImage = new Mat();
-                CvInvoke.BitwiseAnd(img, mask, bitImage);
+                 Mat bitImage = new Mat();
+                 CvInvoke.BitwiseAnd(img, mask, bitImage);
 
-                if(((BlobParams)parameter).polarity == "Dark blobs, Light background")
-                {
-                    CvInvoke.BitwiseNot(mask, mask);
-                    CvInvoke.BitwiseOr(mask, bitImage, bitImage);
-                }
+                 if(((BlobParams)parameter).polarity == "Dark blobs, Light background")
+                 {
+                     CvInvoke.BitwiseNot(mask, mask);
+                     CvInvoke.BitwiseOr(mask, bitImage, bitImage);
+                 }
 
-                image = new Mat(bitImage, region);
-                bitImage?.Dispose();
-                mask?.Dispose();*/
-            
+                 image = new Mat(bitImage, region);
+                 bitImage?.Dispose();
+                 mask?.Dispose();*/
+
 
             blobResults?.Dispose();
             blobResults = new BlobResults();
 
-            if(((BlobToolControl)m_toolControl) != null)
+            if (((BlobToolControl)m_toolControl) != null)
                 parameter = ((BlobToolControl)m_toolControl).BlobParams;
             else
                 parameter = new BlobParams();
@@ -174,7 +151,6 @@ namespace OpenCV_Vision_Pro
             contourByRow.Clear();
             //================================================= Pre-Processing ============================================
             Mat filter_image = new Mat();
-            //CvInvoke.BilateralFilter(image, filter_image, 9, 20, 20);
             CvInvoke.GaussianBlur(image, filter_image, new Size(3, 3), 0);
 
             imageClone = GetThresholdImage(filter_image, imageClone);
@@ -191,7 +167,7 @@ namespace OpenCV_Vision_Pro
             //====================================== Find Blobs => Contours ===============================================
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             Mat hierarchy = new Mat();
-            
+
             CvInvoke.FindContours(imageClone, contours, hierarchy, RetrType.Tree, ChainApproxMethod.ChainApproxSimple);
             //=============================================================================================================
 
@@ -200,11 +176,11 @@ namespace OpenCV_Vision_Pro
             using (Brush grayBrush = new SolidBrush(Color.Gray))
             using (Graphics graphics = Graphics.FromImage(combinedImage))
             {
-                
+
                 graphics.FillRectangle(grayBrush, new Rectangle(0, 0, image.Width, image.Height));
                 Stack<int> stack = new Stack<int>();
                 stack.Push(0);
-                BlobRecursiveRun(hierarchy, contours,true, combinedImage,stack);
+                BlobRecursiveRun(hierarchy, contours, true, combinedImage, stack);
                 blobResults.resultImage = combinedImage.ToMat();
 
                 grayBrush.Dispose();
@@ -218,7 +194,7 @@ namespace OpenCV_Vision_Pro
             image.Dispose();
         }
 
-        public  object showResult()
+        public object showResult()
         {
             resultSource?.Dispose();
 
@@ -227,44 +203,22 @@ namespace OpenCV_Vision_Pro
                 return resultSource;
             if (m_toolControl == null)
                 return resultSource;
-            
+
             SortableBindingList<BlobData> resultList = new SortableBindingList<BlobData>();
             resultSource.DataSource = resultList;
-            
+
             foreach (BlobData r in blobResults.blobs)
                 resultList.Add(r);
-           
+
             return resultSource;
         }
 
-        public  void showResultImages()
+        public void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".BlobImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".BlobImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".BlobImage"] = blobResults.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".BlobImage", blobResults.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".BlobImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".BlobImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".BlobImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".BlobImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".BlobImage"] = blobResults.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".BlobImage", blobResults.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".BlobImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".BlobImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, blobResults.resultImage, ToolName, "BlobImage");
         }
 
-        public  void Dispose()
+        public void Dispose()
         {
             blobResults?.Dispose();
             m_toolControl?.Dispose();
@@ -310,7 +264,7 @@ namespace OpenCV_Vision_Pro
                         BlobData m_blob = new BlobData();
                         double CenterMassX = Math.Round(m_moments.M10 / m_moments.M00, 4);
                         double CenterMassY = Math.Round(m_moments.M01 / m_moments.M00, 4);
-
+                        
                         m_blob.ID = index;
                         m_blob.Area = m_moments.M00;
                         m_blob.CenterMassX = CenterMassX;
@@ -449,7 +403,7 @@ namespace OpenCV_Vision_Pro
                         BlobRecursiveRun(hierarchy, contours, !isBlob, combinedImage, childStack);
 
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
                 }
@@ -498,10 +452,10 @@ namespace OpenCV_Vision_Pro
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                MessageBox.Show("Input Image Error in "+ToolName);
+                MessageBox.Show("Input Image Error in " + ToolName);
             }
             return imageClone;
         }
     }
-    
+
 }

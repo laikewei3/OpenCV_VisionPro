@@ -1,57 +1,28 @@
-﻿import cv2
+﻿import open3d as o3d
 import numpy as np
+import laspy
+import PyO3DHelperClass
 
-images = []
-images.append(cv2.imread("C:/Users/T0571/Downloads/HDR TUTO/1.JPG"))
-images.append(cv2.imread("C:/Users/T0571/Downloads/HDR TUTO/2.JPG"))
-images.append(cv2.imread("C:/Users/T0571/Downloads/HDR TUTO/3.JPG"))
-images.append(cv2.imread("C:/Users/T0571/Downloads/HDR TUTO/4.JPG"))
+path = "C://Users//T0571//Downloads//ALS2018_UP_Golm_06May2018.laz"
+pc = laspy.read(path)
 
-times = np.array([ 1/30.0, 0.25, 2.5, 15.0 ], dtype=np.float32)
-
-# Align input images
-#alignMTB = cv2.createAlignMTB()
-#alignMTB.process(images, images)
-
-# Obtain Camera Response Function (CRF)
-calibrateDebevec = cv2.createCalibrateDebevec()
-responseDebevec = calibrateDebevec.process(images, times)
-
-# Merge images into an HDR linear image
-mergeDebevec = cv2.createMergeDebevec()
-hdrDebevec = mergeDebevec.process(images, times, responseDebevec)
-cv2.imshow("HDR", hdrDebevec)
+xyz = np.vstack((pc.x,pc.y,pc.z)).transpose()
+print(xyz.shape)
 
 
+pcd = o3d.geometry.PointCloud()
+pcd.points = o3d.utility.Vector3dVector(xyz)
 
-# Tonemap using Drago's method to obtain 24-bit color image
-tonemapDrago = cv2.createTonemapDrago(1.0, 0.7)
-ldrDrago = tonemapDrago.process(hdrDebevec)
-ldrDrago = 3 * ldrDrago
-cv2.imshow("ldr",ldrDrago)
-cv2.waitKey(10000)
-"""
-#Ask the user for url input
-#url = "https://www.youtube.com/watch?v=_QoGyX2kgxc"
+pcd.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=1,max_nn=32))
+#o3d.visualization.draw_geometries([pcd])
 
-#video = pafy.new(url)
-#best = video.getbest(preftype="mp4")
+pcd.orient_normals_to_align_with_direction([0.,0.,1.])
 
-#cap = cv2.VideoCapture(best.url)
+#o3d.visualization.draw_geometries([pcd])
 
-#Asking the user for video start time and duration in seconds
-#milliseconds = 1000
-#start_time = int(input("Enter Start time: "))
-#end_time = int(input("Enter Length: "))
-#end_time = start_time + end_time
+pcd = pcd.voxel_down_sample(voxel_size=2)
+o3d.visualization.draw_geometries([pcd])
 
-# Passing the start and end time for CV2
-#cap.set(cv2.CAP_PROP_POS_MSEC, start_time*milliseconds)
-
-#Will execute till the duration specified by the user
-#while True: #and cap.get(cv2.CAP_PROP_POS_MSEC)<=end_time*milliseconds:
-  #      success, img = cap.read()
-   #     cv2.imshow("Image", img)
-   #     cv2.waitKey(10)
-"""
-
+mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd,0.7)
+mesh.compute_vertex_normals()
+o3d.visualization.draw_geometries([mesh],mesh_show_back_face=True)

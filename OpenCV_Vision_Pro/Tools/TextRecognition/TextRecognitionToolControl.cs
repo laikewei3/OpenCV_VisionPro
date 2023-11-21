@@ -1,11 +1,10 @@
 ﻿using OpenCV_Vision_Pro.Interface;
-using System.Collections;
 using System;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class TextRecognitionToolControl : UserControl, UserControlBase
+    public partial class TextRecognitionToolControl : UserControl, IUserDataControl
     {
         public DataGridView resultDataGrid { get; set; }
         public ROI m_roi { get { return TextRecognitionParams.m_roi; } }

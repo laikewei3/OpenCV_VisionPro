@@ -1,20 +1,12 @@
 ﻿using OpenCV_Vision_Pro.Interface;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ImageSegmentor
 {
-    public partial class ColorSegmentorToolControl : UserControl, ColorUserControlBase
+    public partial class ColorSegmentorToolControl : UserControl, IColorUserControlBase
     {
         public DataGridView resultDataGrid { get; set; }
-
         public ROI m_roi { get { return ColorSegmentorParams.m_roi; } }
         public IParams parameter { get; set; }
         public ColorSegmentorParams ColorSegmentorParams { get; set; }

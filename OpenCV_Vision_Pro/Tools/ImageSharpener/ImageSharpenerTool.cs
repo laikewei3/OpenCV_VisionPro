@@ -12,18 +12,15 @@ namespace OpenCV_Vision_Pro
 {
     public class SharpenerParams : IParams
     {
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public string runMode { get; set; } = "Sharper";
         public double gamma { get; set; } = 1.0;
     }
-    public class ImageSharpenerTool : IToolBase
+    public class ImageSharpenerTool : IToolData
     {
         public  string ToolName { get; set; }
         public  AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public  BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
-        public  UserControlBase m_toolControl { get; set; }
-        public  Rectangle m_rectROI { get; set; }
+        public  IUserControlBase m_toolControl { get; set; }
         public  IParams parameter { get; set; } = new SharpenerParams();
         public  BindingSource resultSource { get; set; }
 
@@ -41,12 +38,6 @@ namespace OpenCV_Vision_Pro
 
         public  void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new ImageSharpenerToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -138,40 +129,12 @@ namespace OpenCV_Vision_Pro
 
         public  void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".SharpenerImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".SharpenerImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".SharpenerImage"] = SharpenerResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".SharpenerImage", SharpenerResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".SharpenerImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".SharpenerImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".SharpenerImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".SharpenerImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".SharpenerImage"] = SharpenerResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".SharpenerImage", SharpenerResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".SharpenerImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".SharpenerImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, SharpenerResult.resultImage, ToolName, "SharpenerImage");
         }
 
-        private class SharpenerResults : IDisposable, IToolResult
+        private class SharpenerResults : IToolResult
         {
-            public Mat resultImage { get; set; }
             public double scoreVariance { get; set; }
-
-            public void Dispose()
-            {
-                resultImage?.Dispose();
-            }
         }
 
     }

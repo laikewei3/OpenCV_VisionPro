@@ -1,15 +1,13 @@
-﻿using Emgu.CV.Structure;
-using Emgu.CV;
+﻿using Emgu.CV;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using OpenCV_Vision_Pro.Interface;
-using System.Collections;
 
 namespace OpenCV_Vision_Pro.LineSegment
 {
-    public partial class LineSegmentToolControl : UserControl, UserControlBase
+    public partial class LineSegmentToolControl : UserControl, IUserDataControl
     {
         public Mat resultSelectedImage { get; set; } = new Mat();
         public LineSegmentParams LineSegmentParams { get; set; }

@@ -1,7 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Emgu.CV.UI;
 using Emgu.CV.Util;
 using OpenCV_Vision_Pro.Interface;
 using System;
@@ -17,13 +16,11 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
         public double P1 { get; set; } = 1.0;
         public double P2 { get; set; } = 1.0;
         public double P3 { get; set; } = 1.0;
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
     }
 
-    public class ArithmeticTool : ISimpleToolBase
+    public class ArithmeticTool : IBaseTool
     {
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public IParams parameter { get; set; } = new ArithmeticParams();
         public IToolResult toolResult { get; set; }
         public ArithmeticResult ArithmeticResult { get { return (ArithmeticResult)toolResult; } set { toolResult = value; } }
@@ -263,12 +260,5 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
     }
 
     public class ArithmeticResult : IToolResult, IDisposable
-    {
-        public Mat resultImage { get; set;}
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
-    }
+    {}
 }

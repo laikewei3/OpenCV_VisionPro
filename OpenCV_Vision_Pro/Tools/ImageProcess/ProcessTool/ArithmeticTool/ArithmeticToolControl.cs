@@ -4,9 +4,8 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
 {
-    public partial class ArithmeticToolControl : UserControl, UserControlBase
+    public partial class ArithmeticToolControl : UserControl, IUserControlBase
     {
-        public DataGridView resultDataGrid { get; set; }
         public ROI m_roi { get { return ArithmeticParams.m_roi; } }
         public IParams parameter { get; set; }
         public ArithmeticParams ArithmeticParams { get; private set; }
@@ -16,10 +15,6 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
             InitializeComponent(); 
             parameter = ArithmeticParams;
             this.ArithmeticParams = (ArithmeticParams)parameter;
-        }
-        
-        public void SetDataSource(object bs)
-        {
         }
 
         private void Arithmetic_Load(object sender, EventArgs e)

@@ -1,23 +1,24 @@
 ﻿using OpenCV_Vision_Pro.Interface;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    public interface UserControlBase : IDisposable
+    public interface IUserDataControl : IUserControlBase
     {
         DataGridView resultDataGrid { get; set; }
-        ROI m_roi { get; }
-        IParams parameter { get; set; }
+        
         void SetDataSource(object bs);
     }
 
-    public interface ColorUserControlBase : UserControlBase
+    public interface IUserControlBase : IDisposable
+    {
+        ROI m_roi { get; }
+
+        IParams parameter { get; set; }
+    }
+
+    public interface IColorUserControlBase : IUserDataControl
     {
         ColorTools m_colorTools { get; set; }
     }

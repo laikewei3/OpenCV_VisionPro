@@ -1,24 +1,18 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using MS.WindowsAPICodePack.Internal;
 using OpenCV_Vision_Pro.Interface;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Windows.Media;
 using ZXing;
 using ZXing.Common;
-using ZXing.Datamatrix;
 
 namespace OpenCV_Vision_Pro.Tools.ID
 {
     public class IDParams : IParams
     {
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public string mode { get; set; } = "BarCode";
     }
 
@@ -33,17 +27,12 @@ namespace OpenCV_Vision_Pro.Tools.ID
         }
     }
 
-    public class IDResult : IToolResult, IDisposable
+    public class IDResult : IToolResult
     {
-        public Mat resultImage { get; set; }
         public BindingList<IDdata> idList { get; set; } = new BindingList<IDdata>();
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
-    public class IDTool : IToolBase
+
+    public class IDTool : IToolData
     {
         public string ToolName { get; set; }
         public IDTool(string toolName)
@@ -54,10 +43,9 @@ namespace OpenCV_Vision_Pro.Tools.ID
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
         public BindingSource resultSource { get; set; }
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public IParams parameter { get; set; } = new IDParams();
         public IToolResult toolResult { get; set; }
-        public Rectangle m_rectROI { get; set; }
         private IDResult IDResult { get { return (IDResult)toolResult; } set { toolResult = value; } }
 
         public void Dispose()
@@ -70,12 +58,6 @@ namespace OpenCV_Vision_Pro.Tools.ID
 
         public void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new IDToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -124,7 +106,7 @@ namespace OpenCV_Vision_Pro.Tools.ID
             else
             {
                 Bitmap bMap = image.ToBitmap();
-                LuminanceSource source = new RGBLuminanceSource(bMap.ToImage<Bgr, byte>().Bytes,bMap.Width,bMap.Height);
+                LuminanceSource source = new RGBLuminanceSource(bMap.ToImage<Bgr, byte>().Bytes, bMap.Width, bMap.Height);
                 bMap.Dispose();
 
                 BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
@@ -132,7 +114,7 @@ namespace OpenCV_Vision_Pro.Tools.ID
                 if (result != null)
                 {
                     ResultPoint[] points = result.ResultPoints;
-                    Rectangle loc = new Rectangle((int)points[1].X, (int)points[1].Y, (int)(points[2].X - points[1].X), (int)(points[0].Y - points[1].Y)); 
+                    Rectangle loc = new Rectangle((int)points[1].X, (int)points[1].Y, (int)(points[2].X - points[1].X), (int)(points[0].Y - points[1].Y));
                     Point[] pointArr = { loc.Location, new Point(loc.Size.Width, loc.Size.Height) };
                     if (!region.IsEmpty)
                     {
@@ -150,7 +132,7 @@ namespace OpenCV_Vision_Pro.Tools.ID
                     CvInvoke.Rectangle(imageClone, loc, new MCvScalar(0, 0, 255), 4);
                 }
             }
-            
+
 
             IDResult.resultImage = imageClone.Clone();
             imageClone.Dispose();
@@ -172,29 +154,7 @@ namespace OpenCV_Vision_Pro.Tools.ID
 
         public void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".ID"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".ID"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".ID"] = IDResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".ID", IDResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".ID"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".ID");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".ID"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".ID"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".ID"] = IDResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".ID", IDResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".ID"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".ID");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, IDResult.resultImage, ToolName, "ID");
         }
     }
 }

@@ -9,19 +9,15 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
 {
-    public class PaintParams:IParams
+    public class PaintParams : IParams
     {
-        public string PaintMode { get; set; } = "No Rotation/Flip";
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
         public List<Point> InPaintPoints { get; set; } = new List<Point>();
         public int paintSize { get; set; } = 5;
     }
 
-    public class PaintTool : IToolBase
+    public class PaintTool : ITool
     {
-        public UserControlBase m_toolControl { get; set; }
-        public Rectangle m_rectROI { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public IParams parameter { get; set; } = new PaintParams();
         public IToolResult toolResult { get; set; }
         public PaintResult PaintResult { get { return (PaintResult)toolResult; } set { toolResult = value; } }
@@ -38,16 +34,13 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
         public void Dispose()
         {
             m_toolControl?.Dispose();
+            resultSource?.Dispose();
+            toolResult?.Dispose();
+            m_bitmapList?.Dispose();
         }
 
         public void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new PaintToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -55,7 +48,7 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
         {
             PaintResult?.Dispose();
             PaintResult = new PaintResult();
-            
+
             if (((PaintParams)parameter).InPaintPoints.Count > 0)
             {
                 if (image.NumberOfChannels > 3)
@@ -74,46 +67,13 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
             }
         }
 
-        public object showResult()
-        {
-            return null;
-        }
-
         public void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".PaintImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".PaintImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".PaintImage"] = PaintResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".PaintImage", PaintResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".PaintImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".PaintImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".PaintImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".PaintImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".PaintImage"] = PaintResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".PaintImage", PaintResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".PaintImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".PaintImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, PaintResult.resultImage, ToolName, "PaintImage");
         }
     }
 
-    public class PaintResult : IToolResult, IDisposable
+    public class PaintResult : IToolResult
     {
-        public Mat resultImage { get; set;}
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 }

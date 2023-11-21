@@ -9,9 +9,8 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ImageStacking
 {
-    public partial class ImageStackingToolControl : UserControl, UserControlBase
+    public partial class ImageStackingToolControl : UserControl, IUserControlBase
     {
-        public DataGridView resultDataGrid { get; set; }
 
         public ROI m_roi { get { return StackingParams.m_roi; } }
 
@@ -27,9 +26,6 @@ namespace OpenCV_Vision_Pro.Tools.ImageStacking
             this.StackingParams.m_roi.Dock = DockStyle.Top;
             this.Controls.Add(StackingParams.m_roi);
         }
-
-        public void SetDataSource(object bs)
-        { }
 
         private void ImageStackingToolContorl_Load(object sender, EventArgs e)
         {

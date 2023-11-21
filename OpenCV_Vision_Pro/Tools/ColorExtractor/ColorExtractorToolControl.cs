@@ -1,17 +1,10 @@
 ﻿using OpenCV_Vision_Pro.Interface;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro.Tools.ImageSegmentor
 {
-    public partial class ColorExtractorToolControl : UserControl, ColorUserControlBase
+    public partial class ColorExtractorToolControl : UserControl, IColorUserControlBase
     {
         public DataGridView resultDataGrid { get; set; }
 
@@ -41,8 +34,7 @@ namespace OpenCV_Vision_Pro.Tools.ImageSegmentor
         }
 
         public void SetDataSource(object bs)
-        {
-        }
+        {}
 
         private void ColorExtractorToolControl_Load(object sender, EventArgs e)
         {

@@ -1,22 +1,14 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.ML;
 using Emgu.CV.Structure;
-using OpenCV_Vision_Pro.LineSegment;
 using OpenCV_Vision_Pro.Interface;
-using OpenCV_Vision_Pro.Properties;
 using Shared.ComponentModel.SortableBindingList;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-using System.Security.Cryptography;
-using System.Windows.Media;
 using Emgu.CV.Util;
-using System.Linq.Dynamic.Core;
 
 namespace OpenCV_Vision_Pro.LineSegment
 {
@@ -29,18 +21,15 @@ namespace OpenCV_Vision_Pro.LineSegment
         public double maxSlope { get; set; } = 4;
         public int maxResult { get; set; } = 1;
         public int contrastThreshold { get; set; } = 50;
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
     }
 
-    public class LineSegmentTool : IToolBase
+    public class LineSegmentTool : IToolData
     {
         public string ToolName { get; set; }
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
         public BindingSource resultSource { get; set; }
-        public Rectangle m_rectROI { get; set; }
         public IParams parameter { get; set; } = new LineSegmentParams();
         public IToolResult toolResult { get; set; }
         private LineSegmentResult LineSegmentResult { get { return (LineSegmentResult)toolResult; } set { toolResult = value; } }
@@ -54,12 +43,6 @@ namespace OpenCV_Vision_Pro.LineSegment
 
         public void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new LineSegmentToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -267,29 +250,7 @@ namespace OpenCV_Vision_Pro.LineSegment
 
         public void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".LineSegmentImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".LineSegmentImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".LineSegmentImage"] = LineSegmentResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".LineSegmentImage", LineSegmentResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".LineSegmentImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".LineSegmentImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".LineSegmentImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".LineSegmentImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".LineSegmentImage"] = LineSegmentResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".LineSegmentImage", LineSegmentResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".LineSegmentImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".LineSegmentImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, LineSegmentResult.resultImage, ToolName, "LineSegmentImage");
         }
 
         public void Dispose()
@@ -358,15 +319,9 @@ namespace OpenCV_Vision_Pro.LineSegment
 
     }
 
-    public class LineSegmentResult : IDisposable, IToolResult
+    public class LineSegmentResult : IToolResult
     {
         public SortableBindingList<LineSegments> LineSegmentEdges { get; set; } = new SortableBindingList<LineSegments>();
-        public Mat resultImage { get; set; }
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 
     public class LineSegments
@@ -379,14 +334,8 @@ namespace OpenCV_Vision_Pro.LineSegment
             this.Angle = angle;
         }
 
-        //public double Score { get; set; }
         public int Edge0 { get; set; }
         public double Distance { get; set; }
         public double Angle { get; set; }
-        //public double Position { get; set; }
-        //public double X { get; set; }
-        //public double Y { get; set; }
-        //public double ScoringFunction0 { get; set; }
-        //public double Contrast_E0 { get; set; }
     }
 }

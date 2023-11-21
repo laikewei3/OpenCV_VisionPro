@@ -9,13 +9,11 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
     public class RotateFlipParams:IParams
     {
         public string rotateFlipMode { get; set; } = "No Rotation/Flip";
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
     }
 
-    public class RotateFlipTool : ISimpleToolBase
+    public class RotateFlipTool : IBaseTool
     {
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public IParams parameter { get; set; } = new RotateFlipParams();
         public IToolResult toolResult { get; set; }
         public RotateFlipResult RotateFlipResult { get { return (RotateFlipResult)toolResult; } set { toolResult = value; } }
@@ -72,12 +70,5 @@ namespace OpenCV_Vision_Pro.Tools.ImageProcess.ProcessTool
     }
 
     public class RotateFlipResult : IToolResult, IDisposable
-    {
-        public Mat resultImage { get; set;}
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
-    }
+    {}
 }

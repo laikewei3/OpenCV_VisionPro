@@ -9,7 +9,7 @@ using OpenCV_Vision_Pro.Interface;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class BlobToolControl : UserControl, UserControlBase
+    public partial class BlobToolControl : UserControl, IUserDataControl
     {
         public Mat resultSelectedImage { get; set; }
         public BlobParams BlobParams { get; private set; }

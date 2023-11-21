@@ -23,7 +23,7 @@ namespace OpenCV_Vision_Pro
 {
     public partial class DisplayControl : UserControl
     {
-        public IToolBase toolBase { get; set; }
+        public ITool toolBase { get; set; }
        
         private bool drawLines = false;
 

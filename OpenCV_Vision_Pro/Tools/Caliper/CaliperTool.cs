@@ -16,15 +16,9 @@ using System.Windows.Forms;
 
 namespace OpenCV_Vision_Pro
 {
-    public class CaliperResult : IDisposable, IToolResult
+    public class CaliperResult : IToolResult, IDisposable
     {
         public SortableBindingList<Edges> caliperEdges { get; set; } = new SortableBindingList<Edges>();
-        public Mat resultImage { get; set; }
-
-        public void Dispose()
-        {
-            resultImage?.Dispose();
-        }
     }
 
     public class Edges
@@ -87,19 +81,16 @@ namespace OpenCV_Vision_Pro
         public double estimatedWidth { get; set; } = 10;
         public int maxResult { get; set; } = 1;
         public int contrastThreshold { get; set; } = 5;
-        public ROI m_roi { get; set; } = new ROI();
-        public bool m_boolHasROI { get; set; } = false;
     }
 
-    public partial class CaliperTool : IToolBase
+    public partial class CaliperTool : IToolData
     {
         public string ToolName { get; set; }
-        public UserControlBase m_toolControl { get; set; }
+        public IUserControlBase m_toolControl { get; set; }
         public AutoDisposeDict<string, Mat> m_bitmapList { get; set; }
         public BindingList<string> m_DisplaySelection { get; set; } = new BindingList<string>();
         public BindingSource resultSource { get; set; }
-        public Rectangle m_rectROI { get; set; }
-
+        
         public IParams parameter { get; set; } = new CaliperParams();
 
         public IToolResult toolResult { get; set; }
@@ -115,12 +106,6 @@ namespace OpenCV_Vision_Pro
 
         public  void getGUI()
         {
-            if (m_rectROI != null && !m_rectROI.IsEmpty)
-            {
-                parameter.m_roi.location = new Point(m_rectROI.X, m_rectROI.Y);
-                parameter.m_roi.ROI_Width = m_rectROI.Width;
-                parameter.m_roi.ROI_Height = m_rectROI.Height;
-            }
             m_toolControl = new CaliperToolControl(parameter) { Dock = DockStyle.Fill };
         }
 
@@ -231,29 +216,7 @@ namespace OpenCV_Vision_Pro
 
         public  void showResultImages()
         {
-            if (Form1.m_bitmapList.ContainsKey("LastRun." + ToolName + ".CaliperImage"))
-            {
-                Form1.m_bitmapList["LastRun." + ToolName + ".CaliperImage"]?.Dispose();
-                Form1.m_bitmapList["LastRun." + ToolName + ".CaliperImage"] = caliperResult.resultImage.Clone();
-            }
-            else
-            {
-                Form1.m_bitmapList.Add("LastRun." + ToolName + ".CaliperImage", caliperResult.resultImage.Clone());
-                if (!Form1.m_form1DisplaySelection.Contains("LastRun." + ToolName + ".CaliperImage"))
-                    Form1.m_form1DisplaySelection.Add("LastRun." + ToolName + ".CaliperImage");
-            }
-
-            if (m_bitmapList.ContainsKey("LastRun." + ToolName + ".CaliperImage"))
-            {
-                m_bitmapList["LastRun." + ToolName + ".CaliperImage"]?.Dispose();
-                m_bitmapList["LastRun." + ToolName + ".CaliperImage"] = caliperResult.resultImage.Clone();
-            }
-            else
-            {
-                m_bitmapList.Add("LastRun." + ToolName + ".CaliperImage", caliperResult.resultImage.Clone());
-                if (!m_DisplaySelection.Contains("LastRun." + ToolName + ".CaliperImage"))
-                    m_DisplaySelection.Add("LastRun." + ToolName + ".CaliperImage");
-            }
+            HelperClass.showResultImagesStatic(m_bitmapList, m_DisplaySelection, caliperResult.resultImage, ToolName, "CaliperImage");
         }
 
         public  void Dispose()

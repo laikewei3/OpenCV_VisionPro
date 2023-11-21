@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace OpenCV_Vision_Pro
 {
-    public partial class CaliperToolControl : UserControl, UserControlBase
+    public partial class CaliperToolControl : UserControl, IUserDataControl
     {
         public Mat resultSelectedImage { get; set; } = new Mat();
         public CaliperParams CaliperParams { get; set;}

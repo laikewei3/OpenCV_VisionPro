@@ -163,6 +163,13 @@
     <Compile Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.Designer.cs">
       <DependentUpon>ArithmeticToolControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\ImageStitching\ImageStitchingTool.cs" />
+    <Compile Include="Tools\ImageStitching\ImageStitchingToolControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\ImageStitching\ImageStitchingToolControl.Designer.cs">
+      <DependentUpon>ImageStitchingToolControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\ImageStacking\ImageStackingTool.cs" />
     <Compile Include="Tools\ImageStacking\ImageStackingToolControl.cs">
       <SubType>UserControl</SubType>
@@ -278,7 +285,7 @@
     <Compile Include="Display + ROI\ROI.Designer.cs">
       <DependentUpon>ROI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Interface\IToolBase.cs" />
+    <Compile Include="Interface\ITool.cs" />
     <Compile Include="Tools\ColorSegmentor\ColorSegmentorTool.cs" />
     <Compile Include="Tools\ColorSegmentor\ColorSegmentorToolControl.cs">
       <SubType>UserControl</SubType>
@@ -299,7 +306,7 @@
     <Compile Include="ToolWindow.Designer.cs">
       <DependentUpon>ToolWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Interface\UserControlBase.cs" />
+    <Compile Include="Interface\IUserDataControl.cs" />
     <Compile Include="DataContainer\ToolsTreeNode.cs" />
     <EmbeddedResource Include="AIForm.resx">
       <DependentUpon>AIForm.cs</DependentUpon>
@@ -322,6 +329,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.resx">
       <DependentUpon>ArithmeticToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\ImageStitching\ImageStitchingToolControl.resx">
+      <DependentUpon>ImageStitchingToolControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageStacking\ImageStackingToolControl.resx">
       <DependentUpon>ImageStackingToolControl.cs</DependentUpon>
@@ -362,8 +372,8 @@
     <EmbeddedResource Include="Tools\ImageConvert\ImageConvertToolControl.resx">
       <DependentUpon>ImageConvertToolControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Interface\UserControlBase.resx">
-      <DependentUpon>UserControlBase.cs</DependentUpon>
+    <EmbeddedResource Include="Interface\IUserDataControl.resx">
+      <DependentUpon>IUserDataControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -561,6 +571,10 @@
   <ItemGroup>
     <None Include="Resources\3d.png" />
     <Content Include="PythonGUI.py" />
+    <None Include="Resources\stitch.png" />
+    <None Include="Resources\stack.png" />
+    <None Include="Resources\paint.png" />
+    <None Include="Resources\imagefile.png" />
     <Content Include="testSIFT.py" />
     <None Include="Resources\transform.png" />
     <None Include="Resources\polarUnwrap.png" />
