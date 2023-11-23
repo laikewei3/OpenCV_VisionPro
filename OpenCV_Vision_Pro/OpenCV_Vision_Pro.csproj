@@ -177,6 +177,13 @@
     <Compile Include="Tools\ImageBlending\ImageBlendingToolControl.Designer.cs">
       <DependentUpon>ImageBlendingToolControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\ImageProcess\ProcessTool\SuperResolutionTool\SuperResolutionTool.cs" />
+    <Compile Include="Tools\ImageProcess\ProcessTool\SuperResolutionTool\SuperResolutionToolControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\ImageProcess\ProcessTool\SuperResolutionTool\SuperResolutionToolControl.Designer.cs">
+      <DependentUpon>SuperResolutionToolControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\ImageStitching\ImageStitchingTool.cs" />
     <Compile Include="Tools\ImageStitching\ImageStitchingToolControl.cs">
       <SubType>UserControl</SubType>
@@ -349,6 +356,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageBlending\ImageBlendingToolControl.resx">
       <DependentUpon>ImageBlendingToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\SuperResolutionTool\SuperResolutionToolControl.resx">
+      <DependentUpon>SuperResolutionToolControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageStitching\ImageStitchingToolControl.resx">
       <DependentUpon>ImageStitchingToolControl.cs</DependentUpon>

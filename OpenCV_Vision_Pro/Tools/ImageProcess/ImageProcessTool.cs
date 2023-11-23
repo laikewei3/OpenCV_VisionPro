@@ -59,7 +59,7 @@ namespace OpenCV_Vision_Pro
             parameter.m_roi.ROIRectangle = HelperClass.getROIImage(img, region, parameter.m_roi.points, out Mat image);
             ProcessResult?.Dispose();
             ProcessResult = new ProcessResults();
-
+            
             for(int i = 0; i < ((ProcessParams)parameter).toolProcessList.Count; i++)
             {
                 IBaseTool tool = ((ProcessParams)parameter).toolProcessList[i].toolProcess;

@@ -66,6 +66,10 @@ namespace OpenCV_Vision_Pro
                     tool = new ArithmeticTool();
                     ((ArithmeticTool)tool).parameter = new ArithmeticParams();
                     break;
+                case "Resize":
+                    tool = new SuperResolutionTool();
+                    ((SuperResolutionTool)tool).parameter = new SuperResolutionParams();
+                    break;
                 default:
                     MessageBox.Show("Process Error");
                     break;

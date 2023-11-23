@@ -104,6 +104,7 @@ class PyO3DHelperClass:
                 source, target, max_correspondence_distance_fine,
                 icp_fine.transformation)
             return transformation_icp, information_icp
+        
         def full_registration(pcds, max_correspondence_distance_coarse,
                                 max_correspondence_distance_fine):
             pose_graph = o3d.pipelines.registration.PoseGraph()

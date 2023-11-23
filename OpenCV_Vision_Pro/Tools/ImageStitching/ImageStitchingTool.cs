@@ -79,7 +79,7 @@ namespace OpenCV_Vision_Pro.Tools.ImageStitching
                 Mat processedImg = new Mat();
                 CvInvoke.CopyMakeBorder(output, processedImg, 10, 10, 10, 10, BorderType.Constant, new MCvScalar(0, 0, 0));
                 output.Dispose();
-
+                
                 Mat gray = new Mat();
                 CvInvoke.CvtColor(processedImg, gray, ColorConversion.Bgr2Gray);
                 Mat thresholdImg = new Mat();
