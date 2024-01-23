@@ -765,11 +765,11 @@ namespace OpenCV_Vision_Pro
 
         private void openDisplayInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EmptyForm ef = Application.OpenForms[this.ParentForm.Text + " Display"] as EmptyForm;
+            LoopStitch ef = Application.OpenForms[this.ParentForm.Text + " Display"] as LoopStitch;
             ef?.Close();
             ef?.Dispose();
 
-            EmptyForm emptyForm = new EmptyForm()
+            LoopStitch emptyForm = new LoopStitch()
             {
                 Name = this.ParentForm.Text + " Display",
                 Text = this.ParentForm.Text + " Display"
@@ -810,7 +810,7 @@ namespace OpenCV_Vision_Pro
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 if (saveFileDialog1.FileName != "" && image)
-                    CvInvoke.Imwrite(saveFileDialog1.FileName, m_display.Image);
+                    CvInvoke.Imwrite(saveFileDialog1.FileName, m_display.Image, new KeyValuePair<ImwriteFlags, int>(ImwriteFlags.PngCompression,9));
                 else if(saveFileDialog1.FileName != "")
                 {
                     using (MemoryStream ms = new MemoryStream())
@@ -819,10 +819,10 @@ namespace OpenCV_Vision_Pro
 
                         foreach (KeyValuePair<string, Mat> kvp in m_bitmapList)
                         {
-                            ZipArchiveEntry entry = zipArc.CreateEntry(kvp.Key + ".jpg", CompressionLevel.Optimal);
+                            ZipArchiveEntry entry = zipArc.CreateEntry(kvp.Key + ".png", CompressionLevel.Optimal);
                             using (var entryStream = entry.Open())
                             {
-                                kvp.Value.ToBitmap().Save(entryStream, ImageFormat.Jpeg);
+                                kvp.Value.ToBitmap().Save(entryStream, ImageFormat.Png);
                             }
 
                         }

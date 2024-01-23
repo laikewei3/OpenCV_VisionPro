@@ -19,6 +19,7 @@ using System.Diagnostics;
 using OpenCV_Vision_Pro.Tools.ImageStacking;
 using OpenCV_Vision_Pro.Tools.ImageStitching;
 using OpenCV_Vision_Pro.Tools.ImageBlending;
+using OpenCV_Vision_Pro.Tools.Retina;
 
 namespace OpenCV_Vision_Pro
 {
@@ -508,7 +509,15 @@ namespace OpenCV_Vision_Pro
                     break;
                 case "imageBlendingToolToolStripMenuItem":
                     tool = new ImageBlendingTool("ImageBlendingTool" + (++HelperClass.m_dictToolCount["ImageBlendingTool"]).ToString());
-                    imageIndex = 17;
+                    imageIndex = 18;
+                    break;
+                case "retinaToolStripMenuItem":
+                    tool = new RetinaTool("RetinaTool" + (++HelperClass.m_dictToolCount["RetinaTool"]).ToString());
+                    imageIndex = 19;
+                    break;
+                case "retinexToolStripMenuItem":
+                    tool = new RetinaTool("RetinexTool" + (++HelperClass.m_dictToolCount["RetinexTool"]).ToString());
+                    imageIndex = 20;
                     break;
                 default:
                     MessageBox.Show("Invalid Tool Added");
@@ -818,6 +827,22 @@ namespace OpenCV_Vision_Pro
                 process?.CloseMainWindow();
                 process?.Dispose();
             }
+        }
+
+        private void m_loopStitchLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form form = Application.OpenForms["LoopStitch"];
+            if (form == null)
+            {
+                LoopStitch loopStitchForm = new LoopStitch();
+                loopStitchForm.Show();
+            }
+            else
+            {
+                form.Show();
+                form.BringToFront();
+            }
+            Hide();
         }
     }
 }

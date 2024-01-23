@@ -73,6 +73,26 @@ namespace OpenCV_Vision_Pro.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap bioinspired {
+            get {
+                object obj = ResourceManager.GetObject("bioinspired", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blend {
+            get {
+                object obj = ResourceManager.GetObject("blend", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap blob {
             get {
                 object obj = ResourceManager.GetObject("blob", resourceCulture);
@@ -316,6 +336,26 @@ namespace OpenCV_Vision_Pro.Properties {
         internal static System.Drawing.Bitmap process {
             get {
                 object obj = ResourceManager.GetObject("process", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap retina {
+            get {
+                object obj = ResourceManager.GetObject("retina", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap retinex {
+            get {
+                object obj = ResourceManager.GetObject("retinex", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

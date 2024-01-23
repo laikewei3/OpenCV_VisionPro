@@ -34,7 +34,9 @@ namespace OpenCV_Vision_Pro
         PaintTool,
         ImageStackingTool,
         ImageStitchingTool,
-        ImageBlendingTool
+        ImageBlendingTool,
+        RetinaTool,
+        RetinexTool
     }
 
     public static class HelperClass
@@ -59,13 +61,16 @@ namespace OpenCV_Vision_Pro
             {"ImagePaintTool",0 },
             {"ImageStackingTool",0 },
             {"ImageStitchingTool",0},
-            {"ImageBlendingTool",0}
+            {"ImageBlendingTool",0},
+            {"RetinaTool",0},
+            {"RetinexTool",0}
         };
 
         public static ImageList iconList = new ImageList()
         {
             Images = { Resources.blob, Resources.caliper, Resources.histogram, Resources.convert, Resources.segmentor, Resources.match, Resources.extractor, Resources.editor, Resources.line,
-                Resources.yolo, Resources.polarUnwrap, Resources.transform, Resources.ocr, Resources.process, Resources.id, Resources.paint, Resources.stack, Resources.stitch, Resources.stitch }
+                Resources.yolo, Resources.polarUnwrap, Resources.transform, Resources.ocr, Resources.process, Resources.id, Resources.paint, Resources.stack, Resources.stitch, 
+                Resources.blend, Resources.retina, Resources.retinex }
         };
 
         public static Size resize(int oriWidth, int oriHeight, int currWidth, int currHeight)

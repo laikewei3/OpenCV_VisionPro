@@ -1,22 +1,13 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Dnn;
-using Emgu.CV.Flann;
-using Emgu.CV.Structure;
-using Emgu.CV.Util;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using OpenCV_Vision_Pro.AITool;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Threading;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using Image = System.Drawing.Image;
 

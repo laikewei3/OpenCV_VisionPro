@@ -128,11 +128,11 @@
     <Compile Include="AITool\HandLandmarkDetection.cs" />
     <Compile Include="AITool\HumanPoseDetection.cs" />
     <Compile Include="Calibration.cs" />
-    <Compile Include="EmptyForm.cs">
+    <Compile Include="LoopStitch.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EmptyForm.Designer.cs">
-      <DependentUpon>EmptyForm.cs</DependentUpon>
+    <Compile Include="LoopStitch.Designer.cs">
+      <DependentUpon>LoopStitch.cs</DependentUpon>
     </Compile>
     <Compile Include="Interface\IAITool.cs" />
     <Compile Include="AITool\YoloDetection.cs" />
@@ -212,6 +212,13 @@
       <DependentUpon>RotateFlipToolControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\ImageProcess\ProcessTool\RotateFlipTool\RotateFlipTool.cs" />
+    <Compile Include="Tools\Retina\RetinaTool.cs" />
+    <Compile Include="Tools\Retina\RetinaToolControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\Retina\RetinaToolControl.Designer.cs">
+      <DependentUpon>RetinaToolControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\TextRecognition\TextRecognitionTool.cs" />
     <Compile Include="Tools\TextRecognition\TextRecognitionToolControl.cs">
       <SubType>UserControl</SubType>
@@ -331,12 +338,13 @@
     <Compile Include="DataContainer\ToolsTreeNode.cs" />
     <EmbeddedResource Include="AIForm.resx">
       <DependentUpon>AIForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Display + ROI\ColorTools.resx">
       <DependentUpon>ColorTools.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EmptyForm.resx">
-      <DependentUpon>EmptyForm.cs</DependentUpon>
+    <EmbeddedResource Include="LoopStitch.resx">
+      <DependentUpon>LoopStitch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -353,6 +361,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\ArithmeticTool\ArithmeticToolControl.resx">
       <DependentUpon>ArithmeticToolControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ImageBlending\ImageBlendingToolControl.resx">
       <DependentUpon>ImageBlendingToolControl.cs</DependentUpon>
@@ -372,6 +381,9 @@
     <EmbeddedResource Include="Tools\ImageProcess\ProcessTool\RotateFlipTool\RotateFlipToolControl.resx">
       <DependentUpon>RotateFlipToolControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\Retina\RetinaToolControl.resx">
+      <DependentUpon>RetinaToolControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tools\TextRecognition\TextRecognitionToolControl.resx">
       <DependentUpon>TextRecognitionToolControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -386,15 +398,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\Caliper\CaliperToolControl.resx">
       <DependentUpon>CaliperToolControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Display + ROI\DisplayControl.resx">
       <DependentUpon>DisplayControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ColorMatcher\ColorMatchToolControl.resx">
       <DependentUpon>ColorMatchToolControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ColorExtractor\ColorExtractorToolControl.resx">
       <DependentUpon>ColorExtractorToolControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\Histogram\HistogramToolControl.resx">
       <DependentUpon>HistogramToolControl.cs</DependentUpon>
@@ -519,6 +534,9 @@
     <PackageReference Include="pythonnet">
       <Version>3.0.3</Version>
     </PackageReference>
+    <PackageReference Include="SciSharp.TensorFlow.Redist-Windows-GPU">
+      <Version>2.10.3</Version>
+    </PackageReference>
     <PackageReference Include="Shared.ComponentModel.SortableBindingList">
       <Version>0.0.3</Version>
     </PackageReference>
@@ -536,6 +554,12 @@
     </PackageReference>
     <PackageReference Include="System.Management">
       <Version>7.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="TensorFlow.Keras">
+      <Version>0.15.0</Version>
+    </PackageReference>
+    <PackageReference Include="TensorFlow.NET">
+      <Version>0.150.0</Version>
     </PackageReference>
     <PackageReference Include="Tesseract">
       <Version>5.2.0</Version>
@@ -605,6 +629,10 @@
     <None Include="Resources\stack.png" />
     <None Include="Resources\paint.png" />
     <None Include="Resources\imagefile.png" />
+    <None Include="Resources\retinex.png" />
+    <None Include="Resources\retina.png" />
+    <None Include="Resources\blend.png" />
+    <None Include="Resources\bioinspired.png" />
     <Content Include="testSIFT.py" />
     <None Include="Resources\transform.png" />
     <None Include="Resources\polarUnwrap.png" />

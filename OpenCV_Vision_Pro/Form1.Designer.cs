@@ -57,6 +57,10 @@ namespace OpenCV_Vision_Pro
             this.imageStackingToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageStitchingToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageBlendingToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.bioInspiredToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.retinaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.retinexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_GetInputImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openImageFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,6 +79,7 @@ namespace OpenCV_Vision_Pro
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.m_labelTo3D = new System.Windows.Forms.LinkLabel();
+            this.m_loopStitchLabel = new System.Windows.Forms.LinkLabel();
             this.m_AddToolList.SuspendLayout();
             this.m_GetInputImageMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -114,9 +119,11 @@ namespace OpenCV_Vision_Pro
             this.textRecognitionToolToolStripMenuItem,
             this.iDToolToolStripMenuItem,
             this.toolStripSeparator2,
-            this.imageFileToolToolStripMenuItem});
+            this.imageFileToolToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.bioInspiredToolToolStripMenuItem});
             this.m_AddToolList.Name = "contextMenuStrip1";
-            this.m_AddToolList.Size = new System.Drawing.Size(188, 214);
+            this.m_AddToolList.Size = new System.Drawing.Size(188, 242);
             // 
             // imageToolToolStripMenuItem
             // 
@@ -302,10 +309,42 @@ namespace OpenCV_Vision_Pro
             // 
             // imageBlendingToolToolStripMenuItem
             // 
+            this.imageBlendingToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.blend;
             this.imageBlendingToolToolStripMenuItem.Name = "imageBlendingToolToolStripMenuItem";
             this.imageBlendingToolToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.imageBlendingToolToolStripMenuItem.Text = "Image Blending Tool";
             this.imageBlendingToolToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(184, 6);
+            // 
+            // bioInspiredToolToolStripMenuItem
+            // 
+            this.bioInspiredToolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.retinaToolStripMenuItem,
+            this.retinexToolStripMenuItem});
+            this.bioInspiredToolToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.bioinspired;
+            this.bioInspiredToolToolStripMenuItem.Name = "bioInspiredToolToolStripMenuItem";
+            this.bioInspiredToolToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.bioInspiredToolToolStripMenuItem.Text = "BioInspired Tool";
+            // 
+            // retinaToolStripMenuItem
+            // 
+            this.retinaToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.retina;
+            this.retinaToolStripMenuItem.Name = "retinaToolStripMenuItem";
+            this.retinaToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.retinaToolStripMenuItem.Text = "Retina";
+            this.retinaToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
+            // 
+            // retinexToolStripMenuItem
+            // 
+            this.retinexToolStripMenuItem.Image = global::OpenCV_Vision_Pro.Properties.Resources.retinex;
+            this.retinexToolStripMenuItem.Name = "retinexToolStripMenuItem";
+            this.retinexToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.retinexToolStripMenuItem.Text = "Retinex";
+            this.retinexToolStripMenuItem.Click += new System.EventHandler(this.AddToolMenuItem_Click);
             // 
             // m_GetInputImageMenu
             // 
@@ -511,25 +550,26 @@ namespace OpenCV_Vision_Pro
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.ColumnCount = 6;
+            this.tableLayoutPanel4.ColumnCount = 7;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 219F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
             this.tableLayoutPanel4.Controls.Add(this.m_labelToMLDL, 4, 0);
             this.tableLayoutPanel4.Controls.Add(this.m_RunBtnContinuous, 3, 0);
             this.tableLayoutPanel4.Controls.Add(this.m_BtnAddTool, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.m_labelTo3D, 5, 0);
             this.tableLayoutPanel4.Controls.Add(this.m_RunBtn, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.m_OpenBtn, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.m_loopStitchLabel, 6, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tableLayoutPanel4.Size = new System.Drawing.Size(644, 32);
             this.tableLayoutPanel4.TabIndex = 1;
             // 
@@ -548,6 +588,22 @@ namespace OpenCV_Vision_Pro
             this.m_labelTo3D.Text = "     Python3D";
             this.m_labelTo3D.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.m_labelTo3D.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_labelTo3D_LinkClicked);
+            // 
+            // m_loopStitchLabel
+            // 
+            this.m_loopStitchLabel.Image = global::OpenCV_Vision_Pro.Properties.Resources.stitch;
+            this.m_loopStitchLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_loopStitchLabel.Location = new System.Drawing.Point(523, 3);
+            this.m_loopStitchLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.m_loopStitchLabel.Name = "m_loopStitchLabel";
+            this.m_loopStitchLabel.Padding = new System.Windows.Forms.Padding(5);
+            this.m_loopStitchLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.m_loopStitchLabel.Size = new System.Drawing.Size(101, 26);
+            this.m_loopStitchLabel.TabIndex = 7;
+            this.m_loopStitchLabel.TabStop = true;
+            this.m_loopStitchLabel.Text = "       Loop Stitch";
+            this.m_loopStitchLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_loopStitchLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_loopStitchLabel_LinkClicked);
             // 
             // Form1
             // 
@@ -622,6 +678,11 @@ namespace OpenCV_Vision_Pro
         private System.Windows.Forms.ToolStripMenuItem imageStackingToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageStitchingToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageBlendingToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem bioInspiredToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem retinaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem retinexToolStripMenuItem;
+        private System.Windows.Forms.LinkLabel m_loopStitchLabel;
     }
 }
 

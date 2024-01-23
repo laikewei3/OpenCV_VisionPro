@@ -158,7 +158,7 @@ namespace OpenCV_Vision_Pro
         {
             m_bitmapList?.Dispose();
             m_toolControl?.Dispose();
-            m_PerspectiveTransformResult.Dispose();
+            m_PerspectiveTransformResult?.Dispose();
             resultSource?.Dispose();
         }
 
