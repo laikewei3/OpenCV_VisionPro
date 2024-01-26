@@ -119,6 +119,11 @@
             0,
             65536});
             this.overlapXNud.Location = new System.Drawing.Point(70, 55);
+            this.overlapXNud.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.overlapXNud.Name = "overlapXNud";
             this.overlapXNud.Size = new System.Drawing.Size(464, 20);
             this.overlapXNud.TabIndex = 2;
@@ -151,6 +156,11 @@
             0,
             65536});
             this.overlapYNud.Location = new System.Drawing.Point(70, 81);
+            this.overlapYNud.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.overlapYNud.Name = "overlapYNud";
             this.overlapYNud.Size = new System.Drawing.Size(464, 20);
             this.overlapYNud.TabIndex = 4;
@@ -170,6 +180,11 @@
             0,
             131072});
             this.AlignYNud.Location = new System.Drawing.Point(70, 133);
+            this.AlignYNud.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.AlignYNud.Name = "AlignYNud";
             this.AlignYNud.Size = new System.Drawing.Size(464, 20);
             this.AlignYNud.TabIndex = 5;
@@ -189,6 +204,11 @@
             0,
             131072});
             this.AlignXNud.Location = new System.Drawing.Point(70, 107);
+            this.AlignXNud.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.AlignXNud.Name = "AlignXNud";
             this.AlignXNud.Size = new System.Drawing.Size(464, 20);
             this.AlignXNud.TabIndex = 6;
@@ -337,6 +357,11 @@
             0,
             131072});
             this.minOverlapNud.Location = new System.Drawing.Point(70, 159);
+            this.minOverlapNud.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.minOverlapNud.Name = "minOverlapNud";
             this.minOverlapNud.Size = new System.Drawing.Size(464, 20);
             this.minOverlapNud.TabIndex = 14;
