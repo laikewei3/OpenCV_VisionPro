@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tensorflow;
 
 namespace OpenCV_Vision_Pro
 {
@@ -358,7 +359,7 @@ namespace OpenCV_Vision_Pro
             Console.WriteLine("Finding X Overlap using Cuda......");
             GpuMat sqdif_arr = new GpuMat(out_right_cnt - img1_left_pixel - min_overlap_count, 1, DepthType.Cv64F, 1);
             Size size = new Size(img1_left_pixel, output_right.Size.Height);
-          
+
             Parallel.For(0, out_right_cnt - img1_left_pixel - min_overlap_count,
                    x => {
                        CudaImage<Gray, byte> img = output_right.GetSubRect(new Rectangle(new Point(x, 0), size));
@@ -367,14 +368,14 @@ namespace OpenCV_Vision_Pro
                        CudaInvoke.Absdiff(img, img1_left, diff);
 
                        CudaImage<Gray, float> diff_float = diff.Convert<Gray, float>();
-                       MCvScalar sum_sqdif = CudaInvoke.AbsSum(diff_float);
+                       MCvScalar sum_sqdif = CudaInvoke.SqrSum(diff_float);
 
                        sqdif_arr.Row(x).SetTo(sum_sqdif);
                        diff.Dispose();
                        img.Dispose();
                        diff_float.Dispose();
                    });
-            
+
             double minVal = 0, maxVal = 0;
             Point minLoc = new Point(0, 0), maxLoc = minLoc;
             CudaInvoke.MinMaxLoc(sqdif_arr, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
@@ -422,7 +423,6 @@ namespace OpenCV_Vision_Pro
                     img1DOWN = img1UP = output_right_TOP = img1DOWN_TOP = output_right_BOTTOM = img1UP_BOTTOM = output_right_BOTTOM_diffDOWN = output_right_BOTTOM_diffUP = null;
                     diffDOWN = diffUP = new CudaImage<Gray, byte>();
                     CudaImage<Gray, float> diffDOWNf, diffUPf;
-                    diffDOWNf = diffUPf = new CudaImage<Gray, float>();
 
                     MCvScalar sum_sqdifDOWN, sum_sqdifUP;
 
@@ -459,8 +459,8 @@ namespace OpenCV_Vision_Pro
                     diffDOWNf = diffDOWN.Convert<Gray, float>();
                     diffUPf = diffUP.Convert<Gray, float>();
 
-                    sum_sqdifDOWN = CudaInvoke.AbsSum(diffDOWNf);
-                    sum_sqdifUP = CudaInvoke.AbsSum(diffUPf);
+                    sum_sqdifDOWN = CudaInvoke.SqrSum(diffDOWNf);
+                    sum_sqdifUP = CudaInvoke.SqrSum(diffUPf);
 
                     sqdif_arr.Row(j).Col(0).SetTo(sum_sqdifDOWN);
                     sqdif_arr.Row(j).Col(1).SetTo(new MCvScalar(xDOWN));
@@ -516,7 +516,7 @@ namespace OpenCV_Vision_Pro
             GpuMat sqdif_arr = new GpuMat(out_bottom_cnt - img1_top_pixel, 1, DepthType.Cv64F, 1);
 
             Size size = img1_top.Size;
-           
+
             Parallel.For(0, out_bottom_cnt - img1_top_pixel - min_overlap_count,
                    y => {
                        CudaImage<Gray, byte> img = output_bottom.GetSubRect(new Rectangle(new Point(0, y), size));
@@ -524,13 +524,13 @@ namespace OpenCV_Vision_Pro
                        CudaImage<Gray, byte> diff = new CudaImage<Gray, byte>();
                        CudaInvoke.Absdiff(img, img1_top, diff);
                        CudaImage<Gray, float> diff_float = diff.Convert<Gray, float>();
-                       MCvScalar sum_sqdif = CudaInvoke.AbsSum(diff_float);
+                       MCvScalar sum_sqdif = CudaInvoke.SqrSum(diff_float);
                        sqdif_arr.Row(y).SetTo(sum_sqdif);
                        diff_float.Dispose();
                        diff.Dispose();
                        img.Dispose();
                    });
-           
+
             double minVal = 0, maxVal = 0;
             Point minLoc = new Point(0, 0), maxLoc = new Point(0, 0);
             CudaInvoke.MinMaxLoc(sqdif_arr, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
@@ -572,7 +572,6 @@ namespace OpenCV_Vision_Pro
                        img1RIGHT = img1LEFT = output_bottom_LEFT = img1RIGHT_LEFT = output_bottom_RIGHT = img1LEFT_RIGHT = output_bottom_LEFT_diffRIGHT = output_bottom_RIGHT_diffLEFT = null;
                        diffRIGHT = diffLEFT = new CudaImage<Gray, byte>();
                        CudaImage<Gray, float> diffRIGHTf, diffLEFTf;
-                       diffRIGHTf = diffLEFTf = new CudaImage<Gray, float>();
                        MCvScalar sum_sqdifRIGHT, sum_sqdifLEFT;
                        Console.WriteLine("Checking Y Align using Cuda");
 
@@ -607,8 +606,8 @@ namespace OpenCV_Vision_Pro
                        diffLEFTf = diffLEFT.Convert<Gray, float>();
                        diffRIGHTf = diffRIGHT.Convert<Gray, float>();
 
-                       sum_sqdifRIGHT = CudaInvoke.AbsSum(diffRIGHTf);
-                       sum_sqdifLEFT = CudaInvoke.AbsSum(diffLEFTf);
+                       sum_sqdifRIGHT = CudaInvoke.SqrSum(diffRIGHTf);
+                       sum_sqdifLEFT = CudaInvoke.SqrSum(diffLEFTf);
 
                        sqdif_arr.Row(j).Col(0).SetTo(sum_sqdifRIGHT);
                        sqdif_arr.Row(j).Col(1).SetTo(new MCvScalar(yRIGHT));
